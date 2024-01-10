@@ -1,0 +1,18 @@
+/* Estilos para centrar el contenido en modo escritorio con margen a cada lado */
+@media (min-width: 768px) {
+  .centered-login {
+    background-color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 0 20px; /* Agrega un margen horizontal a cada lado */
+  }
+  
+  .login-form {
+    background-color: white;
+    width: 100%; /* Asegura que el formulario tenga el ancho completo */
+    max-width: 400px; /* Define un ancho máximo para el formulario */
+    padding: 20px; /* Agrega un margen interno al formulario */
+  }
+}
