@@ -423,7 +423,6 @@ return (
              {/* Input Color y Talles */}
    
 
-
              <Grid item xs={12} sm={6}>
                <TextField
                  variant="outlined"
