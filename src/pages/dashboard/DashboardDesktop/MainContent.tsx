@@ -1,12 +1,12 @@
 import { Typography } from '@mui/material';
 import { useSelectedItemsContext } from '../../../context/SelectedItems';
-import ProductsListDesktop from '../Products/ProductsListDesktop';
+import ProductsListDesktop from '../Products/ProductDesktop/ProductsListDesktop';
 import ShippingMethodsDesktop from '../ShippingMethodsForm/ShippingMethodsDesktop';
 import PaymentMethodsDesktop from '../PaymentMethods/PaymentMethodsDesktop';
 import StoreDataDesktop from '../StoreData/StoreDataDesktop';
 import PromoCodeDesktop from '../PromoCode/PromoCodeDesktop';
 import MyOrdersDesktop from '../MyOrders/MyOrdersDesktop';
-import ProductsFormDesktop from '../Products/ProductsFormDesktop';
+import ProductsFormDesktop from '../Products/ProductDesktop/ProductsFormDesktop';
 
 const MainContent = () => {
   const { selectedItems } = useSelectedItemsContext();

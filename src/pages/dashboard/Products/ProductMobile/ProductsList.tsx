@@ -2,15 +2,15 @@ import  { useEffect, useState } from "react";
 import { Button, IconButton, Modal, TableBody, TableCell, TableContainer, TableHead, Paper, TableRow, Table, Drawer, Typography,} from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import { db } from "../../../firebase/firebaseConfig";
-import { useColorsContext } from '../../../context/ColorsContext'; 
+import { db } from "../../../../firebase/firebaseConfig";
+import { useColorsContext } from '../../../../context/ColorsContext'; 
 import {
   collection,
   doc,
   deleteDoc,
   onSnapshot
 } from "firebase/firestore";
-import { Product} from '../../../type/type';
+import { Product} from '../../../../type/type';
 
 import Box from "@mui/material/Box";
 import ProductsForm from "./ProductsForm";

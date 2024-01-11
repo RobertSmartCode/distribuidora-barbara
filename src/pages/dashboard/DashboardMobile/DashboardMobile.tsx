@@ -1,6 +1,6 @@
 import {Box, CssBaseline, IconButton} from "@mui/material";
 import ProductAddForm from "../Products/ProductAddForm";
-import ProductsList from "../Products/ProductsList";
+import ProductsList from "../Products/ProductMobile/ProductsList";
 import MyOrders from "../MyOrders/MyOrders";
 import PaymentMethodsList from "../PaymentMethods/PaymentMethodsList";
 import ShippingMethodsList from "../ShippingMethodsForm/ShippingMethodsList";

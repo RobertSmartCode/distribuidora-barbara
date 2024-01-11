@@ -26,6 +26,11 @@ export interface Product {
   
 }
 
+export interface Image {
+  url: string;
+  alt: string;
+}
+
 export interface CartItem extends Product {
   quantity: number;
   selectedColor: string; 

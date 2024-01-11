@@ -2,14 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { TextField, Button, List, ListItem, ListItemText, Grid } from '@mui/material';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import { useColorsContext } from '../../../context/ColorsContext'; 
+import { useColorsContext } from '../../../../context/ColorsContext'; 
 
-interface ColorInputDesktopProps {
+interface ColorInputProps {
   initialColors?: { color: string; sizes: string[]; quantities: number[] }[];
   updateColors: (newColors: { color: string; sizes: string[]; quantities: number[] }[]) => void;
 }
 
-const ColorInputDesktop: React.FC<ColorInputDesktopProps> = ({ initialColors}) => {
+const ColorInput: React.FC<ColorInputProps> = ({ initialColors}) => {
   const { colors, updateColors } = useColorsContext()!;
   const [color, setColor] = useState<string>("");
   const [size, setSize] = useState<string>("");
@@ -92,10 +92,7 @@ const ColorInputDesktop: React.FC<ColorInputDesktopProps> = ({ initialColors}) =
             />
             <Button size="small" onClick={() => handleDeleteColor(index)}  sx={{
               marginLeft: '0px',
-              padding: 0, 
-              '@media (min-width: 768px)': {
-                marginRight: '880px',
-              },
+              padding: 0
             }}>
               <DeleteForeverIcon />
             </Button>
@@ -139,7 +136,7 @@ const ColorInputDesktop: React.FC<ColorInputDesktopProps> = ({ initialColors}) =
               <ul style={{ color: 'black', listStyle: 'none', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'right', paddingLeft: 0, marginLeft: 0 }}>
                 {colorData.sizes && colorData.sizes.map((size, sizeIndex) => (
                   <li key={sizeIndex} style={{ color: 'black', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <span>{`Talle:${size}, Cantidad: ${colorData.quantities[sizeIndex]}`}</span>
+                  <span>{`Talle:${size}, Cant.: ${colorData.quantities[sizeIndex]}`}</span>
                   <Button
                     size="small"
                     onClick={() => handleDeleteSize(index, sizeIndex)}
@@ -167,10 +164,7 @@ const ColorInputDesktop: React.FC<ColorInputDesktopProps> = ({ initialColors}) =
           sx={{
             width: '75%',
             margin: 'auto',
-            '@media (min-width: 768px)': {
-              width: '38%',
-              marginRight:"10px" 
-            },
+            
           }}
         />
 
@@ -183,9 +177,7 @@ const ColorInputDesktop: React.FC<ColorInputDesktopProps> = ({ initialColors}) =
             width: '75%',
             margin: 'auto',
             marginTop: '8px',
-            '@media (min-width: 768px)': {
-              width: '20%', // Ajusta el ancho para pantallas de escritorio (puedes ajustar el valor según tus necesidades)
-            },
+         
           }}
         >
           Agregar Color
@@ -195,4 +187,4 @@ const ColorInputDesktop: React.FC<ColorInputDesktopProps> = ({ initialColors}) =
   );
 };
 
-export default ColorInputDesktop;
+export default ColorInput;

@@ -1,35 +1,32 @@
-import React, { useState, useEffect, useRef } from "react";
-import { db, uploadFile } from "../../../firebase/firebaseConfig";
+import React, { useState, useEffect } from "react";
+import { db } from "../../../../firebase/firebaseConfig";
 import { addDoc, collection, doc, updateDoc, CollectionReference} from "firebase/firestore";
 import {
   Button,
   TextField,
   Grid,
   Snackbar,
-  Card,
-  CardContent,
-  CardActions,
-  CardMedia,
-
   MenuItem
 
 } from "@mui/material";
 import * as Yup from "yup";
-import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import { useColorsContext } from '../../../context/ColorsContext'; 
-import { Product, ColorData,  } from '../../../type/type';
-import { getFormattedDate } from '../../../utils/dateUtils';
-import { ErrorMessage } from '../../../messages/ErrorMessage';
-import { productSchema } from '../../../schema/productSchema';
-import { useSelectedItemsContext } from '../../../context/SelectedItems';
-import ColorInputDesktop from "./ColorInputDesktop";
 
-const ProductsFormDesktop: React.FC= ({
- 
-}) => {
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
+import { useColorsContext } from '../../../../context/ColorsContext'; 
+import { Product, ColorData, Image  } from '../../../../type/type';
+import { getFormattedDate } from '../../../../utils/dateUtils';
+import { ErrorMessage } from '../../../../messages/ErrorMessage';
+import { productSchema } from '../../../../schema/productSchema';
+import { useSelectedItemsContext } from '../../../../context/SelectedItems';
+import ColorInputDesktop from "./ColorInputDesktop";
+import ImageManager from '../ImageManager';
+import { useImagesContext } from "../../../../context/ImagesContext";
+
+const ProductsFormDesktop: React.FC= () => {
+
   const [isLoading] = useState<boolean>(false);
-  const {  updateSelectedItems } = useSelectedItemsContext();
+
+  const {  updateSelectedItems } = useSelectedItemsContext()!;
+
   const [newProduct, setNewProduct] = useState<Product>({
     id: "",
     title: "",
@@ -56,9 +53,8 @@ const ProductsFormDesktop: React.FC= ({
     selectedSize: "", 
   });
 
-  const [productSelected, setProductSelected] = useState<Product | null>(null);
-  const [isChange, setIsChange] = useState<boolean>(false);
-  console.log(isChange)
+const [productSelected, setProductSelected] = useState<Product | null>(null);
+
 const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
 const [colorErrors, setColorErrors] = useState<{ [key: string]: string }>({});
@@ -105,6 +101,9 @@ const validateColorsData = (colorsData: ColorData[]) => {
 
 const { colors, updateColors } = useColorsContext()!;
 
+const { images, updateImages} = useImagesContext()!;
+
+
 const calculateStock = (colorsData: ColorData[]) => {
   let totalStock = 0;
 
@@ -120,131 +119,23 @@ const calculateStock = (colorsData: ColorData[]) => {
 
 const [selectedProductColors, setSelectedProductColors] = useState<{ color: string; sizes: string[]; quantities: number[] }[]>([]);
 
-
-
- // Estado para las imágenes existentes
- const [files, setFiles] = useState<File[]>([]);
-
-
- // Estado para las imágenes recién cargadas desde la computadora
-
-
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [uploadMessage, setUploadMessage] = useState<string>("");
-  const [selectedImageCount, setSelectedImageCount] = useState<number>(
-    productSelected?.images.length || 0
-  );
-
  
 
 
   useEffect(() => {
     if (productSelected) {
       setSelectedProductColors(productSelected.colors || []);
-      setFiles(productSelected.images.map((imageUrl) => new File([], imageUrl)));
+    
     } else {
-      setFiles(newProduct.images.map((imageUrl) => new File([], imageUrl)));
+    
     }
   }, [productSelected, newProduct]);
 
-  
 
-  
-  
-
-const normalizeImages = async (imageFiles: File[], existingImageURLs: string[]) => {
-  // Filtra las imágenes que ya son URLs de Firebase
-  const firebaseImages = existingImageURLs.filter((url) =>
-  url.startsWith('https://firebasestorage.googleapis.com'));
-
-  // Filtra las imágenes que son blob URLs (temporales)
-  const localImages = imageFiles.filter((file) =>
-   URL.createObjectURL(file).startsWith('blob:'));
-
-  // Sube las imágenes locales a Firebase y obtén sus URLs
-  const uploadedLocalImages = await Promise.all(localImages.map(async (file) => {
-    // Asume que uploadFile es una función que sube el archivo a Firebase
-    const url = await uploadFile(file); 
-    return url;
-  }));
-
-  // Combina todas las URLs
-  const normalizedImages = [...firebaseImages, ...uploadedLocalImages];
-
-  return normalizedImages;
-};
-
-// Uso en tu función handleImageChange
-const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  if (e.target.files) {
-    const selectedFiles = Array.from(e.target.files);
-   
-
-    if (
-      selectedFiles.length + selectedImageCount <= 8 &&
-      selectedFiles.length + selectedImageCount >= 1
-    ) {
-      const updatedFiles = [...files, ...selectedFiles];
-      
-
-      setFiles(updatedFiles);
-
-      setSelectedImageCount(selectedImageCount + selectedFiles.length);
-      setUploadMessage("");
-
-      if (productSelected) {
-        normalizeImages(selectedFiles, productSelected.images)
-          .then((normalizedImages) => {
-            const updatedProductSelected = {
-              ...productSelected,
-              images: normalizedImages,
-            };
-            console.log("Updated Product Selected:", updatedProductSelected);
-            setProductSelected(updatedProductSelected);
-          })
-          .catch((error) => {
-            console.error("Error al normalizar las imágenes:", error);
-            setUploadMessage("Error al cargar las imágenes");
-          });
-      }
-    } else {
-      setUploadMessage(
-        "Llegaste al límite de fotos permitido (mínimo 1, máximo 8)."
-      );
-    }
-  }
-};
-
-  
 
 // Función para manejar la eliminación de imágenes existentes
-
-const handleRemoveImage = (index: number) => {
-    const updatedFiles = [...files];
-    updatedFiles.splice(index, 1);
-    setFiles(updatedFiles);
-  
-    if (productSelected) {
-      const updatedProductSelected = {
-        ...productSelected,
-        images: [
-          ...productSelected.images.slice(0, index),
-          ...productSelected.images.slice(index + 1),
-        ],
-      };
-      setProductSelected(updatedProductSelected);
-  
-      // Después de eliminar la imagen, actualiza el contador
-      setSelectedImageCount(updatedProductSelected.images.length);
-      setUploadMessage("");
-    } else {
-      setSelectedImageCount(updatedFiles.length);
-      setUploadMessage("");
-    }
-  };
-  
-  
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -279,34 +170,6 @@ const handleRemoveImage = (index: number) => {
     }
   };
 
-  // Función para subir las imágenes al servidor y obtener las URL
-  const uploadImages = async () => {
-    const uploadedImages = [];
-  
-    for (const file of files) {
-      setUploadMessage("Cargando el producto...");
-      const url = await uploadFile(file);
-      uploadedImages.push(url);
-    }
-  
-    setUploadMessage("");
-    return uploadedImages;
-  };
-
-  const createProduct = async (
-    collectionRef: CollectionReference,
-    productInfo: Product
-  ) => {
-    try {
-      const { ...productDataWithoutId } = productInfo;
-      await addDoc(collectionRef, productDataWithoutId);
-    } catch (error) {
-      console.error("Error creating product:", error);
-      throw error;
-    }
-  };
-
-
 
   const updateProduct = async (
     collectionRef: CollectionReference,
@@ -322,15 +185,19 @@ const handleRemoveImage = (index: number) => {
     }
   };
 
-  const openFileInput = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
+  const createProduct = async (
+    collectionRef: CollectionReference,
+    productInfo: Omit<Product, 'id'>
+  ) => {
+    try {
+      const newDocRef = await addDoc(collectionRef, productInfo);
+      return newDocRef.id; // Puedes devolver el ID del nuevo documento si es necesario
+    } catch (error) {
+      console.error("Error creating product:", error);
+      throw error;
     }
   };
-
-
-
-
+  
    // Función para manejar el envío del formulario
 
 
@@ -340,39 +207,33 @@ const handleRemoveImage = (index: number) => {
     try {
       // Validar el producto, ya sea el nuevo o el editado
       const productToValidate = productSelected || newProduct;
-
+  
       await productSchema.validate(productToValidate, { abortEarly: false });
   
+      // Validar los datos de colores
+      if (!validateColorsData(colors)) {
+        throw new Error("Por favor, corrige los errores en el formulario.");
+      }
+
+      const convertImagesToStringArray = (images: Image[]): string[] => {
+        return images.map(image => image.url);
+      };
       
-    // Validar los datos de colores
-    if (!validateColorsData(colors)) {
-      setSnackbarMessage("Por favor, corrige los errores en el formulario.");
-      setSnackbarOpen(true);
-      setErrorTimeoutAndClear();
-      return;
-    }
-       
-       
-    
-      // Subir las imágenes y obtener las URLs
-      const uploadedImages = await uploadImages();
   
       // Crear un objeto con la información del producto
       const productInfo = {
         ...productToValidate,
         unit_price: +productToValidate.unit_price,
         createdAt: productToValidate.createdAt ?? getFormattedDate(),
-        colors: colors.length > 0 ? [...colors] : [], 
-        stock: calculateStock(colors), 
-        images: [...uploadedImages],
+        colors: colors.length > 0 ? [...colors] : [],
+        stock: calculateStock(colors),
+        images: convertImagesToStringArray(images),
       };
-      
   
       const productsCollection = collection(db, "products");
   
       if (productSelected) {
         // Actualizar el producto existente sin duplicar las imágenes
-        productInfo.images = productSelected.images; // Utiliza las imágenes existentes
         await updateProduct(productsCollection, productSelected.id, productInfo);
       } else {
         // Crear un nuevo producto con las imágenes cargadas
@@ -380,12 +241,12 @@ const handleRemoveImage = (index: number) => {
       }
   
       // Limpiar el estado y mostrar un mensaje de éxito
-      setFiles([]);
+   
+      updateImages([]); 
       setSnackbarMessage("Producto creado/modificado con éxito");
       updateSelectedItems([{ name: 'Mis Productos' }]);
       setSnackbarOpen(true);
-      setIsChange(true);
-     
+  
     } catch (error) {
       if (error instanceof Yup.ValidationError) {
         // Manejar errores de validación aquí
@@ -398,21 +259,16 @@ const handleRemoveImage = (index: number) => {
         console.error("Errores de validación:", validationErrors);
         setErrors(validationErrors);
         setErrorTimeoutAndClear();
-        
         setSnackbarMessage("Por favor, corrige los errores en el formulario.");
         setSnackbarOpen(true);
       } else {
         // Manejar otros errores aquí
         console.error("Error en handleSubmit:", error);
         setSnackbarMessage("Error al crear/modificar el producto");
-       
         setSnackbarOpen(true);
       }
     }
   };
-  
-
-  
 
 return (
     <>
@@ -552,6 +408,8 @@ return (
                    }
                  />
              </Grid>
+
+
    
              {/* Input Color y Talles */}
              <Grid item xs={12}>
@@ -564,6 +422,8 @@ return (
            </Grid>
              {/* Input Color y Talles */}
    
+
+
              <Grid item xs={12} sm={6}>
                <TextField
                  variant="outlined"
@@ -681,95 +541,18 @@ return (
                  onChange={handleChange}
                />
              </Grid>
-   
-             {/* Maneja la carga de las imagenes para Modificar */}
-             <Grid item xs={12} lg={12} style={{ width: '100%', margin: 'auto', marginRight:"130px" }}>
-             <div style={{ display: 'flex', justifyContent: 'center', width: '100%', height: '100%' }}>
-                 {productSelected ? (
-                 productSelected.images.map((imageUrl, index) => (
-                     <Card key={index} style={{width: '100%', margin: '10px' }}>
-                     <CardContent>
-                         <p>{`Vista Previa ${index + 1}`}</p>
-                     </CardContent>
-                     <CardMedia
-                         component="img"
-                         height="140"
-                         image={imageUrl}
-                         alt={`Imagen ${index + 1}`}
-                         style={{ objectFit: "contain" }}
-                     />
-                   
-                     <CardActions>
-                         <Button
-                         size="small"
-                         variant="contained"
-                         color="secondary"
-                         onClick={() => handleRemoveImage(index)}
-                         style={{ marginLeft: 'auto' }}
-                         >
-                         <DeleteForeverIcon />
-                         </Button>
-                     </CardActions>
-                     </Card>
-                 ))
-                 ) : (
-                 files.map((file, index) => (
-                     <Card key={index} style={{ maxWidth: 600, width: '100%', margin: '10px' }}>
-                       <CardContent>
-                         <p>{`Vista Previa ${index + 1}`}</p>
-                     </CardContent>
-                     <CardMedia
-                         component="img"
-                         height="140"
-                         image={URL.createObjectURL(file)}
-                         alt={`Vista Previa ${index + 1}`}
-                         style={{ objectFit: "contain" }}
-                     />
-         
-                     <CardActions>
-                         <Button
-                         size="small"
-                         variant="contained"
-                         color="secondary"
-                         onClick={() => handleRemoveImage(index)}
-                         style={{ marginLeft: 'auto' }}
-                         >
-                         <DeleteForeverIcon />
-                         </Button>
-                     </CardActions>
-                     </Card>
-                 ))
-                 )}
-             </div>
-             </Grid>
- 
-   
-             {/* Maneja la carga de las imagenes para Crear */}
-             <Grid item xs={12} style={{ textAlign: 'center', marginRight:"200px" }}>
-               <Button
-                 variant="contained"
-                 color="primary"
-                 onClick={openFileInput}
-               >
-                 Subir foto
-               </Button>
-               {selectedImageCount >= 1 && selectedImageCount < 8 && (
-                 <p>Puedes subir otra foto.</p>
-               )}
-               {selectedImageCount === 8 && (
-                 <p>Llegaste al máximo de fotos permitido.</p>
-               )}
-               <input
-                 ref={fileInputRef}
-                 type="file"
-                 multiple
-                 accept="image/*"
-                 onChange={handleImageChange}
-                 style={{ display: "none" }}
-               />
-               <p>{uploadMessage}</p>
-             </Grid>
-   
+
+
+
+                  {/*ImageManager */}
+                  <Grid item xs={12}>
+                  <ImageManager
+                    productSelected={productSelected}
+                  />
+                    {/* <ErrorMessage errors={colorErrors} /> */}
+                  </Grid>
+                    {/*ImageManager*/}
+
              {/* Botón de crear o modificar*/}
              <Grid item xs={12} style={{ textAlign: 'center', marginRight: "200px", marginBottom: "20px" }}>
                  {!isLoading && (
@@ -799,10 +582,6 @@ return (
    );
    
  
-
-  
-
-
 
 };
 

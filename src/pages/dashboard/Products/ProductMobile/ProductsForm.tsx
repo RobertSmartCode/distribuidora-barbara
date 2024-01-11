@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { db, uploadFile } from "../../../firebase/firebaseConfig";
+import { db, uploadFile } from "../../../../firebase/firebaseConfig";
 import { addDoc, collection, doc, updateDoc, CollectionReference} from "firebase/firestore";
 import {
   Button,
@@ -18,11 +18,11 @@ import {
 import * as Yup from "yup";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import ColorInput from './ColorInput';
-import { useColorsContext } from '../../../context/ColorsContext'; 
-import { Product, ColorData, ProductsFormProps } from '../../../type/type';
-import { getFormattedDate } from '../../../utils/dateUtils';
-import { ErrorMessage } from '../../../messages/ErrorMessage';
-import { productSchema } from '../../../schema/productSchema';
+import { useColorsContext } from '../../../../context/ColorsContext'; 
+import { Product, ColorData, ProductsFormProps } from '../../../../type/type';
+import { getFormattedDate } from '../../../../utils/dateUtils';
+import { ErrorMessage } from '../../../../messages/ErrorMessage';
+import { productSchema } from '../../../../schema/productSchema';
 
 
 const ProductsForm: React.FC<ProductsFormProps> = ({
@@ -284,6 +284,8 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     return uploadedImages;
   };
 
+
+  
   const createProduct = async (
     collectionRef: CollectionReference,
     productInfo: Product
