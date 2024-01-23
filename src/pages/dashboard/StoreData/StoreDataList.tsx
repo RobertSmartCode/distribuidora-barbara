@@ -50,7 +50,7 @@ interface StoreData {
 
 const StoreDataList: React.FC = () => {
   const [storeData, setStoreData] = useState<StoreData[]>([]);
-  const [editStoreData, setEditStoreData] = useState<StoreData | null>(null);
+ 
   const [openForm, setOpenForm] = useState<boolean>(false); // Corregido: especifica el tipo boolean
   const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false); // Corregido: especifica el tipo boolean
   const [snackbarMessage, setSnackbarMessage] = useState<string>(""); // Corregido: especifica el tipo string
@@ -92,8 +92,7 @@ const StoreDataList: React.FC = () => {
 
 const handleEditStoreData = (data: StoreData) => {
   
-  setEditStoreData(data);
-  // Evitar abrir el formulario automáticamente aquí
+  
   setOpenForm(true);
 };
 
@@ -112,7 +111,7 @@ const handleEditStoreData = (data: StoreData) => {
   };
 
   const handleCloseForm = () => {
-    setEditStoreData(null);
+   
     setOpenForm(false);
     fetchStoreData();
   };
@@ -300,20 +299,7 @@ const handleEditStoreData = (data: StoreData) => {
           <StoreDataForm
             open={openForm}
             onClose={handleCloseForm}
-            storeDataToEdit={{
-              id: editStoreData?.id || "",
-              storeName: editStoreData?.storeName || "",
-              // logo: editStoreData?.logo || "",
-              description: editStoreData?.description || "",
-              address: editStoreData?.address || "",
-              phoneNumber: editStoreData?.phoneNumber || "",
-              email: editStoreData?.email || "",
-              website: editStoreData?.website || "",
-              socialMedia: editStoreData?.socialMedia || {},
-              businessHours: editStoreData?.businessHours || "",
-              // Agregar otras propiedades específicas de editStoreData si es necesario
-            }}
-            onUpdateStoreData={handleUpdateStoreData}
+          
           />
 
 

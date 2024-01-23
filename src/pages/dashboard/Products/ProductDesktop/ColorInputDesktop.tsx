@@ -5,8 +5,12 @@ import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { useColorsContext } from '../../../../context/ColorsContext'; 
 
 interface ColorInputDesktopProps {
-  initialColors?: { color: string; sizes: string[]; quantities: number[] }[];
-  updateColors: (newColors: { color: string; sizes: string[]; quantities: number[] }[]) => void;
+  initialColors?: 
+  { color: string;
+     sizes: string[];
+      quantities: number[]
+     }[];
+ 
 }
 
 const ColorInputDesktop: React.FC<ColorInputDesktopProps> = ({ initialColors}) => {
@@ -184,7 +188,7 @@ const ColorInputDesktop: React.FC<ColorInputDesktopProps> = ({ initialColors}) =
             margin: 'auto',
             marginTop: '8px',
             '@media (min-width: 768px)': {
-              width: '20%', // Ajusta el ancho para pantallas de escritorio (puedes ajustar el valor según tus necesidades)
+              width: '20%', 
             },
           }}
         >
@@ -196,3 +200,6 @@ const ColorInputDesktop: React.FC<ColorInputDesktopProps> = ({ initialColors}) =
 };
 
 export default ColorInputDesktop;
+
+
+

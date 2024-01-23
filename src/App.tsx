@@ -7,8 +7,15 @@ import SortContextComponent from "./context/SortContext";
 import SearchContextComponent from "./context/SearchContext";
 import ColorsContextComponent from "./context/ColorsContext";
 import ImagesContextComponent from "./context/ImagesContext";
+import ProductVariantsComponent from "./context/ProductVariantsContext";
+import { StoreDataProvider } from "./context/StoreDataContext";
+import CashRegisterContextComponent from "./context/CashRegisterContext";
+
+
+
 
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+
 import SelectedItemsContextComponent from "./context/SelectedItems";
 
 const theme = createTheme({
@@ -22,15 +29,16 @@ const theme = createTheme({
   },
 });
 
-
-
 function App() {
 
   return (
   <ThemeProvider theme={theme}>
 
     <BrowserRouter>
+    <StoreDataProvider>
+    <CashRegisterContextComponent >
     <SelectedItemsContextComponent>
+    <ProductVariantsComponent>
     <ImagesContextComponent>
       <ColorsContextComponent>
         <SearchContextComponent>
@@ -46,7 +54,10 @@ function App() {
         </SearchContextComponent>
       </ColorsContextComponent>
       </ImagesContextComponent>
+      </ProductVariantsComponent>
       </SelectedItemsContextComponent>
+      </CashRegisterContextComponent>
+      </StoreDataProvider>
     </BrowserRouter>
   </ThemeProvider>
   );

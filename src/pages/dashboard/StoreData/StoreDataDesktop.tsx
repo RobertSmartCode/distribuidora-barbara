@@ -13,61 +13,36 @@ import {
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import EditIcon from "@mui/icons-material/Edit";
 
-import { collection, deleteDoc, doc, getDocs, updateDoc } from "firebase/firestore";
+import { collection,  onSnapshot, deleteDoc, doc, } from "firebase/firestore";
 import { db } from "../../../firebase/firebaseConfig";
 import StoreDataForm from "./StoreDataForm"; // Importa el formulario de datos de la tienda
-
-
-// Define el tipo StoreData (ajusta las propiedades según las necesidades)
-interface StoreData {
-  id: string;
-  storeName: string;
-  logo: string;
-  description: string;
-  address: string;
-  phoneNumber: string;
-  email: string;
-  website: string;
-  socialMedia: {
-    facebook?: string;
-    instagram?: string;
-    tiktok?: string;
-    twitter?: string;
-    linkedin?: string;
-  };
-  businessHours: string;
-  // Agrega otras propiedades específicas de los datos de la tienda si es necesario
-}
+import { StoreData } from "../../../type/type";
 
 
 
-interface StoreData {
-  id: string;
-  storeName: string;
-  // Otras propiedades aquí
-}
 
 
-const StoreDataDesktop: React.FC = () => {
+
+  const StoreDataDesktop: React.FC = () => {
   const [storeData, setStoreData] = useState<StoreData[]>([]);
-  const [editStoreData, setEditStoreData] = useState<StoreData | null>(null);
-  const [openForm, setOpenForm] = useState<boolean>(false); // Corregido: especifica el tipo boolean
-  const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false); // Corregido: especifica el tipo boolean
-  const [snackbarMessage, setSnackbarMessage] = useState<string>(""); // Corregido: especifica el tipo string
+console.log(storeData)
+  const [openForm, setOpenForm] = useState<boolean>(false); 
+  const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false); 
+  const [snackbarMessage, setSnackbarMessage] = useState<string>(""); 
 
 
-  useEffect(() => {
-    fetchStoreData();
-  }, []);
 
-  const fetchStoreData = async () => {
-    try {
-      const querySnapshot = await getDocs(collection(db, "storeData"));
+
+  const fetchStoreData = () => {
+    const storeDataCollection = collection(db, "storeData");
+  
+    // Suscribirse a eventos de cambios en la colección
+    const unsubscribe = onSnapshot(storeDataCollection, (querySnapshot) => {
       const storeDataArray: StoreData[] = [];
-
+  
       querySnapshot.forEach((doc) => {
         const methodData = doc.data();
-
+  
         const storeDataItem: StoreData = {
           id: doc.id,
           storeName: methodData.storeName || "",
@@ -79,21 +54,30 @@ const StoreDataDesktop: React.FC = () => {
           website: methodData.website || "",
           socialMedia: methodData.socialMedia || {},
           businessHours: methodData.businessHours || "",
+          branches: methodData.branches || []
         };
-
+  
         storeDataArray.push(storeDataItem);
       });
-
-      setStoreData(storeDataArray);
-    } catch (error) {
-      console.error("Error al obtener los datos de la tienda:", error);
-    }
-  };
-
-const handleEditStoreData = (data: StoreData) => {
   
-  setEditStoreData(data);
-  // Evitar abrir el formulario automáticamente aquí
+      setStoreData(storeDataArray);
+    });
+  
+    // Devolver una función de limpieza para dejar de escuchar cuando sea necesario
+    return () => unsubscribe();
+  };
+  
+
+  useEffect(() => {
+    const unsubscribe = fetchStoreData();
+  
+    // Devolver una función de limpieza para dejar de escuchar cuando el componente se desmonte
+    return () => unsubscribe();
+  }, []);
+  
+
+
+const handleEditStoreData = () => {
   setOpenForm(true);
 };
 
@@ -112,39 +96,33 @@ const handleEditStoreData = (data: StoreData) => {
   };
 
   const handleCloseForm = () => {
-    setEditStoreData(null);
+   
     setOpenForm(false);
     fetchStoreData();
   };
 
-  const handleUpdateStoreData = async (storeId: string, updatedData: Partial<StoreData>) => {
-    try {
-      const dataRef = doc(db, "storeData", storeId);
-      await updateDoc(dataRef, updatedData);
-      setSnackbarMessage("Datos de la tienda actualizados con éxito.");
-      setSnackbarOpen(true);
-      fetchStoreData();
-    } catch (error) {
-      console.error("Error al actualizar los datos de la tienda:", error);
-      setSnackbarMessage("Error al actualizar los datos de la tienda.");
-      setSnackbarOpen(true);
-    }
-  };
-  
-  const handleSnackbarClose = () => {
-    setSnackbarOpen(false);
-  };
+
+ 
 
   return (
-    <Box>
+    <Box
+    sx={{
+      margin: '0 auto',  
+      maxWidth: '80%',
+    }}
+    
+    >
       {/* Sección "Configuración de Datos de la Tienda" */}
     
-        <Box style={{  marginRight:"150px" }}>
+        <Box >
             {storeData.length === 0 ? (
                 <Button
                 variant="contained"
                 onClick={() => setOpenForm(true)}
-                style={{ marginBottom: "20px" }}
+                style={{
+                  display: 'block',
+                  margin: '0 auto ',
+                }}
                 >
                 Crear Datos de la Tienda
                 </Button>
@@ -197,44 +175,57 @@ const handleEditStoreData = (data: StoreData) => {
        
 
         <Typography>Horario de Atención: {data.businessHours}</Typography>
+
+          {/* Sucursales */}
+          {data.branches && data.branches.length > 0 && (
+            <Box>
+              <Typography variant="h6" sx={{ textAlign: 'center', marginTop: '10px' }}>
+                Sucursales
+              </Typography>
+              {data.branches.map((branch) => (
+                <Box key={branch.name} style={{ marginBottom: '10px' }}>
+                  <Typography>Sucursal: {branch.name}</Typography>
+                  <Typography>Dirección: {branch.address}</Typography>
+                  <Typography>Teléfono: {branch.phone}</Typography>
+
+                  {/* Información de las cajas */}
+                  {branch.boxes && branch.boxes.length > 0 && (
+                    <Box>
+                      <Typography variant="subtitle1" sx={{ marginTop: '5px' }}>
+                        Cajas:
+                      </Typography>
+                      {branch.boxes.map((box) => (
+                        <Box key={box.number} style={{ marginLeft: '10px' }}>
+                          <Typography>Número: {box.number}</Typography>
+                          <Typography>Ubicación: {box.location}</Typography>
+                          {/* Puedes agregar más detalles de la caja si es necesario */}
+                        </Box>
+                      ))}
+                    </Box>
+                  )}
+                </Box>
+              ))}
+            </Box>
+          )}
+
       </CardContent>
       <CardActions sx={{ display: "flex", justifyContent: "flex-end" }}>
-        <IconButton onClick={() => handleEditStoreData(data)}>
-          <EditIcon />
-        </IconButton>
-        <IconButton onClick={() => handleDeleteStoreData(data.id)}>
-          <DeleteForeverIcon />
-        </IconButton>
-      </CardActions>
-
-
+      <IconButton onClick={() => handleEditStoreData()}> 
+        <EditIcon />
+      </IconButton>
+      <IconButton onClick={() => data.id ? handleDeleteStoreData(data.id) : undefined}>
+        <DeleteForeverIcon />
+      </IconButton>
+    </CardActions>
     </Card>
   ))}
-
-
 
         
           <StoreDataForm
             open={openForm}
             onClose={handleCloseForm}
-            storeDataToEdit={{
-              id: editStoreData?.id || "",
-              storeName: editStoreData?.storeName || "",
-              // logo: editStoreData?.logo || "",
-              description: editStoreData?.description || "",
-              address: editStoreData?.address || "",
-              phoneNumber: editStoreData?.phoneNumber || "",
-              email: editStoreData?.email || "",
-              website: editStoreData?.website || "",
-              socialMedia: editStoreData?.socialMedia || {},
-              businessHours: editStoreData?.businessHours || "",
-              // Agregar otras propiedades específicas de editStoreData si es necesario
-            }}
-            onUpdateStoreData={handleUpdateStoreData}
+            storeData={storeData[0]} 
           />
-
-
-         
 
         </Box>
       
@@ -243,7 +234,7 @@ const handleEditStoreData = (data: StoreData) => {
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={4000}
-        onClose={handleSnackbarClose}
+       
         message={snackbarMessage}
       />
     </Box>

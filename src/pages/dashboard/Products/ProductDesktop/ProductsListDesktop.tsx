@@ -1,9 +1,9 @@
 import  { useEffect, useState } from "react";
-import {IconButton, Modal, TableBody, TableCell, TableContainer, TableHead, Paper, TableRow, Table,} from "@mui/material";
+import {IconButton, Modal, TableBody, TableCell, TableContainer, TableHead, TableRow, Table, Card,} from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { db } from "../../../../firebase/firebaseConfig";
-import { useColorsContext } from '../../../../context/ColorsContext'; 
+
 import {
   collection,
   doc,
@@ -13,14 +13,15 @@ import {
 import { Product} from '../../../../type/type';
 
 import Box from "@mui/material/Box";
-import ProductsForm from "../ProductMobile/ProductsForm";
+
 import CloseIcon from "@mui/icons-material/Close";
+import ProductsEditDesktop from "./ProductsEditDesktop";
 
 
 
 
 const ProductsListDesktop = () => {
-  const { updateColors } = useColorsContext()!;
+ 
   const [open, setOpen] = useState<boolean>(false);
   const [productSelected, setProductSelected] = useState<Product | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
@@ -35,28 +36,20 @@ const ProductsListDesktop = () => {
 
         return {
           id: productDoc.id,
-          title: productData.title || "", 
+          title: productData.title || "",
+          brand: productData.brand || "",
           description: productData.description || "",
-          unit_price: productData.unit_price || 0,
-          stock: productData.stock || 0,
           category: productData.category || "",
-          images: productData.images || [],
-          sizes: productData.sizes || [],
-          colors: productData.colors || [],
-          salesCount: productData.salesCount || 0,
-          featured: productData.featured || false,
-          createdAt: productData.createdAt || "",
-          keywords: productData.keywords || [],
           discount: productData.discount || 0,
-          sku: productData.sku || "",
-          elasticity: productData.elasticity || "", 
-          thickness: productData.thickness || "", 
-          breathability: productData.breathability || "", 
-          season: productData.season || "",
-          material: productData.material || "", 
-          details: productData.details || "", 
-          selectedColor: productData.selectedColor  || "", 
-          selectedSize: productData.selectedSize || "", 
+          unitperpack: productData.unitperpack || 0,
+          productVariants: productData.productVariants || [],
+          keywords: productData.keywords || "",
+          salesCount: productData.salesCount || "",
+          featured: productData.featured || false,
+          images: productData.images || [],
+          createdAt: productData.createdAt || "",
+          online: productData.online || false,
+          location: productData.location || "",
         };
       });
       setProducts(newArr);
@@ -79,20 +72,28 @@ const ProductsListDesktop = () => {
     setOpen(true);
   };
 
-
   return (
 
 
-    <Box sx={{ marginLeft:"0px"}} >
-      <TableContainer component={Paper} sx={{ maxWidth: "90%"}}>
+    <Box  >
+        <Card
+          sx={{
+            width: '80%',
+            padding: '20px',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            margin: 'auto', // Centra el Card dentro del Box
+          }}
+        >
+      <TableContainer  >
         <Table aria-label="simple table">
           <TableHead>
             <TableRow>
               <TableCell variant="head" align="center">Id</TableCell>
               <TableCell variant="head" align="justify">Título</TableCell>
               <TableCell variant="head" align="justify">Imagen</TableCell>
-              <TableCell variant="head" align="justify">Precio</TableCell>
-              <TableCell variant="head" align="justify">Stock</TableCell>
+            
               <TableCell variant="head" align="justify">Categoria</TableCell> 
               <TableCell variant="head" align="justify">Acciones</TableCell>
             </TableRow>
@@ -116,12 +117,7 @@ const ProductsListDesktop = () => {
                     style={{ width: "auto", height: "80px", maxWidth: "100%" }}
                   />
                 </TableCell>
-                <TableCell component="th" scope="row" align="justify">
-                  {product.unit_price}
-                </TableCell>
-                <TableCell component="th" scope="row" align="justify">
-                  {product.stock}
-                </TableCell>
+             
                  <TableCell component="th" scope="row" align="justify">
                   {product.category}
                 </TableCell> 
@@ -138,7 +134,7 @@ const ProductsListDesktop = () => {
           </TableBody>
         </Table>
       </TableContainer>
-
+              
         <Modal
         open={open}
         onClose={handleClose}
@@ -146,25 +142,25 @@ const ProductsListDesktop = () => {
         aria-describedby="modal-modal-description"
       >
         <Box sx={{ position: 'relative' }}>
-          <IconButton
-            aria-label="close"
-            onClick={handleClose}
-            sx={{ position: 'absolute', top: '20px', right: '20px' }}
-          >
-            <CloseIcon />
-          </IconButton>
+        <IconButton
+          aria-label="close"
+          onClick={handleClose}
+          sx={{ position: 'absolute', top: '10%', right: '12%' }}
+        >
+          <CloseIcon />
+        </IconButton>
 
-          <ProductsForm
-            handleClose={handleClose}
-            setIsChange={setIsChange}
+
+          <ProductsEditDesktop
             productSelected={productSelected}
             setProductSelected={setProductSelected}
-            products={products}
-            updateColors={updateColors} 
+            handleClose={handleClose}
           />
+
 
         </Box>
       </Modal>
+      </Card>
     </Box>
   );
 };

@@ -5,7 +5,7 @@ import { Grid } from "@mui/material";
 
 
 const HomeBanner: React.FC = () => {
-  const banner= "https://firebasestorage.googleapis.com/v0/b/pinguinos-kids.appspot.com/o/LogoMobile%2FHomeBanner%20(1).png?alt=media&token=dc9b9675-ee1e-4b0e-ad15-e2436352d979"
+  const banner= "https://firebasestorage.googleapis.com/v0/b/distribuidora-barbara.appspot.com/o/Logos%2FBannerDB.png?alt=media&token=a03cc02a-3c41-4074-bf4e-8a12b42adcee"
   return (
     <Grid container justifyContent="center" alignItems="center" marginTop="0px">
       <Grid item xs={12} lg={6}>

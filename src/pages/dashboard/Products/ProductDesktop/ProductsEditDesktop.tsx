@@ -1,20 +1,21 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
+import { ProductsEditDesktopProps } from '../../../../type/type';
+import { Box, CssBaseline, Toolbar, Card, Typography } from '@mui/material';
 import * as Yup from "yup";
 import { db } from "../../../../firebase/firebaseConfig";
-import { addDoc, collection, doc, updateDoc, CollectionReference} from "firebase/firestore";
+import { collection, doc, updateDoc, CollectionReference} from "firebase/firestore";
 import {
   Button,
   TextField,
   Grid,
   Snackbar,
-  MenuItem,
-  Card
+  MenuItem
 
 } from "@mui/material";
 
 
 
-import { Product,  Image, ProductsFormDesktopProps } from '../../../../type/type';
+import { Product,  Image } from '../../../../type/type';
 import { getFormattedDate } from '../../../../utils/dateUtils';
 import { ErrorMessage } from '../../../../messages/ErrorMessage';
 import { productSchema } from '../../../../schema/productSchema';
@@ -26,46 +27,25 @@ import { useImagesContext } from "../../../../context/ImagesContext";
 import ProductVariants from "./ProductVariants";
 
 
-const ProductsFormDesktop: React.FC<ProductsFormDesktopProps> = (props) => {
-  const { productSelected, setProductSelected  } = props;
 
 
+const ProductsEditDesktop: React.FC<ProductsEditDesktopProps> = ({ productSelected, setProductSelected, handleClose }) => {
+ 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  
   const [isLoading] = useState<boolean>(false);
 
   const {  updateSelectedItems } = useSelectedItemsContext()!;
 
-  const [newProduct, setNewProduct] = useState<Product>({
-    id: "",
-    title: "",
-    brand: "",
-    description: "",
-    category: "",
-    discount: 0,
-    unitperpack: 10,
-    productVariants: [{
-      type: "",
-      cost: 0,
-      taxes: 0,
-      profitMargin: 0,
-      price: 0,
-      quantities: 0,
-      barcode: 0,
-      contentPerUnit: 0, 
-      isContentInGrams: true,  
-    }],
-    keywords: "",
-    salesCount: "",
-    featured: false,
-    images: [],
-    createdAt: getFormattedDate(),
-    online: false,
-    location: "",
-  });
-  
 
+  useEffect(() => {
+    // Abre el modal cuando productSelected está presente
+    if (productSelected) {
+      setIsModalOpen(true);
+    }
+  }, [productSelected]);
 
-
-const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
 const [errorTimeout, setErrorTimeout] = useState<NodeJS.Timeout | null>(null);
 
@@ -91,33 +71,30 @@ const { images, updateImages} = useImagesContext()!;
 
 const [selectedImages, setSelectedImages] = useState<Image[]>([]);
 
-
-
 const [selectedProductVariants, setSelectedProductVariants] = useState<{ 
-  type: string; 
-  cost: number; 
-  taxes: number; 
-  profitMargin: number; 
-  price: number; 
-  quantities: number;
-  barcode: number;
-  contentPerUnit: number;  
-  isContentInGrams: boolean;
-  
-   }[]>([]);
- 
-useEffect(() => {
-  if (productSelected) {
+    type: string; 
+    cost: number; 
+    taxes: number; 
+    profitMargin: number; 
+    price: number; 
+    quantities: number;
+    barcode: number;
+    contentPerUnit: number;  
+    isContentInGrams: boolean;
+    
+     }[]>([]);
    
-    setSelectedProductVariants(productSelected.productVariants || []);
-     // Convierte las URLs en objetos Image y actualiza el estado
-     const imageObjects: Image[] = productSelected.images.map((url) => ({ url }));
-     setSelectedImages(imageObjects);
-  } else {
-   
-    setSelectedProductVariants([]);
-  }
-}, [productSelected, newProduct]);
+  useEffect(() => {
+    if (productSelected) {
+     
+      setSelectedProductVariants(productSelected.productVariants || []);
+
+      // Convierte las URLs en objetos Image y actualiza el estado
+    const imageObjects: Image[] = productSelected.images.map((url) => ({ url }));
+    setSelectedImages(imageObjects);
+      
+    }
+  }, [productSelected]);
 
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -125,21 +102,22 @@ useEffect(() => {
 
 // Función para manejar la eliminación de imágenes existentes
 
+
 const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  const { name, value } = e.target;
+    const { name, value } = e.target;
+  
+    const updatedProduct = productSelected
+      ? { ...productSelected, [name]: value }
+      : null;  // Asegúrate de ajustar esta parte según tus necesidades
+  
+    if (productSelected) {
+      setProductSelected(updatedProduct);
+    }
+  };
+  
+  
 
-  const updatedProduct = productSelected
-    ? { ...productSelected, [name]: value }
-    : { ...newProduct, [name]: value };
-
-  if (productSelected) {
-    setProductSelected(updatedProduct);
-  } else {
-    setNewProduct(updatedProduct);
-  }
-};
-
-
+  
 
   const updateProduct = async (
     collectionRef: CollectionReference,
@@ -156,20 +134,6 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
   };
 
 
-  const createProduct = async (
-    collectionRef: CollectionReference,
-    productInfo: Omit<Product, 'id'>
-  ) => {
-    try {
-      const newDocRef = await addDoc(collectionRef, productInfo);
-      console.log("New product ID:", newDocRef.id);
-      return newDocRef.id; 
-    } catch (error) {
-      console.error("Error creating product:", error);
-      throw error;
-    }
-  };
-  
   
   
    // Función para manejar el envío del formulario
@@ -180,7 +144,7 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
   
     try {
       // Validar el producto, ya sea el nuevo o el editado
-      const productToValidate = productSelected || newProduct;
+      const productToValidate = productSelected ;
   
       await productSchema.validate(productToValidate, { abortEarly: false });
   
@@ -190,19 +154,17 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         return; // Terminar la función si hay un error
       }
 
-      const convertImagesToStringArray = (images: Image[]): string[] => {
-        return images.map(image => image.url);
-      };
-      
+    
   
       // Crear un objeto con la información del producto
       const productInfo = {
         ...productToValidate,
        
-        createdAt: productToValidate.createdAt ?? getFormattedDate(),
-        productVariants:productVariantOptions.length > 0 ? [...productVariantOptions] : [],
-        keywords: productToValidate.title.toLowerCase(),
-        images: convertImagesToStringArray(images),
+        createdAt: (productToValidate?.createdAt) ?? getFormattedDate(),
+        productVariants: productVariantOptions.length > 0 ? [...productVariantOptions] : [],
+        keywords: (productToValidate?.title ?? "").toLowerCase(),
+        images: images.map(image => image.url),
+        
       };
   
       const productsCollection = collection(db, "products");
@@ -210,17 +172,15 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       if (productSelected) {
         // Actualizar el producto existente sin duplicar las imágenes
         await updateProduct(productsCollection, productSelected.id, productInfo);
-      } else {
-        // Crear un nuevo producto con las imágenes cargadas
-        await createProduct(productsCollection, productInfo);
       }
   
       // Limpiar el estado y mostrar un mensaje de éxito
    
       updateImages([]); 
-      setSnackbarMessage("Producto creado/modificado con éxito");
+      setSnackbarMessage("Producto Modificado con éxito");
       updateSelectedItems([{ name: 'Mis Productos' }]);
       setSnackbarOpen(true);
+      handleClose();
   
     } catch (error) {
      
@@ -246,34 +206,66 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       } else {
         // Manejar otros errores aquí
         console.error("Error en handleSubmit:", error);
-        setSnackbarMessage("Error al crear/modificar el producto");
+        setSnackbarMessage("Modificar el producto");
         setSnackbarOpen(true);
       }
     }
   };
 
-return (
-    <>
 
-        <Card
-          sx={{
+  return (
+    <>
+      <CssBaseline />
+
+      {/* Fondo blanco y estilos para centrar el contenido */}
+      {isModalOpen && (
+      <Box
+        component="main"
+        sx={{
+            flexGrow: 1,
+            py: 4,
             width: '80%',
-            padding: '20px',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            margin: 'auto', // Centra el Card dentro del Box
+            backgroundColor: '#fff', // Fondo semi transparente
+            overflowY: 'auto',
+            height: '100vh',
+            marginLeft: 'auto', // Centrar a la derecha
+            marginRight: '20px', // Espaciado en el lado derecho
+            justifyContent: 'center', // Centra horizontalmente
+            alignItems: 'center', // Centra verticalmente
           }}
-        >
-         <form
+          
+      >
+
+<Card
+              sx={{
+                width: '80%',
+                padding: '20px',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                margin: 'auto', // Centra el Card dentro del Box
+              }}
+          >
+       <Typography variant="h4" mb={3} style={{ textAlign: 'center'}}>
+          Editar Producto
+       </Typography>
+
+        {/* Asegúrate de ajustar el contenido según tus necesidades */}
+        <Toolbar />
+        <form
            onSubmit={handleSubmit}
-           
+           style={{
+             width: "100%",
+             display: "flex",
+             flexDirection: "column",
+           }}
          >
+       
            <Grid container spacing={2} sx={{ textAlign: 'center' }}>
-             <Grid item xs={12} sm={6} >
+             <Grid item xs={12} sm={6}>
                <TextField
                  variant="outlined"
-                 value={productSelected ? productSelected.title : newProduct.title}
+                 value={productSelected ? productSelected.title : '' }
                  label="Nombre"
                  name="title"
                  onChange={handleChange}
@@ -291,10 +283,10 @@ return (
                />
  
              </Grid>
-             <Grid item xs={12} sm={6} >
+             <Grid item xs={12} sm={6}>
             <TextField
               variant="outlined"
-              value={productSelected ? productSelected.brand : newProduct.brand}
+              value={productSelected ? productSelected.brand : '' }
               label="Marca"
               name="brand"
               onChange={handleChange}
@@ -315,7 +307,7 @@ return (
              <Grid item xs={12} sm={6}>
                <TextField
                  variant="outlined"
-                 value={productSelected ? productSelected.description : newProduct.description}
+                 value={productSelected ? productSelected.description : ''}
                  label="Descripción"
                  name="description"
                  onChange={handleChange}
@@ -337,7 +329,7 @@ return (
              <Grid item xs={12} sm={6}>
                <TextField
                  variant="outlined"
-                 value={productSelected ? productSelected.category : newProduct.category}
+                 value={productSelected ? productSelected.category : '' }
                  label="Categoría"
                  name="category"
                  onChange={handleChange}
@@ -359,7 +351,7 @@ return (
              <Grid item xs={12} sm={6}>
                <TextField
                  variant="outlined"
-                 value={productSelected ? productSelected.discount : newProduct.discount}
+                 value={productSelected ? productSelected.discount : ''}
                  label="Descuento"
                  type="number"
                  name="discount"
@@ -380,7 +372,7 @@ return (
              <Grid item xs={12} sm={6}>
               <TextField
                 variant="outlined"
-                value={productSelected ? productSelected.unitperpack : newProduct.unitperpack}
+                value={productSelected ? productSelected.unitperpack : ''}
                 label="Unidades por Empaque"
                 name="unitperpack"
                 onChange={handleChange}
@@ -400,7 +392,7 @@ return (
             <Grid item xs={12} sm={6}>
             <TextField
               variant="outlined"
-              value={productSelected ? productSelected.location : newProduct.location}
+              value={productSelected ? productSelected.location : ''}
               label="Ubicación"
               name="location"
               onChange={handleChange}
@@ -419,11 +411,14 @@ return (
           </Grid>
 
              {/* ProductVariants */}
-             <Grid item xs={12} sm={12}>
+             
+             <Grid item xs={12}>
                 <ProductVariants
                   initialData={selectedProductVariants}
                 />
               </Grid>
+
+        
              {/*ProductVariants*/}
    
    
@@ -435,7 +430,7 @@ return (
                  select
                  fullWidth
                  sx={{ width: '75%', margin: 'auto' }}
-                 value={productSelected ? productSelected.featured ? "yes" : "no" : newProduct.featured ? "yes" : "no"}
+                 value={productSelected ? productSelected.featured ? "yes" : "no" : ''}
                  onChange={handleChange}
                >
                  <MenuItem value="yes">Si</MenuItem>
@@ -450,7 +445,7 @@ return (
               select
               fullWidth
               sx={{ width: '75%', margin: 'auto' }}
-              value={productSelected ? productSelected.online ? "yes" : "no" : newProduct.online ? "yes" : "no"}
+              value={productSelected ? productSelected.online ? "yes" : "no" : '' }
               onChange={handleChange}
             >
               <MenuItem value="yes">Sí</MenuItem>
@@ -459,7 +454,7 @@ return (
           </Grid>
 
           {/*ImageManager */}
-          <Grid item xs={12}>
+          <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           <ImageManager
            initialData={selectedImages}
           />
@@ -467,29 +462,28 @@ return (
           {/*ImageManager*/}
 
              {/* Botón de crear o modificar*/}
-             <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+     
+                <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                  {!isLoading && (
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      type="submit"
+                      size="large"
+                      disabled={isLoading}
+                    >
+                      {productSelected ? "Modificar" : "Crear"}
+                    </Button>
+                  )}
+                </Grid>
           
 
-                 {!isLoading && (
-                     <Button
-                     variant="contained"
-                     color="primary"
-                     type="submit"
-                     size="large"  
-                     disabled={isLoading}
-                     >
-                     {productSelected ? "Modificar" : "Crear"}
-                     </Button>
-                 )}
-                 </Grid>
 
               
- 
            </Grid>
-
-
          </form>
 
+  
          </Card>
         
             <Snackbar
@@ -502,21 +496,12 @@ return (
                   }}
                 />
 
-       </>
-    
-   );
-   
- 
-
+      </Box>
+       )}
+    </>
+  );
 };
 
-export default ProductsFormDesktop;
-
-
-
-
-
-
-
+export default ProductsEditDesktop;
 
 

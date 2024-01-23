@@ -3,7 +3,7 @@ import React, { createContext, useState, ReactNode, useContext } from "react";
 // Definir la interfaz para las opciones de imágenes
 interface Image {
   url: string;
-  alt: string;
+ 
 }
 
 // Definir la interfaz para el contexto de imágenes

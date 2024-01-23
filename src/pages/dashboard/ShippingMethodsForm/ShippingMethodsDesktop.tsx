@@ -10,6 +10,7 @@ import {
   TableRow,
   Snackbar,
   Box,
+
   
 
 } from "@mui/material";
@@ -106,7 +107,8 @@ const ShippingMethodsDesktop: React.FC = () => {
       {/* Sección "Configuración de Envío" */}
  
 
-        <Box style={{  marginRight:"150px" }}>
+        <Box style={{  textAlign: 'center'}}>
+
         <div style={{ margin: '0 auto', textAlign: 'center', marginTop:"20px" }}>
             <Button
               variant="contained"
@@ -117,34 +119,41 @@ const ShippingMethodsDesktop: React.FC = () => {
             </Button>
           </div>
 
-
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Nombre</TableCell>
-              <TableCell>Precio</TableCell>
-              <TableCell>Acciones</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {methods.map((method) => (
-              <TableRow key={method.id}>
-                <TableCell>{method.name}</TableCell>
-                <TableCell>{method.price}</TableCell>
-                <TableCell>
-                  <Button onClick={() => handleEditMethod(method)}>
-                    <EditIcon />
-                  </Button>
-                  <Button onClick={() => handleDeleteMethod(method.id)}>
-                    <DeleteForeverIcon />
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+         
+            <TableContainer
+              component={Paper}
+              sx={{
+                margin: '0 auto',
+                maxWidth: '80%',
+              }}
+            >
+              <Table>
+                <TableHead>
+                  <TableRow>
+                <TableCell style={{ width: '40%' }}>Nombre</TableCell>
+                <TableCell style={{ width: '40%' }}>Precio</TableCell>
+                <TableCell style={{ width: '20%' }}>Acciones</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {methods.map((method) => (
+                    <TableRow key={method.id}>
+                      <TableCell>{method.name}</TableCell>
+                      <TableCell>{method.price}</TableCell>
+                      <TableCell>
+                        <Button onClick={() => handleEditMethod(method)}>
+                          <EditIcon />
+                        </Button>
+                        <Button onClick={() => handleDeleteMethod(method.id)}>
+                          <DeleteForeverIcon />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+     
 
       <ShippingMethodsForm
         open={openForm}

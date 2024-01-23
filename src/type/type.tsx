@@ -2,33 +2,84 @@
 export interface Product {
   id: string;
   title: string;
+  brand: string;
   description: string;
   category: string;
-  unit_price: number;
   discount: number;
-  stock: number;
-  sizes: string[];
-  colors: { color: string; sizes: string[]; quantities: number[] }[];
-  sku: string;
+  unitperpack: number;
+ 
+  productVariants: {
+    type: string;
+    cost: number;
+    taxes: number;
+    profitMargin: number;
+    price: number;
+    quantities: number;
+    barcode: number;
+    contentPerUnit: number;  
+    isContentInGrams: boolean;
+  }[];
   keywords: string;
   salesCount: string;
   featured: boolean;
   images: string[];
   createdAt: string;
-  elasticity: string; 
-  thickness: string; 
-  breathability: string;
-  season: string; 
-  material: string; 
-  details: string; 
-  selectedColor: string; 
-  selectedSize: string;
-  
+  online: boolean;
+  location: string;
 }
+
+export interface ProductVariantsProps {
+  initialData?: {
+    type: string;
+    cost: number;
+    taxes: number;
+    profitMargin: number;
+    price: number;
+    quantities: number;
+    barcode: number; 
+    contentPerUnit: number;  
+    isContentInGrams: boolean; 
+   
+  }[];
+}
+
+export interface ProductVariantOption {
+  type: string
+  cost: number 
+  taxes: number 
+  profitMargin: number 
+  price: number 
+  quantities: number  
+  barcode: number;
+  contentPerUnit: number;  
+  isContentInGrams: boolean; 
+}
+
+
+
+export interface ProductsEditDesktopProps {
+  productSelected: Product | null;
+  setProductSelected: React.Dispatch<React.SetStateAction<Product | null>>;
+  handleClose: () => void;
+}
+
+
+export interface ProductsFormDesktopProps {
+  productSelected: Product | null;
+  setProductSelected: React.Dispatch<React.SetStateAction<Product | null>>;
+  handleClose: () => void;
+}
+
+export interface ColorData {
+  color: string;
+  sizes: string[];
+  quantities: number[];
+}
+
+
 
 export interface Image {
   url: string;
-  alt: string;
 }
 
 export interface CartItem extends Product {
@@ -36,20 +87,12 @@ export interface CartItem extends Product {
   selectedColor: string; 
   selectedSize: string;  
   
-  colors: {
+ colors: {
     color: string;
     sizes: string[];
     quantities: number[];
   }[]; 
 }
-
-
-
-  export interface ColorData {
-    color: string;
-    sizes: string[];
-    quantities: number[];
-  }
 
 
 export  interface ProductsFormProps {
@@ -137,3 +180,51 @@ export interface Order {
     businessName?: string; // Nuevo campo para Razón Social
   };
 }
+
+
+
+export interface StoreData {
+  id?: string;
+  storeName: string;
+  logo?: string;
+  description: string;
+  address: string;
+  phoneNumber: string;
+  email: string;
+  website: string;
+  socialMedia: SocialMedia;
+  businessHours: string;
+  branches?: Branch[];
+}
+
+export interface SocialMedia {
+  facebook?: string;
+  instagram?: string;
+  tiktok?: string;
+  twitter?: string;
+  linkedin?: string;
+}
+
+
+export interface Branch {
+  id: string; 
+  name: string;
+  address: string;
+  phone: string;
+  boxes: Box[];
+}
+
+export interface Box {
+   id: string;
+  number: string;
+  location: string;
+  branchIndex: number; 
+}
+
+export interface SelectedLocation {
+  sucursal: string;
+  caja: string;
+}
+
+
+

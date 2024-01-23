@@ -1,86 +1,87 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Button, Card, CardActions, CardContent, CardMedia, Grid } from '@mui/material';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { useImagesContext } from '../../../context/ImagesContext';
-import { Product } from '../../../type/type';
 import { uploadFile } from "../../../firebase/firebaseConfig";
 import { Image } from '../../../type/type';
 
 interface ImageManagerProps {
-  files?: File[];
-  productSelected: Product | null;
+  initialData: Image[]; 
 }
 
+const ImageManager: React.FC<ImageManagerProps> = ({ initialData }) => {
 
-const ImageManager: React.FC<ImageManagerProps> = ({ productSelected }) => {
   const { images, updateImages } = useImagesContext()!;
-
-
-  // Estado para las imágenes existentes
-  const [files, setFiles] = useState<File[]>([]);
+  const [files, setFiles] = useState<Image[]>(initialData || []);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [uploadMessage, setUploadMessage] = useState<string>("");
   const [selectedImageCount, setSelectedImageCount] = useState<number>(
-    productSelected?.images.length || 0
+    initialData?.length || 0
   );
 
   useEffect(() => {
-    if (productSelected) {
-      setFiles(productSelected.images.map((imageUrl) => new File([], imageUrl)));
-    } else {
-      // Asumiendo que `newImages.images` es un array de URLs, no de Files
-      setFiles([]);
+    if (initialData) {
+      setFiles(initialData);
+     
     }
-  }, [productSelected]);
+  }, [initialData]);
 
-  
  
 
+  const transformBlobToFirebase = async (blobUrl: string): Promise<string | null> => {
+    if (!blobUrl.startsWith('blob:')) {
+      return null; // No es una URL blob
+    }
+  
+    try {
+      // Obtén el blob directamente de la URL local
+      const blob = await fetch(blobUrl).then(response => response.blob());
+  
+      // Crea un objeto File a partir del Blob
+      const file = new File([blob], 'filename', { lastModified: new Date().getTime() });
+  
+      // Carga el archivo a Firebase y obtén la nueva URL
+      const firebaseUrl = await uploadFile(file);
+  
+      return firebaseUrl;
+    } catch (error) {
+      console.error('Error al transformar la URL blob a Firebase:', error);
+      return null;
+    }
+  };
+  
 
+ 
 
-  const normalizeImages = async (imageFiles: File[], existingImages: Image[]) => {
-    // Filtra las imágenes que ya son URLs de Firebase
-    const firebaseImages = existingImages.map((image) => image.url).filter((url) =>
-      url.startsWith('https://firebasestorage.googleapis.com')
-    );
+  const normalizeImages = async (imageFiles: Image[]) => {
+    const normalizedImages: Image[] = await Promise.all(imageFiles.map(async (image) => {
+      const url = image.url;
   
-    // Filtra las imágenes que son blob URLs (temporales)
-    const localImages = imageFiles.filter((file) =>
-      URL.createObjectURL(file).startsWith('blob:')
-    );
-  
-    // Sube las imágenes locales a Firebase y obtén sus URLs
-    const uploadedLocalImages = await Promise.all(localImages.map(async (file) => {
-      // Asume que uploadFile es una función que sube el archivo a Firebase
-      const url = await uploadFile(file);
-      return url;
-    }));
-  
-    // Combina todas las URLs y crea objetos Image
-    const normalizedImages: Image[] = [...firebaseImages, ...uploadedLocalImages].map((url, index) => ({
-      url,
-      alt: `Image ${index + 1}`,
+      if (url.startsWith('blob:')) {
+        // Si es una URL local (blob), cárgala a Firebase
+        const firebaseUrl = await transformBlobToFirebase(url);
+        return { url: firebaseUrl || url }; // Devuelve la URL de Firebase si está disponible, de lo contrario, devuelve la URL original
+      } else {
+        // Si es una URL de Firebase o cualquier otro tipo, déjala tal como está
+        return { url };
+      }
     }));
   
     return normalizedImages;
   };
   
+  
+  
   const handleRemoveImage = (index: number) => {
-    // Clona el array de images para evitar mutaciones directas
     const updatedImages = [...images];
     const updatedFiles = [...files];
-    // Remueve la imagen correspondiente al índice
-      updatedImages.splice(index, 1)[0];
-      updatedFiles.splice(index, 1)[0];
-    // Después de eliminar la imagen, actualiza el contador
+    updatedImages.splice(index, 1)[0];
+    updatedFiles.splice(index, 1)[0];
     setSelectedImageCount(updatedImages.length);
     setUploadMessage("");
-    // Actualiza las imágenes en el contexto
     updateImages(updatedImages);
     setFiles(updatedFiles);
-
   };
-  
 
   const openFileInput = () => {
     if (fileInputRef.current) {
@@ -88,7 +89,6 @@ const ImageManager: React.FC<ImageManagerProps> = ({ productSelected }) => {
     }
   };
 
-  // Uso en tu función handleImageChange
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const selectedFiles = Array.from(e.target.files);
@@ -97,25 +97,13 @@ const ImageManager: React.FC<ImageManagerProps> = ({ productSelected }) => {
         selectedFiles.length + selectedImageCount <= 8 &&
         selectedFiles.length + selectedImageCount >= 1
       ) {
-        const updatedFiles = [...files, ...selectedFiles];
+        console.log("Selected Files:", selectedFiles);
+        const updatedFiles = [...files, ...selectedFiles.map(file => ({ url: URL.createObjectURL(file) }))];
+        console.log("Updated Files:", updatedFiles);
   
         setFiles(updatedFiles);
         setSelectedImageCount(selectedImageCount + selectedFiles.length);
         setUploadMessage("");
-  
-        try {
-          // Llamada a normalizeImages con el array de objetos Image
-          const normalizedImages = await normalizeImages(selectedFiles, images);
-  
-          // Actualiza las imágenes en el contexto
-          updateImages(normalizedImages);
-  
-          
-         
-        } catch (error) {
-          console.error("Error al normalizar las imágenes:", error);
-          setUploadMessage("Error al cargar las imágenes");
-        }
       } else {
         setUploadMessage(
           "Llegaste al límite de fotos permitido (mínimo 1, máximo 8)."
@@ -124,6 +112,20 @@ const ImageManager: React.FC<ImageManagerProps> = ({ productSelected }) => {
     }
   };
   
+  useEffect(() => {
+    const updateImagesAsync = async () => {
+      try {
+        const normalizedImages = await normalizeImages(files);
+        await updateImages(normalizedImages);
+      } catch (error) {
+        console.error("Error al normalizar las imágenes:", error);
+        setUploadMessage("Error al cargar las imágenes");
+      }
+    };
+  
+    // Llamar a la función de actualización de imágenes después de que files se haya actualizado
+    updateImagesAsync();
+  }, [files]);  // Dependencia de useEffect: files
   
   
 
@@ -132,67 +134,42 @@ const ImageManager: React.FC<ImageManagerProps> = ({ productSelected }) => {
       {/* Maneja la carga de las imágenes para Modificar */}
       <Grid item xs={12} lg={12} style={{ width: '100%', margin: 'auto', marginRight: '130px' }}>
         <div style={{ display: 'flex', justifyContent: 'center', width: '100%', height: '100%' }}>
-          {productSelected ? (
-            productSelected.images.map((imageUrl, index) => (
-              <Card key={index} style={{ width: '100%', margin: '10px' }}>
-                <CardContent>
-                  <p>{`Vista Previa ${index + 1}`}</p>
-                </CardContent>
-                <CardMedia
-                  component="img"
-                  height="140"
-                  image={imageUrl}
-                  alt={`Imagen ${index + 1}`}
-                  style={{ objectFit: "contain" }}
-                />
-                <CardActions>
-                  <Button
-                    size="small"
-                    variant="contained"
-                    color="secondary"
-                    onClick={() => handleRemoveImage(index)}
-                    style={{ marginLeft: 'auto' }}
-                  >
-                    <DeleteForeverIcon />
-                  </Button>
-                </CardActions>
-              </Card>
-            ))
-          ) : (
-            files.map((file, index) => (
-              <Card key={index} style={{ maxWidth: 600, width: '100%', margin: '10px' }}>
-                <CardContent>
-                  <p>{`Vista Previa ${index + 1}`}</p>
-                </CardContent>
-                <CardMedia
-                  component="img"
-                  height="140"
-                  image={URL.createObjectURL(file)}
-                  alt={`Vista Previa ${index + 1}`}
-                  style={{ objectFit: "contain" }}
-                />
-                <CardActions>
-                  <Button
-                    size="small"
-                    variant="contained"
-                    color="secondary"
-                    onClick={() => handleRemoveImage(index)}
-                    style={{ marginLeft: 'auto' }}
-                  >
-                    <DeleteForeverIcon />
-                  </Button>
-                </CardActions>
-              </Card>
-            ))
-          )}
+          {files.map((image, index) => (
+            <Card key={index} style={{ maxWidth: 600, width: '100%', margin: '10px' }}>
+              <CardContent>
+                <p>{`Vista Previa ${index + 1}`}</p>
+              </CardContent>
+              <CardMedia
+                component="img"
+                height="140"
+                image={image.url}
+                alt={`Vista Previa ${index + 1}`}
+                style={{ objectFit: "contain" }}
+              />
+              <CardActions>
+                <Button
+                  size="small"
+                  variant="contained"
+                  color="secondary"
+                  onClick={() => handleRemoveImage(index)}
+                  style={{ marginLeft: 'auto' }}
+                >
+                  <DeleteForeverIcon />
+                </Button>
+              </CardActions>
+            </Card>
+          ))}
         </div>
       </Grid>
 
       {/* Maneja la carga de las imágenes para Crear */}
-      <Grid item xs={12} style={{ textAlign: 'center', marginRight: '200px' }}>
+      <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         <Button variant="contained" color="primary" onClick={openFileInput}>
           Subir foto
         </Button>
+
+        </Grid>
+        <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         {selectedImageCount >= 1 && selectedImageCount < 8 && <p>Puedes subir otra foto.</p>}
         {selectedImageCount === 8 && <p>Llegaste al máximo de fotos permitido.</p>}
         <input

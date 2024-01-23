@@ -110,7 +110,7 @@ const PaymentMethodsDesktop: React.FC = () => {
     <Box>
  
 
-        <Box  style={{  marginRight:"150px" }}>
+        <Box  style={{  textAlign: 'center' }}>
         <div style={{ margin: '0 auto', textAlign: 'center', marginTop:"20px" }}>
           <Button
             variant="contained"
@@ -121,13 +121,19 @@ const PaymentMethodsDesktop: React.FC = () => {
           </Button>
           </div>
 
-          <TableContainer component={Paper}>
+          <TableContainer
+           component={Paper}
+           sx={{
+            margin: '0 auto',
+            maxWidth: '80%',
+          }}
+           >
             <Table>
             <TableHead>
-              <TableRow>
-                <TableCell>Nombre</TableCell>
-                <TableCell>Descripción</TableCell>
-                <TableCell>Acciones</TableCell>
+            <TableRow>
+                <TableCell style={{ width: '40%' }}>Nombre</TableCell>
+                <TableCell style={{ width: '40%' }}>Descripción</TableCell>
+                <TableCell style={{ width: '20%' }}>Acciones</TableCell>
               </TableRow>
             </TableHead>
 

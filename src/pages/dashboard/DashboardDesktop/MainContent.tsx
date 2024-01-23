@@ -7,22 +7,24 @@ import StoreDataDesktop from '../StoreData/StoreDataDesktop';
 import PromoCodeDesktop from '../PromoCode/PromoCodeDesktop';
 import MyOrdersDesktop from '../MyOrders/MyOrdersDesktop';
 import ProductsFormDesktop from '../Products/ProductDesktop/ProductsFormDesktop';
+import ProductScanner from '../../cashregister/ProductScanner';
 
 const MainContent = () => {
   const { selectedItems } = useSelectedItemsContext();
 
   // Obtén la primera selección (puedes ajustar según tus necesidades)
-  const selectedItem = selectedItems[0]?.name || 'Inicio';
+  const selectedItem = selectedItems[0]?.name || '';
 
   return (
     <>
-       <Typography variant="h4" mb={3} style={{ textAlign: 'center', marginRight:"150px" }}>
+       <Typography variant="h4" mb={3} style={{ textAlign: 'center'}}>
           {selectedItem}
        </Typography>
 
 
         {/* Renderizar el componente correspondiente según la selección */}
-        {selectedItem === 'Ordenes' && <MyOrdersDesktop />}
+        {/* {selectedItem === 'Ordenes' && <MyOrdersDesktop />} */}
+        {selectedItem === 'Ordenes' && <ProductScanner />}
         {selectedItem === 'Agregar Producto' && <ProductsFormDesktop />}
         {selectedItem === 'Mis Productos' && <ProductsListDesktop/>}
         {selectedItem === 'Métodos de Pago' && <PaymentMethodsDesktop />}

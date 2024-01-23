@@ -1,11 +1,10 @@
 export const ErrorMessage = ({ messages, errors }: { messages?: string[]; errors?: { [key: string]: string } }) => (
-    <div style={{ color: 'red', fontSize: '14px', margin: '10px 10px', textAlign: 'justify', marginLeft: '0px', }}>
-      {messages && messages.map((message, index) => (
-        <p key={index} style={{ margin: '10px 10px', marginLeft: '0px', width: '75%' }}>{message}</p>
-      ))}
-      {errors && Object.keys(errors).map((errorKey) => (
-        <p key={errorKey} style={{  margin: '10px 10px', marginLeft: '0px', width: '75%' }}>{errors[errorKey]}</p>
-      ))}
-    </div>
-    
-    );
+  <div style={{ color: 'red', fontSize: '14px', margin: '10px', textAlign: 'justify', width: '75%', marginLeft: 'auto', marginRight: 'auto' }}>
+    {messages && messages.map((message, index) => (
+      <p key={index} style={{ margin: '10px', width: '100%' }}>{message}</p>
+    ))}
+    {errors && Object.entries(errors).map(([key, error]) => (
+      <p key={key} style={{ margin: '10px', width: '100%' }}>{error}</p>
+    ))}
+  </div>
+);

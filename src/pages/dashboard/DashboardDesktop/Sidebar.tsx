@@ -26,7 +26,7 @@ const Sidebar = () => {
   return (
     <Drawer variant="permanent" anchor="left">
       <List>
-        <ListItem button component={Link} to="/"  onClick={() => handleItemClick('Inicio')}>
+        <ListItem button component={Link} to="/" >
           <ListItemIcon>
             <HomeIcon />
           </ListItemIcon>
