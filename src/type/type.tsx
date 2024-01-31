@@ -36,7 +36,11 @@ export interface ProductsEditDesktopProps {
 
 // Asegúrate de ajustar los tipos según tus necesidades reales
 export interface ProductsFormDesktopProps {
- 
+  productSelected: Product | null;
+  setProductSelected: React.Dispatch<React.SetStateAction<Product | null>>;
+  handleClose: () => void;
+  setIsChange: React.Dispatch<React.SetStateAction<boolean>>;
+  products: Product[]; // Agrega esta línea
 }
 
 
