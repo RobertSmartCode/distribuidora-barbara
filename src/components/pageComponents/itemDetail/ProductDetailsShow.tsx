@@ -49,22 +49,17 @@ const ProductDetailShow: React.FC<ProductDetailShowProps> = () => {
       <h2>{product.title}</h2>
       <p>{product.description}</p>
       <div>
-        <strong>Elasticity:</strong> {product.elasticity}
+        <strong>Empaque:</strong> {product.type}
       </div>
       <div>
-        <strong>Thickness:</strong> {product.thickness}
+        <strong>Marca:</strong> {product.brand}
       </div>
       <div>
-        <strong>Breathability:</strong> {product.breathability}
-      </div>
+      <strong>Contenido Neto:</strong> {product.contentPerUnit} {product.isContentInGrams ? 'gramos' : 'mililitros'}
+    </div>
+  
       <div>
-        <strong>Season:</strong> {product.season}
-      </div>
-      <div>
-        <strong>Material:</strong> {product.material}
-      </div>
-      <div>
-        <strong>Details:</strong> {product.details}
+        <strong>Unidad por empaque:</strong> {product.unitperpack}
       </div>
       {/* Puedes agregar más detalles según sea necesario */}
     </div>

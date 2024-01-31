@@ -120,7 +120,7 @@ const ItemDetail: React.FC = () => {
       colors: [{ color: selectedColor, sizes: [selectedSize], quantities: [1] }],
     };
   
-    addToCart(cartItem, counter);
+    addToCart(cartItem);
   };
   
 
