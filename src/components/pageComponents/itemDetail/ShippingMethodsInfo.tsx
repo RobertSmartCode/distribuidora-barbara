@@ -15,9 +15,6 @@ const ShippingMethodsInfo: React.FC = () => {
   
 
 
- 
-
-
 
   const toggleDrawer = () => {
     setIsOpen(!isOpen);
@@ -28,9 +25,6 @@ const ShippingMethodsInfo: React.FC = () => {
   };
 
 
-  const handleShippingMethodSelect = () => {
-  
-  };
 
   // Colores personalizados
   const customColors = {
@@ -111,8 +105,6 @@ const ShippingMethodsInfo: React.FC = () => {
           </IconButton>
         </Box>
         <ShippingMethods
-              onSelectMethod={handleShippingMethodSelect}
-              initialSelectedMethod={null}
             />
       </Drawer>
     </Box>
