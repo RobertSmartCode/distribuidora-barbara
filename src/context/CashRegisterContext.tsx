@@ -1,17 +1,15 @@
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
+import { Product } from '../type/type';
 
 interface CashRegisterContextData {
   cart: CartItem[];
-  addToCart: (product: CartItem) => void;
-  removeFromCart: (productId: string) => void;
+  addToCart: (product: Product, quantity?: number) => void;
+  removeFromCart: (barcode: string) => void;
   clearCart: () => void;
   getTotalAmount: () => number;
 }
 
-export interface CartItem {
-  id: string;
-  name: string;
-  price: number;
+export interface CartItem extends Product {
   quantity: number;
 }
 
@@ -24,22 +22,25 @@ interface CashRegisterContextComponentProps {
 const CashRegisterContextComponent: React.FC<CashRegisterContextComponentProps> = ({ children }) => {
   const [cart, setCart] = useState<CartItem[]>([]);
 
-  const addToCart = (product: CartItem) => {
-    const existingProduct = cart.find((item) => item.id === product.id);
-
-    if (existingProduct) {
+  const addToCart = (product: Product, quantity: number = 1) => {
+    const existingProductIndex = cart.findIndex((item) => item.barcode === product.barcode);
+  
+    if (existingProductIndex !== -1) {
+      // Si el producto ya está en el carrito, incrementa la cantidad del producto existente
       setCart((prevCart) =>
-        prevCart.map((item) =>
-          item.id === product.id ? { ...item, quantity: item.quantity + product.quantity } : item
+        prevCart.map((item, index) =>
+          index === existingProductIndex ? { ...item, quantity: item.quantity + quantity } : item
         )
       );
     } else {
-      setCart((prevCart) => [...prevCart, product]);
+      // Si el producto no está en el carrito, agrégalo con la cantidad especificada
+      setCart((prevCart) => [...prevCart, { ...product, quantity }]);
     }
   };
+  
+  const removeFromCart = (barcode: string) => {
+    setCart((prevCart) => prevCart.filter((item) => item.barcode.toString() !== barcode.toString()));
 
-  const removeFromCart = (productId: string) => {
-    setCart((prevCart) => prevCart.filter((item) => item.id !== productId));
   };
 
   const clearCart = () => {

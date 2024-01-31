@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 
 import { db } from "../../firebase/firebaseConfig";
-import { CartContext } from '../../context/CartContext';
+import { useCustomer } from '../../context/CustomerContext';
 import { AuthContext } from "../../context/AuthContext";
 import * as Yup from 'yup';
 import { useFormik } from "formik";
@@ -28,10 +28,9 @@ import {
 } from "firebase/firestore";
 
 
-
 const CheckoutForm = () => {
 
-    const {getCustomerInformation, setCustomerInformation} = useContext(CartContext)! || {};
+  const { customerInfo, setCustomerInfo } = useCustomer()!;
 
     const [myOrders, setMyOrders] = useState<Order[]>([]);
 
@@ -173,7 +172,7 @@ const CheckoutForm = () => {
         
       };
 
-      setCustomerInformation(customerData);
+      setCustomerInfo(customerData);
 
       navigate("/checkout/next");
     },
@@ -182,12 +181,13 @@ const CheckoutForm = () => {
   
 // Verificar si los valores iniciales han sido cargados antes de inicializar el formulario
 
+// Verificar si los valores iniciales han sido cargados antes de inicializar el formulario
 useEffect(() => {
   if (initialValuesLoaded) {
     const currentUser =
       user && myOrders.length > 0
         ? mapOrderToCustomerInfo(myOrders[0])
-        : (getCustomerInformation() as CustomerInfo) || {};
+        : (customerInfo || {}) as CustomerInfo;
 
     // Actualizar los valores iniciales solo si el formulario no ha sido tocado
     if (!formik.touched.email) {
@@ -220,7 +220,7 @@ useEffect(() => {
       }
     }
   }
-}, [user, myOrders, getCustomerInformation, formik.touched.email, initialValuesLoaded]);
+}, [user, myOrders, customerInfo, formik.touched.email, initialValuesLoaded]);
 
 
 
@@ -314,7 +314,7 @@ const validateBusinessName = (value: string) => {
         businessName: formik.values.businessName || "",
       };
 
-      setCustomerInformation(customerData);
+      setCustomerInfo(customerData);
 
       navigate("/checkout/next");
 

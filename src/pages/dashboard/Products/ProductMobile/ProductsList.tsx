@@ -3,7 +3,7 @@ import { Button, IconButton, Modal, TableBody, TableCell, TableContainer, TableH
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { db } from "../../../../firebase/firebaseConfig";
-import { useColorsContext } from '../../../../context/ColorsContext'; 
+
 import {
   collection,
   doc,
@@ -20,50 +20,52 @@ import CloseIcon from "@mui/icons-material/Close";
 
 
 const ProductsList = () => {
-  const { updateColors } = useColorsContext()!;
+
   const [open, setOpen] = useState<boolean>(false);
   const [productSelected, setProductSelected] = useState<Product | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [isChange, setIsChange] = useState<boolean>(false);
 
 
+  
   useEffect(() => {
     const productsCollection = collection(db, "products");
     const unsubscribe = onSnapshot(productsCollection, (snapshot) => {
       const newArr: Product[] = snapshot.docs.map((productDoc) => {
         const productData = productDoc.data();
-
+  
         return {
           id: productDoc.id,
-          title: productData.title || "", 
+          title: productData.title || "",
+          brand: productData.brand || "",
           description: productData.description || "",
-          unit_price: productData.unit_price || 0,
-          stock: productData.stock || 0,
           category: productData.category || "",
-          images: productData.images || [],
-          sizes: productData.sizes || [],
-          colors: productData.colors || [],
+          discount: productData.discount || 0,
+          unitperpack: productData.unitperpack || 0,
+          type: productData.type || "", // Asegúrate de ajustar esto según tus datos reales
+          cost: productData.cost || 0,
+          taxes: productData.taxes || 0,
+          profitMargin: productData.profitMargin || 0,
+          price: productData.price || 0, // Asegúrate de ajustar esto según tus datos reales
+          quantities: productData.quantities || 0,
+          barcode: productData.barcode || 0,
+          contentPerUnit: productData.contentPerUnit || 0,
+          isContentInGrams: productData.isContentInGrams || false,
+          keywords: productData.keywords || "",
           salesCount: productData.salesCount || "",
           featured: productData.featured || false,
+          images: productData.images || [],
           createdAt: productData.createdAt || "",
-          keywords: productData.keywords || [],
-          discount: productData.discount || 0,
-          sku: productData.sku || "",
-          elasticity: productData.elasticity || "", 
-          thickness: productData.thickness || "", 
-          breathability: productData.breathability || "", 
-          season: productData.season || "",
-          material: productData.material || "", 
-          details: productData.details || "", 
-          selectedColor: productData.selectedColor  || "", 
-          selectedSize: productData.selectedSize || "", 
+          online: productData.online || false,
+          location: productData.location || "",
         };
       });
       setProducts(newArr);
     });
-
+  
     return () => unsubscribe();
   }, [isChange]);
+
   
   const deleteProduct = (id: string) => {
     deleteDoc(doc(db, "products", id));
@@ -200,10 +202,10 @@ const ProductsList = () => {
                   />
                 </TableCell>
                 <TableCell component="th" scope="row" align="center">
-                  {product.unit_price}
+                  {product.price}
                 </TableCell>
                 <TableCell component="th" scope="row" align="center">
-                  {product.stock}
+                  {product.quantities}
                 </TableCell>
                 <TableCell component="th" scope="row" align="center">
                   {product.category}
@@ -243,7 +245,6 @@ const ProductsList = () => {
             productSelected={productSelected}
             setProductSelected={setProductSelected}
             products={products}
-            updateColors={updateColors} 
           />
 
         </Box>

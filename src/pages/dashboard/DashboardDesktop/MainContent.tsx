@@ -5,9 +5,10 @@ import ShippingMethodsDesktop from '../ShippingMethodsForm/ShippingMethodsDeskto
 import PaymentMethodsDesktop from '../PaymentMethods/PaymentMethodsDesktop';
 import StoreDataDesktop from '../StoreData/StoreDataDesktop';
 import PromoCodeDesktop from '../PromoCode/PromoCodeDesktop';
-import MyOrdersDesktop from '../MyOrders/MyOrdersDesktop';
 import ProductsFormDesktop from '../Products/ProductDesktop/ProductsFormDesktop';
-import ProductScanner from '../../cashregister/ProductScanner';
+import CompletedOrderList from '../MyOrders/CompletedOrderList';
+
+
 
 const MainContent = () => {
   const { selectedItems } = useSelectedItemsContext();
@@ -23,8 +24,7 @@ const MainContent = () => {
 
 
         {/* Renderizar el componente correspondiente según la selección */}
-        {/* {selectedItem === 'Ordenes' && <MyOrdersDesktop />} */}
-        {selectedItem === 'Ordenes' && <ProductScanner />}
+        {selectedItem === 'Ordenes' && <CompletedOrderList/>}
         {selectedItem === 'Agregar Producto' && <ProductsFormDesktop />}
         {selectedItem === 'Mis Productos' && <ProductsListDesktop/>}
         {selectedItem === 'Métodos de Pago' && <PaymentMethodsDesktop />}

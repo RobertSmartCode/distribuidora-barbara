@@ -2,12 +2,16 @@ import { useState, useContext, useEffect } from "react";
 import { initMercadoPago, Wallet} from "@mercadopago/sdk-react";
 import axios from "axios";
 import { CartContext } from '../../context/CartContext';
-
+import { useShippingMethods } from '../../context/ShippingMethodsContext';
+import { useCustomer} from '../../context/CustomerContext';
 
 
 const MercadoPagoPayment = () => {
 
-  const { cart, getSelectedShippingMethod, getTotalPrice, discountInfo, getCustomerInformation } = useContext(CartContext)! || {};
+ 
+  const { cart, getTotalPrice } = useContext(CartContext)! || {};
+  const { getSelectedShippingMethod } = useShippingMethods()!;
+  const { customerInfo } = useCustomer()!;
   const subtotal = getTotalPrice ? getTotalPrice() : 0;
   const selectedShippingMethod = getSelectedShippingMethod();
 
@@ -15,20 +19,12 @@ const MercadoPagoPayment = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   const shippingCost = selectedShippingMethod ? selectedShippingMethod.price : 0;
-  const discountPercentage = discountInfo?.discountPercentage ?? 0;
-  const maxDiscountAmount = discountInfo?.maxDiscountAmount ?? 0;
-  const discountAmount = (discountPercentage / 100) * (subtotal + shippingCost);
+
  
-  let total = (subtotal + shippingCost) * (1 - (discountPercentage ?? 0) / 100);
-
-  if (discountAmount < maxDiscountAmount) {
-    total = (subtotal + shippingCost) * (1 - discountPercentage / 100);
-  } else {
-    total = subtotal + shippingCost - maxDiscountAmount;
-  }
+  let total = (subtotal + shippingCost)
 
 
-const userData = getCustomerInformation()
+const userData = customerInfo
 
 
 
@@ -61,7 +57,7 @@ const userData = getCustomerInformation()
     const newArray = cart.map((product) => {
       return {
         title: product.title,
-        unit_price: product.unit_price,
+        unit_price: product.price,
         quantity: product.quantity,
       };
     });

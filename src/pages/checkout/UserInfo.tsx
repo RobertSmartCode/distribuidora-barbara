@@ -1,15 +1,20 @@
-import { useContext,  } from "react";
 import { Typography, Button, Card, CardContent, Box } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { CartContext } from "../../context/CartContext";
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import PhoneIcon from '@mui/icons-material/Phone';
 import EditIcon from '@mui/icons-material/Edit'; 
+
+
+import { useShippingMethods } from '../../context/ShippingMethodsContext';
+import { useCustomer} from '../../context/CustomerContext';
+
 const UserInfo = () => {
-  const { getCustomerInformation, getSelectedShippingMethod } = useContext(CartContext)!;
-  const customerInfo = getCustomerInformation();
+  const { getSelectedShippingMethod } = useShippingMethods()!;
+  const { customerInfo } = useCustomer()!;
+ 
+ 
   const selectedShippingMethod = getSelectedShippingMethod();
 
 

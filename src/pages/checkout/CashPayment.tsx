@@ -5,9 +5,16 @@ import { db} from '../../firebase/firebaseConfig';
 import { useNavigate } from 'react-router-dom';
 import { CartContext } from '../../context/CartContext';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { useShippingMethods } from '../../context/ShippingMethodsContext';
+import { useCustomer} from '../../context/CustomerContext';
 
 const CashPayment = () => {
-  const { cart, clearCart, getSelectedShippingMethod, getTotalPrice, discountInfo, getCustomerInformation } = useContext(CartContext)! || {};
+
+  
+  const { getSelectedShippingMethod } = useShippingMethods()!;
+  const { customerInfo } = useCustomer()!;
+
+  const { cart, clearCart,  getTotalPrice } = useContext(CartContext)! || {};
   const subtotal = getTotalPrice ? getTotalPrice() : 0;
   const selectedShippingMethod = getSelectedShippingMethod();
 
@@ -17,19 +24,11 @@ const CashPayment = () => {
   const [uploadMessage, setUploadMessage] = useState<string>('');
 
   const shippingCost = selectedShippingMethod ? selectedShippingMethod.price : 0;
-  const discountPercentage = discountInfo?.discountPercentage ?? 0;
-  const maxDiscountAmount = discountInfo?.maxDiscountAmount ?? 0;
-  const discountAmount = (discountPercentage / 100) * (subtotal + shippingCost);
 
-  let total = (subtotal + shippingCost) * (1 - (discountPercentage ?? 0) / 100);
 
-  if (discountAmount < maxDiscountAmount) {
-    total = (subtotal + shippingCost) * (1 - discountPercentage / 100);
-  } else {
-    total = subtotal + shippingCost - maxDiscountAmount;
-  }
+  const total = (subtotal + shippingCost) 
 
-  const userData = getCustomerInformation();
+  const userData = customerInfo
 
   const handleOrder = async () => {
     const order = {

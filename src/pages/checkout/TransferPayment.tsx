@@ -5,10 +5,15 @@ import { db, uploadFile } from '../../firebase/firebaseConfig';
 import { useNavigate } from 'react-router-dom';
 import { CartContext } from '../../context/CartContext';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { useShippingMethods } from '../../context/ShippingMethodsContext';
+import { useCustomer} from '../../context/CustomerContext';
 
 const TransferPayment = () => {
 
-  const { cart, getSelectedShippingMethod, getTotalPrice, discountInfo, getCustomerInformation, clearCart } = useContext(CartContext)! || {};
+
+  const { getSelectedShippingMethod } = useShippingMethods()!;
+  const { customerInfo } = useCustomer()!;
+  const { cart, getTotalPrice, clearCart } = useContext(CartContext)! || {};
   const subtotal = getTotalPrice ? getTotalPrice() : 0;
   const selectedShippingMethod = getSelectedShippingMethod();
 
@@ -24,20 +29,11 @@ const TransferPayment = () => {
 
 
   const shippingCost = selectedShippingMethod ? selectedShippingMethod.price : 0;
-  const discountPercentage = discountInfo?.discountPercentage ?? 0;
-  const maxDiscountAmount = discountInfo?.maxDiscountAmount ?? 0;
-  const discountAmount = (discountPercentage / 100) * (subtotal + shippingCost);
+
  
-  let total = (subtotal + shippingCost) * (1 - (discountPercentage ?? 0) / 100);
+  let total = (subtotal + shippingCost) 
 
-  if (discountAmount < maxDiscountAmount) {
-    total = (subtotal + shippingCost) * (1 - discountPercentage / 100);
-  } else {
-    total = subtotal + shippingCost - maxDiscountAmount;
-  }
-
-
-const userData = getCustomerInformation()
+const userData = customerInfo
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {

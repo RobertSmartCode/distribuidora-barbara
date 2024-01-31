@@ -13,7 +13,6 @@ import {
 import { Product} from '../../../../type/type';
 
 import Box from "@mui/material/Box";
-
 import CloseIcon from "@mui/icons-material/Close";
 import ProductsEditDesktop from "./ProductsEditDesktop";
 
@@ -33,7 +32,7 @@ const ProductsListDesktop = () => {
     const unsubscribe = onSnapshot(productsCollection, (snapshot) => {
       const newArr: Product[] = snapshot.docs.map((productDoc) => {
         const productData = productDoc.data();
-
+  
         return {
           id: productDoc.id,
           title: productData.title || "",
@@ -42,7 +41,15 @@ const ProductsListDesktop = () => {
           category: productData.category || "",
           discount: productData.discount || 0,
           unitperpack: productData.unitperpack || 0,
-          productVariants: productData.productVariants || [],
+          type: productData.type || "", // Asegúrate de ajustar esto según tus datos reales
+          cost: productData.cost || 0,
+          taxes: productData.taxes || 0,
+          profitMargin: productData.profitMargin || 0,
+          price: productData.price || 0, // Asegúrate de ajustar esto según tus datos reales
+          quantities: productData.quantities || 0,
+          barcode: productData.barcode || 0,
+          contentPerUnit: productData.contentPerUnit || 0,
+          isContentInGrams: productData.isContentInGrams || false,
           keywords: productData.keywords || "",
           salesCount: productData.salesCount || "",
           featured: productData.featured || false,
@@ -54,9 +61,10 @@ const ProductsListDesktop = () => {
       });
       setProducts(newArr);
     });
-
+  
     return () => unsubscribe();
   }, [isChange]);
+  
   
   const deleteProduct = (id: string) => {
     deleteDoc(doc(db, "products", id));
@@ -93,7 +101,6 @@ const ProductsListDesktop = () => {
               <TableCell variant="head" align="center">Id</TableCell>
               <TableCell variant="head" align="justify">Título</TableCell>
               <TableCell variant="head" align="justify">Imagen</TableCell>
-            
               <TableCell variant="head" align="justify">Categoria</TableCell> 
               <TableCell variant="head" align="justify">Acciones</TableCell>
             </TableRow>
@@ -156,7 +163,6 @@ const ProductsListDesktop = () => {
             setProductSelected={setProductSelected}
             handleClose={handleClose}
           />
-
 
         </Box>
       </Modal>

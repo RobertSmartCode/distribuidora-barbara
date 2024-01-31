@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import {
   Card,
   CardContent,
@@ -6,79 +6,32 @@ import {
   Checkbox,
   Grid,
 } from "@mui/material";
-import { collection, getDocs } from "firebase/firestore";
-import { db } from "../../../../../../../firebase/firebaseConfig";
-import { ShippingMethod } from "../../../../../../../type/type";
+import { useShippingMethods } from "../../../../../../../context/ShippingMethodsContext";
 
-interface ShippingMethodsProps {
-  onSelectMethod: (method: ShippingMethod) => void;
-  initialSelectedMethod: ShippingMethod | null;
-}
+const ShippingMethods: React.FC = () => {
+  const { shippingMethods, selectedMethodId, updateShippingMethods, selectShippingMethod } = useShippingMethods();
 
-
-const ShippingMethods: React.FC<ShippingMethodsProps> = ({
-  onSelectMethod,
-  initialSelectedMethod,
-}) => {
-  const [methods, setMethods] = useState<ShippingMethod[]>([]);
-
-  useEffect(() => {
-    fetchShippingMethods();
-  }, []);
-
-  useEffect(() => {
-    if (initialSelectedMethod) {
-      const initialMethod = methods.find((m) => m.id === initialSelectedMethod.id);
-      if (initialMethod) {
-        initialMethod.selected = true;
-      
-      }
-    }
-  }, [initialSelectedMethod, methods]);
-
-  const fetchShippingMethods = async () => {
-    try {
-      const querySnapshot = await getDocs(collection(db, "shippingMethods"));
-      const methodsData: ShippingMethod[] = [];
-
-      querySnapshot.forEach((doc) => {
-        const methodData = doc.data();
-        if (methodData.name && methodData.price) {
-          methodsData.push({
-            id: doc.id,
-            name: methodData.name,
-            price: methodData.price,
-            selected: false,
-          });
-        }
-      });
-
-      setMethods(methodsData);
-     
-    } catch (error) {
-      console.error("Error al obtener los métodos de envío:", error);
-    }
-  };
-
-
+  if (!shippingMethods) {
+    // Puedes mostrar un mensaje de carga o retornar un indicador de carga
+    return null;
+  }
 
   return (
     <Grid container spacing={2}>
-      {methods.map((method) => (
+      {shippingMethods.map((method) => (
         <Grid item xs={12} sm={12} md={12} key={method.id}>
           <Card
             onClick={() => {
-              const updatedMethods = methods.map((m) => ({
+              const updatedMethods = shippingMethods.map((m) => ({
                 ...m,
                 selected: m.id === method.id,
               }));
-              setMethods(updatedMethods);
-              onSelectMethod(method);
-             
+              updateShippingMethods(updatedMethods);
+              selectShippingMethod(method.id);
             }}
             style={{
               cursor: "pointer",
-              backgroundColor: method.selected ? "#e0e0e0" : "white",
+              backgroundColor: method.id === selectedMethodId ? "#e0e0e0" : "white",
               display: "flex",
               flexDirection: "column",
               height: "100%",
@@ -101,15 +54,14 @@ const ShippingMethods: React.FC<ShippingMethodsProps> = ({
                 }}
               >
                 <Checkbox
-                  checked={method.selected}
+                  checked={method.id === selectedMethodId}
                   onChange={() => {
-                    const updatedMethods = methods.map((m) => ({
+                    const updatedMethods = shippingMethods.map((m) => ({
                       ...m,
                       selected: m.id === method.id,
                     }));
-                    setMethods(updatedMethods);
-                    onSelectMethod(method);
-                   
+                    updateShippingMethods(updatedMethods);
+                    selectShippingMethod(method.id);
                   }}
                   style={{ marginRight: "10px" }}
                 />

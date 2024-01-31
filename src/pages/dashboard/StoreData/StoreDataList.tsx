@@ -13,7 +13,7 @@ import {
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import EditIcon from "@mui/icons-material/Edit";
 import CloseIcon from "@mui/icons-material/Close";
-import { collection, deleteDoc, doc, getDocs, updateDoc } from "firebase/firestore";
+import { collection, deleteDoc, doc, getDocs} from "firebase/firestore";
 import { db } from "../../../firebase/firebaseConfig";
 import StoreDataForm from "./StoreDataForm"; // Importa el formulario de datos de la tienda
 
@@ -49,8 +49,8 @@ interface StoreData {
 
 
 const StoreDataList: React.FC = () => {
+
   const [storeData, setStoreData] = useState<StoreData[]>([]);
- 
   const [openForm, setOpenForm] = useState<boolean>(false); // Corregido: especifica el tipo boolean
   const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false); // Corregido: especifica el tipo boolean
   const [snackbarMessage, setSnackbarMessage] = useState<string>(""); // Corregido: especifica el tipo string
@@ -91,8 +91,7 @@ const StoreDataList: React.FC = () => {
   };
 
 const handleEditStoreData = (data: StoreData) => {
-  
-  
+  console.log(data)
   setOpenForm(true);
 };
 
@@ -116,20 +115,7 @@ const handleEditStoreData = (data: StoreData) => {
     fetchStoreData();
   };
 
-  const handleUpdateStoreData = async (storeId: string, updatedData: Partial<StoreData>) => {
-    try {
-      const dataRef = doc(db, "storeData", storeId);
-      await updateDoc(dataRef, updatedData);
-      setSnackbarMessage("Datos de la tienda actualizados con éxito.");
-      setSnackbarOpen(true);
-      fetchStoreData();
-    } catch (error) {
-      console.error("Error al actualizar los datos de la tienda:", error);
-      setSnackbarMessage("Error al actualizar los datos de la tienda.");
-      setSnackbarOpen(true);
-    }
-  };
-  
+
 
   const handleBtnClick = () => {
     setStoreDataOpen(!storeDataOpen);

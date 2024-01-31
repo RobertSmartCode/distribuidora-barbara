@@ -1,74 +1,81 @@
-import React, { useState, useEffect, useRef } from "react";
-import { db, uploadFile } from "../../../../firebase/firebaseConfig";
-import { addDoc, collection, doc, updateDoc, CollectionReference} from "firebase/firestore";
-import {
-  Button,
-  TextField,
-  Grid,
-  Snackbar,
-  Card,
-  CardContent,
-  CardActions,
-  CardMedia,
-  Container,
-  Paper,
-  MenuItem
-
-} from "@mui/material";
+import React, { useState, useEffect } from "react";
 import * as Yup from "yup";
-import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import ColorInput from './ColorInput';
-import { useColorsContext } from '../../../../context/ColorsContext'; 
-import { Product, ColorData, ProductsFormProps } from '../../../../type/type';
+import { db } from "../../../../firebase/firebaseConfig";
+import { addDoc, collection, doc, updateDoc, CollectionReference} from "firebase/firestore";
+import {Button, TextField, Grid, Snackbar, MenuItem, Card, FormControl, InputLabel, Select, Checkbox, FormControlLabel, SelectChangeEvent,
+} from "@mui/material";
+
+
+
+import { Product,  Image, ProductsFormDesktopProps } from '../../../../type/type';
 import { getFormattedDate } from '../../../../utils/dateUtils';
 import { ErrorMessage } from '../../../../messages/ErrorMessage';
 import { productSchema } from '../../../../schema/productSchema';
+import { useSelectedItemsContext } from '../../../../context/SelectedItems';
 
 
-const ProductsForm: React.FC<ProductsFormProps> = ({
-  handleClose,
-  setIsChange,
-  productSelected,
-  setProductSelected,
-}) => {
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
+import ImageManager from '../ImageManager';
+import { useImagesContext } from "../../../../context/ImagesContext";
+
+
+
+const ProductsFormDesktop: React.FC<ProductsFormDesktopProps> = (props) => {
+  
+  const calculatePrice = (cost: string, taxes: string, profitMargin: string): number => {
+    // Convierte los valores a números o usa 0 si no son válidos
+    const numericCost = parseFloat(cost) || 0;
+    const numericTaxes = parseFloat(taxes) || 0;
+    const numericProfitMargin = parseFloat(profitMargin) || 0;
+  
+    const totalPrice = numericCost + (numericCost * numericTaxes / 100) + (numericCost * numericProfitMargin / 100);
+    return Math.round(totalPrice);
+  };
+  
+  
+
+
+  const { productSelected, setProductSelected  } = props;
+
   const [isLoading] = useState<boolean>(false);
- 
+
+  const {  updateSelectedItems } = useSelectedItemsContext()!;
+
   const [newProduct, setNewProduct] = useState<Product>({
     id: "",
     title: "",
+    brand: "",
     description: "",
     category: "",
-    unit_price: 1000,
-    discount: 10,
-    stock: 0,
-    sizes: [],
-    colors: [],
-    images: [],
-    sku: "",
+    discount: 0,
+    unitperpack: 10,
+    type: "",
+    cost: 0,
+    taxes: 0,
+    profitMargin: 0,
+    price: 0,
+    quantities: 0,
+    barcode: 0,
+    contentPerUnit: 0, 
+    isContentInGrams: true,  
     keywords: "",
     salesCount: "",
     featured: false,
+    images: [],
     createdAt: getFormattedDate(),
-    elasticity: "",
-    thickness: "",
-    breathability: "",
-    season: "",
-    material: "",
-    details: "",
-    selectedColor:"", 
-    selectedSize: "", 
+    online: false,
+    location: "",
   });
+  
+
+
 
 const [errors, setErrors] = useState<{ [key: string]: string }>({});
-
-const [colorErrors, setColorErrors] = useState<{ [key: string]: string }>({});
 
 const [errorTimeout, setErrorTimeout] = useState<NodeJS.Timeout | null>(null);
 
 const clearErrors = () => {
   setErrors({});
-  setColorErrors({}); 
+
 };
 
 // Función para manejar el tiempo de duración de los errores
@@ -77,228 +84,110 @@ const setErrorTimeoutAndClear = () => {
     clearTimeout(errorTimeout);
   }
 
-  const timeout = setTimeout(clearErrors, 10000); 
+  const timeout = setTimeout(clearErrors, 10000); // 5000 milisegundos (5 segundos)
   setErrorTimeout(timeout);
 };
 
 
-const validateColorsData = (colorsData: ColorData[]) => {
-  const newErrors: { [key: string]: string } = {};
 
-  if (!colorsData || colorsData.length === 0) {
-    newErrors.colors = "Debe haber al menos un color";
+const { images, updateImages} = useImagesContext()!;
+
+
+const [selectedImages, setSelectedImages] = useState<Image[]>([]);
+
+
+
+
+ 
+useEffect(() => {
+  if (productSelected) {
+     // Convierte las URLs en objetos Image y actualiza el estado
+     const imageObjects: Image[] = productSelected.images.map((url) => ({ url }));
+     setSelectedImages(imageObjects);
+  } else {
+   
+
   }
-
-  for (let i = 0; i < colorsData.length; i++) {
-    const color = colorsData[i];
-
-    if (!color.color || color.sizes.length === 0 || color.quantities.length === 0) {
-      newErrors[`color${i}`] = "Cada color debe tener al menos una talla y una cantidad";
-      console.log(newErrors)
-    }
-  }
-
-  setColorErrors(newErrors);
-
-  return Object.keys(newErrors).length === 0; // Devuelve true si no hay errores
-};
-
-
-const { colors, updateColors } = useColorsContext()!;
-
-const calculateStock = (colorsData: ColorData[]) => {
-  let totalStock = 0;
-
-  colorsData.forEach((colorData) => {
-    colorData.quantities.forEach((quantity) => {
-      totalStock += quantity;
-    });
-  });
-
-  return totalStock;
-};
-
-
-const [selectedProductColors, setSelectedProductColors] = useState<{ color: string; sizes: string[]; quantities: number[] }[]>([]);
-
-
-
- // Estado para las imágenes existentes
- const [files, setFiles] = useState<File[]>([]);
-
-
- // Estado para las imágenes recién cargadas desde la computadora
+}, [productSelected, newProduct]);
 
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [uploadMessage, setUploadMessage] = useState<string>("");
-  const [selectedImageCount, setSelectedImageCount] = useState<number>(
-    productSelected?.images.length || 0
-  );
-
- 
-
-
-  useEffect(() => {
-    if (productSelected) {
-      setSelectedProductColors(productSelected.colors || []);
-      setFiles(productSelected.images.map((imageUrl) => new File([], imageUrl)));
-    } else {
-      setFiles(newProduct.images.map((imageUrl) => new File([], imageUrl)));
-    }
-  }, [productSelected, newProduct]);
-
-  
-
-  
-  
-
-const normalizeImages = async (imageFiles: File[], existingImageURLs: string[]) => {
-  // Filtra las imágenes que ya son URLs de Firebase
-  const firebaseImages = existingImageURLs.filter((url) =>
-  url.startsWith('https://firebasestorage.googleapis.com'));
-
-  // Filtra las imágenes que son blob URLs (temporales)
-  const localImages = imageFiles.filter((file) =>
-   URL.createObjectURL(file).startsWith('blob:'));
-
-  // Sube las imágenes locales a Firebase y obtén sus URLs
-  const uploadedLocalImages = await Promise.all(localImages.map(async (file) => {
-    // Asume que uploadFile es una función que sube el archivo a Firebase
-    const url = await uploadFile(file); 
-    return url;
-  }));
-
-  // Combina todas las URLs
-  const normalizedImages = [...firebaseImages, ...uploadedLocalImages];
-
-  return normalizedImages;
-};
-
-// Uso en tu función handleImageChange
-const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  if (e.target.files) {
-    const selectedFiles = Array.from(e.target.files);
-   
-
-    if (
-      selectedFiles.length + selectedImageCount <= 8 &&
-      selectedFiles.length + selectedImageCount >= 1
-    ) {
-      const updatedFiles = [...files, ...selectedFiles];
-      
-
-      setFiles(updatedFiles);
-
-      setSelectedImageCount(selectedImageCount + selectedFiles.length);
-      setUploadMessage("");
-
-      if (productSelected) {
-        normalizeImages(selectedFiles, productSelected.images)
-          .then((normalizedImages) => {
-            const updatedProductSelected = {
-              ...productSelected,
-              images: normalizedImages,
-            };
-            console.log("Updated Product Selected:", updatedProductSelected);
-            setProductSelected(updatedProductSelected);
-          })
-          .catch((error) => {
-            console.error("Error al normalizar las imágenes:", error);
-            setUploadMessage("Error al cargar las imágenes");
-          });
-      }
-    } else {
-      setUploadMessage(
-        "Llegaste al límite de fotos permitido (mínimo 1, máximo 8)."
-      );
-    }
-  }
-};
-
-  
 
 // Función para manejar la eliminación de imágenes existentes
-
-const handleRemoveImage = (index: number) => {
-  const updatedFiles = [...files];
-  updatedFiles.splice(index, 1);
-  setFiles(updatedFiles);
-
-  if (productSelected) {
-    const updatedProductSelected = {
-      ...productSelected,
-      images: [
-        ...productSelected.images.slice(0, index),
-        ...productSelected.images.slice(index + 1),
-      ],
-    };
-    setProductSelected(updatedProductSelected);
-
-    // Después de eliminar la imagen, actualiza el contador
-    setSelectedImageCount(updatedProductSelected.images.length);
-    setUploadMessage("");
-  } else {
-    setSelectedImageCount(updatedFiles.length);
-    setUploadMessage("");
-  }
-};
-
-  
 
 const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
   const { name, value } = e.target;
 
-  // Lógica para otros campos
+  const updatedProduct = productSelected
+    ? { ...productSelected, [name]: value }
+    : { ...newProduct, [name]: value };
+
   if (productSelected) {
-    setProductSelected({
-      ...productSelected,
-      [name]: value,
-      // Actualizar automáticamente las palabras clave si el campo modificado es el título
-      keywords: name === 'title' ? value.toLowerCase() : productSelected.keywords,
-    });
+    setProductSelected(updatedProduct);
   } else {
-    setNewProduct({
-      ...newProduct,
-      [name]: value,
-      // Actualizar automáticamente las palabras clave si el campo modificado es el título
-      keywords: name === 'title' ? value.toLowerCase() : newProduct.keywords,
-    });
+    setNewProduct(updatedProduct);
+  }
+};
+
+// Manejador para cambios en el componente Select
+const handleSelectChange = (event: SelectChangeEvent<string>) => {
+  const { name, value } = event.target;
+
+  const updatedProduct = productSelected
+    ? { ...productSelected, [name]: value }
+    : { ...newProduct, [name]: value };
+
+  if (productSelected) {
+    setProductSelected(updatedProduct);
+  } else {
+    setNewProduct(updatedProduct);
   }
 };
 
 
 
-  // Función para subir las imágenes al servidor y obtener las URL
-  const uploadImages = async () => {
-    const uploadedImages = [];
-  
-    for (const file of files) {
-      setUploadMessage("Cargando el producto...");
-      const url = await uploadFile(file);
-      uploadedImages.push(url);
-    }
-  
-    setUploadMessage("");
-    return uploadedImages;
-  };
 
 
-  
-  const createProduct = async (
-    collectionRef: CollectionReference,
-    productInfo: Product
-  ) => {
-    try {
-      const { ...productDataWithoutId } = productInfo;
-      await addDoc(collectionRef, productDataWithoutId);
-    } catch (error) {
-      console.error("Error creating product:", error);
-      throw error;
-    }
-  };
+const [isContentInGrams, setIsContentInGrams] = useState<boolean>(true);
 
+const handleIsContentInGramsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const isChecked = event.target.checked;
+  
+  // Actualizar el estado
+  setIsContentInGrams(isChecked);
+
+  // Actualizar el objeto según sea necesario
+  const updatedProduct = productSelected
+    ? { ...productSelected, isContentInGrams: isChecked }
+    : { ...newProduct, isContentInGrams: isChecked };
+
+  // Actualizar el estado correspondiente
+  if (productSelected) {
+    setProductSelected(updatedProduct);
+  } else {
+    setNewProduct(updatedProduct);
+  }
+};
+
+const handleIsContentInMililitersChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const isChecked = event.target.checked;
+
+  // Actualizar el estado
+  setIsContentInGrams(!isChecked);
+
+  // Actualizar el objeto según sea necesario
+  const updatedProduct = productSelected
+    ? { ...productSelected, isContentInGrams: !isChecked }
+    : { ...newProduct, isContentInGrams: !isChecked };
+
+  // Actualizar el estado correspondiente
+  if (productSelected) {
+    setProductSelected(updatedProduct);
+  } else {
+    setNewProduct(updatedProduct);
+  }
+};
 
 
   const updateProduct = async (
@@ -315,53 +204,62 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     }
   };
 
-  const openFileInput = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
+
+  const createProduct = async (
+    collectionRef: CollectionReference,
+    productInfo: Omit<Product, 'id'>
+  ) => {
+    try {
+      const newDocRef = await addDoc(collectionRef, productInfo);
+     
+      return newDocRef.id; 
+    } catch (error) {
+      console.error("Error creating product:", error);
+      throw error;
     }
   };
-
-
+  
+  
+  
    // Función para manejar el envío del formulario
+
+
    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
   
     try {
       // Validar el producto, ya sea el nuevo o el editado
       const productToValidate = productSelected || newProduct;
-
+  
       await productSchema.validate(productToValidate, { abortEarly: false });
   
+   
+
+      const convertImagesToStringArray = (images: Image[]): string[] => {
+        return images.map(image => image.url);
+      };
       
-    // Validar los datos de colores
-    if (!validateColorsData(colors)) {
-      setSnackbarMessage("Por favor, corrige los errores en el formulario.");
-      setSnackbarOpen(true);
-      setErrorTimeoutAndClear();
-      return;
-    }
-       
-       
-    
-      // Subir las imágenes y obtener las URLs
-      const uploadedImages = await uploadImages();
-  
+
+         // Calcular el precio antes de enviar la información al servidor
+         const calculatedPrice = calculatePrice(
+          productToValidate.cost.toString(),
+          productToValidate.taxes.toString(),
+          productToValidate.profitMargin.toString()
+        );
+        
       // Crear un objeto con la información del producto
       const productInfo = {
         ...productToValidate,
-        unit_price: +productToValidate.unit_price,
+        price: calculatedPrice, // Asignar el precio calculado
         createdAt: productToValidate.createdAt ?? getFormattedDate(),
-        colors: colors.length > 0 ? [...colors] : [], 
-        stock: calculateStock(colors), 
-        images: [...uploadedImages],
+        keywords: productToValidate.title.toLowerCase(),
+        images: convertImagesToStringArray(images),
       };
-      
   
       const productsCollection = collection(db, "products");
   
       if (productSelected) {
         // Actualizar el producto existente sin duplicar las imágenes
-        productInfo.images = productSelected.images; // Utiliza las imágenes existentes
         await updateProduct(productsCollection, productSelected.id, productInfo);
       } else {
         // Crear un nuevo producto con las imágenes cargadas
@@ -369,24 +267,31 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       }
   
       // Limpiar el estado y mostrar un mensaje de éxito
-      setFiles([]);
+   
+      updateImages([]); 
       setSnackbarMessage("Producto creado/modificado con éxito");
+      updateSelectedItems([{ name: 'Mis Productos' }]);
       setSnackbarOpen(true);
-      setIsChange(true);
-      handleClose();
+  
     } catch (error) {
+     
+
       if (error instanceof Yup.ValidationError) {
+
         // Manejar errores de validación aquí
+        
         const validationErrors: { [key: string]: string } = {};
         error.inner.forEach((e) => {
           if (e.path) {
             validationErrors[e.path] = e.message;
           }
         });
-       
+
+            // Agregar manejo específico para el error de falta de variantes
+    
+        console.error("Errores de validación:", validationErrors);
         setErrors(validationErrors);
         setErrorTimeoutAndClear();
-        
         setSnackbarMessage("Por favor, corrige los errores en el formulario.");
         setSnackbarOpen(true);
       } else {
@@ -397,431 +302,468 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       }
     }
   };
-  
-  
-  return (
-    <Container 
-      maxWidth="xs"
-      sx={{
-        height: "100vh",
-        overflowY: "auto",
-        marginLeft: "auto",
-        marginRight: "auto", 
-        padding: "20px", 
-        border: "1px solid #ccc", 
-      }}
-    >
-      <Paper elevation={3} style={{ padding: "20px" }}>
-        <form
-          onSubmit={handleSubmit}
-          style={{
-            width: "100%",
-            display: "flex",
-            flexDirection: "column",
-            marginLeft: "40px", 
-            marginRight: "40px",
-            gap: "20px",
+
+
+
+
+return (
+    <>
+
+        <Card
+          sx={{
+            width: '80%',
+            padding: '20px',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            margin: 'auto', // Centra el Card dentro del Box
           }}
         >
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                variant="outlined"
-                value={productSelected ? productSelected.title : newProduct.title}
-                label="Nombre"
-                name="title"
-                onChange={handleChange}
-                fullWidth
-                sx={{ width: '75%', margin: 'auto' }}
-              />
-              <ErrorMessage
-                messages={
-                  errors.title
-                    ? Array.isArray(errors.title)
-                      ? errors.title
-                      : [errors.title]
-                    : []
-                }
-              />
-
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                variant="outlined"
-                value={productSelected ? productSelected.description : newProduct.description}
-                label="Descripción"
-                name="description"
-                onChange={handleChange}
-                fullWidth
-                sx={{ width: '75%', margin: 'auto' }}
-              />
-              <ErrorMessage
-                messages={
-                  errors.description
-                    ? Array.isArray(errors.description)
-                      ? errors.description
-                      : [errors.description]
-                    : []
-                }
-              />
-
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                variant="outlined"
-                value={productSelected ? productSelected.category : newProduct.category}
-                label="Categoría"
-                name="category"
-                onChange={handleChange}
-                fullWidth
-                sx={{ width: '75%', margin: 'auto' }}
-              />
+         <form
+           onSubmit={handleSubmit}
+           
+         >
+           <Grid container spacing={2} sx={{ textAlign: 'center' }}>
+             <Grid item xs={12} sm={6} >
+               <TextField
+                 variant="outlined"
+                 value={productSelected ? productSelected.title : newProduct.title}
+                 label="Nombre"
+                 name="title"
+                 onChange={handleChange}
+                 fullWidth
+                 sx={{ width: '75%', margin: 'auto' }}
+               />
                <ErrorMessage
-                messages={
-                  errors.category
-                    ? Array.isArray(errors.category)
-                      ? errors.category
-                      : [errors.category]
-                    : []
-                }
-              />
-
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                variant="outlined"
-                value={productSelected ? productSelected.unit_price: newProduct.unit_price}
-                label="Precio"
-                name="unit_price"
-                type="number"
-                onChange={handleChange}
-                fullWidth
-                sx={{ width: '75%', margin: 'auto' }}
-              />
-              <ErrorMessage
-                messages={
-                  errors.unit_price
-                    ? Array.isArray(errors.unit_price)
-                      ? errors.unit_price
-                      : [errors.unit_price]
-                    : []
-                }
-              />
-
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                variant="outlined"
-                value={productSelected ? productSelected.discount : newProduct.discount}
-                label="Descuento"
-                type="number"
-                name="discount"
-                onChange={handleChange}
-                fullWidth
-                sx={{ width: '75%', margin: 'auto' }}
-              />
-               <ErrorMessage
-                  messages={
-                    errors.discount
-                      ? Array.isArray(errors.discount)
-                        ? errors.discount
-                        : [errors.discount]
-                      : []
-                  }
-                />
-            </Grid>
-  
-            {/* Input Color y Talles */}
-            <Grid item xs={12}>
-            <ColorInput
-              initialColors={selectedProductColors}
-              updateColors={updateColors}
+                 messages={
+                   errors.title
+                     ? Array.isArray(errors.title)
+                       ? errors.title
+                       : [errors.title]
+                     : []
+                 }
+               />
+ 
+             </Grid>
+             <Grid item xs={12} sm={6} >
+            <TextField
+              variant="outlined"
+              value={productSelected ? productSelected.brand : newProduct.brand}
+              label="Marca"
+              name="brand"
+              onChange={handleChange}
+              fullWidth
+              sx={{ width: '75%', margin: 'auto' }}
             />
-            <ErrorMessage errors={colorErrors} />
-
+            <ErrorMessage
+              messages={
+                errors.brand
+                  ? Array.isArray(errors.brand)
+                    ? errors.brand
+                    : [errors.brand]
+                  : []
+              }
+            />
           </Grid>
-            {/* Input Color y Talles */}
+
+             <Grid item xs={12} sm={6}>
+               <TextField
+                 variant="outlined"
+                 value={productSelected ? productSelected.description : newProduct.description}
+                 label="Descripción"
+                 name="description"
+                 onChange={handleChange}
+                 fullWidth
+                 sx={{ width: '75%', margin: 'auto' }}
+                 
+               />
+               <ErrorMessage
+                 messages={
+                   errors.description
+                     ? Array.isArray(errors.description)
+                       ? errors.description
+                       : [errors.description]
+                     : []
+                 }
+               />
+ 
+             </Grid>
+             <Grid item xs={12} sm={6}>
+               <TextField
+                 variant="outlined"
+                 value={productSelected ? productSelected.category : newProduct.category}
+                 label="Categoría"
+                 name="category"
+                 onChange={handleChange}
+                 fullWidth
+                 sx={{ width: '75%', margin: 'auto' }}
+               />
+                <ErrorMessage
+                 messages={
+                   errors.category
+                     ? Array.isArray(errors.category)
+                       ? errors.category
+                       : [errors.category]
+                     : []
+                 }
+               />
+ 
+             </Grid>
+
+             <Grid item xs={12} sm={6}>
+               <TextField
+                 variant="outlined"
+                 value={productSelected ? productSelected.discount : newProduct.discount}
+                 label="Descuento"
+                 type="number"
+                 name="discount"
+                 onChange={handleChange}
+                 fullWidth
+                 sx={{ width: '75%', margin: 'auto' }}
+               />
+                <ErrorMessage
+                   messages={
+                     errors.discount
+                       ? Array.isArray(errors.discount)
+                         ? errors.discount
+                         : [errors.discount]
+                       : []
+                   }
+                 />
+             </Grid>
+             <Grid item xs={12} sm={6}>
+              <TextField
+                variant="outlined"
+                value={productSelected ? productSelected.unitperpack : newProduct.unitperpack}
+                label="Unidades por Empaque"
+                name="unitperpack"
+                onChange={handleChange}
+                fullWidth
+                sx={{ width: '75%', margin: 'auto' }}
+              />
+              <ErrorMessage
+                messages={
+                  errors.unitperpack
+                    ? Array.isArray(errors.unitperpack)
+                      ? errors.unitperpack
+                      : [errors.unitperpack]
+                    : []
+                }
+              />
+            </Grid>
+
+
+
+            <Grid item xs={12} sm={6}>
+            <FormControl fullWidth variant="outlined" sx={{ width: '75%', margin: 'auto' }}>
+              <InputLabel id="type-label">Tipo</InputLabel>
+              <Select
+                labelId="type-label"
+                id="type"
+                name="type"
+                value={productSelected ? productSelected.type : newProduct.type}
+                label="Tipo"
+                onChange={handleSelectChange}
+                fullWidth
+              >
+                <MenuItem value="Bulto">Bulto</MenuItem>
+                <MenuItem value="Unidad">Unidad</MenuItem>
+              </Select>
+            </FormControl>
+            <ErrorMessage
+                 messages={
+                   errors.type
+                     ? Array.isArray(errors.type)
+                       ? errors.type
+                       : [errors.type]
+                     : []
+                 }
+               />
+          </Grid>
+
+      
+            <Grid item xs={12} sm={6}>
+              <TextField
+                type="number"
+                variant="outlined"
+                label="Costo"
+                name="cost"
+              
+                value={productSelected ? productSelected.cost : newProduct.cost}
+                onChange={handleChange}
+                fullWidth
+                sx={{ width: '75%', margin: 'auto' }}
+              />
+                  <ErrorMessage
+                    messages={
+                      errors.cost
+                        ? Array.isArray(errors.cost)
+                          ? errors.cost
+                          : [errors.cost]
+                        : []
+                    }
+                  />
+            </Grid>
+      
+            <Grid item xs={12} sm={6}>
+              <TextField
+                type="number"
+                variant="outlined"
+                label="Impuestos"
+                name="taxes"
+              
+                value={productSelected ? productSelected.taxes : newProduct.taxes}
+                onChange={handleChange}
+                fullWidth
+                sx={{ width: '75%', margin: 'auto' }}
+              />
+                  <ErrorMessage
+                    messages={
+                      errors.taxes
+                        ? Array.isArray(errors.taxes)
+                          ? errors.taxes
+                          : [errors.taxes]
+                        : []
+                    }
+                  />
+            </Grid>
   
             <Grid item xs={12} sm={6}>
               <TextField
+                type="number"
                 variant="outlined"
-                value={productSelected ? productSelected.sku : newProduct.sku}
-                label="SKU"
-                name="sku"
+                label="Margen de Ganancia"
+                name="profitMargin"
+              
+                value={productSelected ? productSelected.profitMargin: newProduct.profitMargin}
                 onChange={handleChange}
                 fullWidth
                 sx={{ width: '75%', margin: 'auto' }}
               />
                 <ErrorMessage
-                  messages={
-                    errors.sku
-                      ? Array.isArray(errors.sku)
-                        ? errors.sku
-                        : [errors.sku]
-                      : []
-                  }
-                />
+                    messages={
+                      errors.profitMargin
+                        ? Array.isArray(errors.profitMargin)
+                          ? errors.profitMargin
+                          : [errors.profitMargin]
+                        : []
+                    }
+                  />
             </Grid>
 
+
+      
             <Grid item xs={12} sm={6}>
               <TextField
-                variant="outlined"
-                value={productSelected ? productSelected.salesCount: newProduct.salesCount}
-                label="Cantidad de ventas"
                 type="number"
-                name="salesCount"
+                variant="outlined"
+                label="Cantidad"
+                name="quantities"
+              
+                value={productSelected ? productSelected.quantities: newProduct.quantities}
                 onChange={handleChange}
                 fullWidth
                 sx={{ width: '75%', margin: 'auto' }}
               />
+                <ErrorMessage
+                    messages={
+                      errors.quantities
+                        ? Array.isArray(errors.quantities)
+                          ? errors.quantities
+                          : [errors.quantities]
+                        : []
+                    }
+                  />
             </Grid>
-  
-            <Grid item xs={12}>
-              <TextField
-                variant="outlined"
-                label="Producto Destacado"
-                name="featured"
-                select
-                fullWidth
-                sx={{ width: '75%', margin: 'auto' }}
-                value={productSelected ? productSelected.featured ? "yes" : "no" : newProduct.featured ? "yes" : "no"}
-                onChange={handleChange}
-              >
-                <MenuItem value="yes">Si</MenuItem>
-                <MenuItem value="no">No</MenuItem>
-              </TextField>
-            </Grid>
-  
+
+
+
             <Grid item xs={12} sm={6}>
               <TextField
+                type="number"
                 variant="outlined"
-                label="Elasticidad"
-                name="elasticity"
-                select
+                label="Código de Barra"
+                name="barcode"
+                
+                value={productSelected ? productSelected.barcode: newProduct.barcode}
+                onChange={handleChange}
                 fullWidth
                 sx={{ width: '75%', margin: 'auto' }}
-                value={productSelected ? productSelected.elasticity : newProduct.elasticity}
-                onChange={handleChange}
-              >
-                <MenuItem value="alta">Alta</MenuItem>
-                <MenuItem value="moderado">Moderado</MenuItem>
-                <MenuItem value="nula">Nula/Casi Nula</MenuItem>
-              </TextField>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                variant="outlined"
-                label="Espesor"
-                name="thickness"
-                select
-                fullWidth
-                sx={{ width: '75%', margin: 'auto' }}
-                value={productSelected ? productSelected.thickness : newProduct.thickness}
-                onChange={handleChange}
-              >
-                <MenuItem value="grueso">Grueso</MenuItem>
-                <MenuItem value="moderado">Moderado</MenuItem>
-                <MenuItem value="fino">Fino</MenuItem>
-              </TextField>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                variant="outlined"
-                label="Transpirabilidad"
-                name="breathability"
-                select
-                fullWidth
-                sx={{ width: '75%', margin: 'auto' }}
-                value={productSelected ? productSelected.breathability : newProduct.breathability}
-                onChange={handleChange}
-              >
-                <MenuItem value="alta">Alta</MenuItem>
-                <MenuItem value="moderado">Moderado</MenuItem>
-                <MenuItem value="nula">Nula/Casi Nula</MenuItem>
-              </TextField>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                variant="outlined"
-                label="Temporada"
-                name="season"
-                select
-                fullWidth
-                sx={{ width: '75%', margin: 'auto' }}
-                value={productSelected ? productSelected.season : newProduct.season}
-                onChange={handleChange}
-              >
-                <MenuItem value="primavera/otono">Primavera/Otoño</MenuItem>
-                <MenuItem value="verano">Verano</MenuItem>
-                <MenuItem value="invierno">Invierno</MenuItem>
-              </TextField>
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                variant="outlined"
-                label="Materiales"
-                name="material"
-                fullWidth
-                sx={{ width: '75%', margin: 'auto' }}
-                value={productSelected ? productSelected.material : newProduct.material}
-                onChange={handleChange}
               />
+                    <ErrorMessage
+                    messages={
+                      errors.barcode
+                        ? Array.isArray(errors.barcode)
+                          ? errors.barcode
+                          : [errors.barcode]
+                        : []
+                    }
+                  />
             </Grid>
-            <Grid item xs={12}>
+
+
+            <Grid item xs={12} sm={6}>
               <TextField
+                type="number"
                 variant="outlined"
-                label="Detalles"
-                name="details"
-                multiline
+                label="Contenido por Unidad"
+                name="contentPerUnit"    
+                value={productSelected ? productSelected.contentPerUnit: newProduct.contentPerUnit}   
+                onChange={handleChange}
                 fullWidth
                 sx={{ width: '75%', margin: 'auto' }}
-                rows={4}
-                value={productSelected ? productSelected.details : newProduct.details}
-                onChange={handleChange}
               />
+                    <ErrorMessage
+                    messages={
+                      errors.contentPerUnit
+                        ? Array.isArray(errors.contentPerUnit)
+                          ? errors.contentPerUnit
+                          : [errors.contentPerUnit]
+                        : []
+                    }
+                  />
             </Grid>
-  
-            {/* Maneja la carga de las imagenes para Modificar */}
-            <Grid item xs={12}>
-              <div style={{  maxHeight: "600px", overflowY: "scroll" }}>
-                {productSelected ? (
-                  productSelected.images.map((imageUrl, index) => (
-                    <Card key={index} style={{ maxWidth: 345,  marginRight:60,  borderRadius: '10px', overflow: 'hidden', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                     <CardContent
-                        style={{
-                          display: 'flex',
-                          flexDirection: 'column',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                        }}
-                      >
-                        <p>{`Vista Previa ${index + 1}`}</p>
-                        </CardContent>
-                     
-                      <CardMedia
-                        component="img"
-                        height="140"
-                        image={imageUrl}
-                        alt={`Imagen ${index + 1}`}
-                        style={{ objectFit: "contain", justifyContent: 'center' }}
-                      />
-                        
-                      <CardActions
-                       style={{
-                        marginLeft: 'auto', // Añade esta línea para mover el CardActions a la derecha
-                        width: 'fit-content', // Ajusta el ancho según sea necesario
-                      }}
-                      >
-                        <Button
-                          size="small"
-                          variant="contained"
-                          color="secondary"
-                          onClick={() => handleRemoveImage(index)}
-                          
-                        >
-                           <DeleteForeverIcon />
-                        </Button>
-                      </CardActions>
-                    </Card>
-                  ))
-                ) : (
-                  files.map((file, index) => (
-                    <Card key={index} style={{ maxWidth: 345,  marginRight:60,  borderRadius: '10px', overflow: 'hidden', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                     <CardContent
-                        style={{
-                          display: 'flex',
-                          flexDirection: 'column',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                        }}
-                      >
-                        <p>{`Vista Previa ${index + 1}`}</p>
-                        </CardContent>
-                      <CardMedia
-                        component="img"
-                        height="140"
-                        image={URL.createObjectURL(file)}
-                        alt={`Vista Previa ${index + 1}`}
-                        style={{ objectFit: "contain", justifyContent: 'center', marginBottom:"20px" }}
-                      />
-                      
-                      <CardActions
-                       style={{
-                        marginLeft: 'auto', // Añade esta línea para mover el CardActions a la derecha
-                        width: 'fit-content', // Ajusta el ancho según sea necesario
-                      }}
-                      >
-                        <Button
-                          size="small"
-                          variant="contained"
-                          color="secondary"
-                          onClick={() => handleRemoveImage(index)}
-                         
-                        >
-                           <DeleteForeverIcon />
-                        </Button>
-                      </CardActions>
-                    </Card>
-                  ))
-                )}
-              </div>
-            </Grid>
-  
-            {/* Maneja la carga de las imagenes para Crear */}
-            <Grid item xs={12}>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={openFileInput}
-              >
-                Subir foto
-              </Button>
-              {selectedImageCount >= 1 && selectedImageCount < 8 && (
-                <p>Puedes subir otra foto.</p>
-              )}
-              {selectedImageCount === 8 && (
-                <p>Llegaste al máximo de fotos permitido.</p>
-              )}
-              <input
-                ref={fileInputRef}
-                type="file"
-                multiple
-                accept="image/*"
-                onChange={handleImageChange}
-                style={{ display: "none" }}
-              />
-              <p>{uploadMessage}</p>
-            </Grid>
-  
-            {/* Botón de crear o modificar*/}
-            <Grid item xs={12}>
-              {!isLoading && (
-                <Button
-                  variant="contained"
-                  color="primary"
-                  type="submit"
-                  disabled={isLoading}
-                >
-                  {productSelected ? "Modificar" : "Crear"}
-                </Button>
-              )}
-             
-            </Grid>
+     
+            <Grid item xs={12} sm={6}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={isContentInGrams}
+                  onChange={handleIsContentInGramsChange}
+                />
+              }
+              label="¿El contenido es en gramos?"
+            />
+
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={!isContentInGrams}
+                  onChange={handleIsContentInMililitersChange}
+                />
+              }
+              label="¿El contenido es en mililitros?"
+            />
+        </Grid>
+
+
+
+
+
+            <Grid item xs={12} sm={6}>
+            <TextField
+              variant="outlined"
+              value={productSelected ? productSelected.location : newProduct.location}
+              label="Ubicación"
+              name="location"
+              onChange={handleChange}
+              fullWidth
+              sx={{ width: '75%', margin: 'auto' }}
+            />
+            <ErrorMessage
+              messages={
+                errors.location
+                  ? Array.isArray(errors.location)
+                    ? errors.location
+                    : [errors.location]
+                  : []
+              }
+            />
           </Grid>
-        </form>
-      </Paper>
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={4000}
-        onClose={() => setSnackbarOpen(false)}
-        message={snackbarMessage}
-      />
-    </Container>
-  );
-  
+
+     
+   
+   
+             <Grid item xs={12} sm={6}>
+               <TextField
+                 variant="outlined"
+                 label="Producto Destacado"
+                 name="featured"
+                 select
+                 fullWidth
+                 sx={{ width: '75%', margin: 'auto' }}
+                 value={productSelected ? productSelected.featured ? "yes" : "no" : newProduct.featured ? "yes" : "no"}
+                 onChange={handleChange}
+               >
+                 <MenuItem value="yes">Si</MenuItem>
+                 <MenuItem value="no">No</MenuItem>
+               </TextField>
+             </Grid>
+             <Grid item xs={12} sm={6}>
+            <TextField
+              variant="outlined"
+              label="En línea"
+              name="online"
+              select
+              fullWidth
+              sx={{ width: '75%', margin: 'auto' }}
+              value={productSelected ? productSelected.online ? "yes" : "no" : newProduct.online ? "yes" : "no"}
+              onChange={handleChange}
+            >
+              <MenuItem value="yes">Sí</MenuItem>
+              <MenuItem value="no">No</MenuItem>
+            </TextField>
+          </Grid>
+
+          {/*ImageManager */}
+          <Grid item xs={12}>
+          <ImageManager
+           initialData={selectedImages}
+          />
+          </Grid>
+          {/*ImageManager*/}
+
+             {/* Botón de crear o modificar*/}
+             <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          
+
+                 {!isLoading && (
+                     <Button
+                     variant="contained"
+                     color="primary"
+                     type="submit"
+                     size="large"  
+                     disabled={isLoading}
+                     >
+                     {productSelected ? "Modificar" : "Crear"}
+                     </Button>
+                 )}
+                 </Grid>
+
+              
+ 
+           </Grid>
 
 
+         </form>
+
+         </Card>
+        
+            <Snackbar
+                  open={snackbarOpen}
+                  autoHideDuration={4000}
+                  onClose={() => setSnackbarOpen(false)}
+                  message={snackbarMessage}
+                  sx={{
+                    margin: "auto"
+                  }}
+                />
+
+       </>
+    
+   );
+   
+ 
 
 };
 
-export default ProductsForm;
+export default ProductsFormDesktop;
+
+
+
+
+
+
+
+
+

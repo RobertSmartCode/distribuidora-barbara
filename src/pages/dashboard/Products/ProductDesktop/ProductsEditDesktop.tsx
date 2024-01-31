@@ -9,8 +9,13 @@ import {
   TextField,
   Grid,
   Snackbar,
-  MenuItem
-
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Select,
+  Checkbox,
+  FormControlLabel,
+  SelectChangeEvent,
 } from "@mui/material";
 
 
@@ -20,11 +25,11 @@ import { getFormattedDate } from '../../../../utils/dateUtils';
 import { ErrorMessage } from '../../../../messages/ErrorMessage';
 import { productSchema } from '../../../../schema/productSchema';
 import { useSelectedItemsContext } from '../../../../context/SelectedItems';
-import { useProductVariantsContext } from '../../../../context/ProductVariantsContext'; 
+
 
 import ImageManager from '../ImageManager';
 import { useImagesContext } from "../../../../context/ImagesContext";
-import ProductVariants from "./ProductVariants";
+
 
 
 
@@ -39,11 +44,12 @@ const ProductsEditDesktop: React.FC<ProductsEditDesktopProps> = ({ productSelect
 
 
   useEffect(() => {
-    // Abre el modal cuando productSelected está presente
     if (productSelected) {
+   
       setIsModalOpen(true);
     }
-  }, [productSelected]);
+  }, [productSelected]); 
+  
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
@@ -64,31 +70,19 @@ const setErrorTimeoutAndClear = () => {
   setErrorTimeout(timeout);
 };
 
-const { productVariantOptions } = useProductVariantsContext()!;
+
 
 const { images, updateImages} = useImagesContext()!;
 
 
 const [selectedImages, setSelectedImages] = useState<Image[]>([]);
 
-const [selectedProductVariants, setSelectedProductVariants] = useState<{ 
-    type: string; 
-    cost: number; 
-    taxes: number; 
-    profitMargin: number; 
-    price: number; 
-    quantities: number;
-    barcode: number;
-    contentPerUnit: number;  
-    isContentInGrams: boolean;
-    
-     }[]>([]);
-   
+
+
   useEffect(() => {
     if (productSelected) {
      
-      setSelectedProductVariants(productSelected.productVariants || []);
-
+  
       // Convierte las URLs en objetos Image y actualiza el estado
     const imageObjects: Image[] = productSelected.images.map((url) => ({ url }));
     setSelectedImages(imageObjects);
@@ -115,7 +109,62 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     }
   };
   
-  
+
+// Manejador para cambios en el componente Select
+const handleSelectChange = (event: SelectChangeEvent<string>) => {
+  const { name, value } = event.target;
+
+  const updatedProduct = productSelected
+    ? { ...productSelected, [name]: value }
+    : null;
+
+  if (productSelected) {
+    setProductSelected(updatedProduct);
+  }
+};
+
+
+
+
+
+const [isContentInGrams, setIsContentInGrams] = useState<boolean>(true);
+
+const handleIsContentInGramsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const isChecked = event.target.checked;
+
+  // Actualizar el estado
+  setIsContentInGrams(isChecked);
+
+  // Actualizar el objeto según sea necesario
+  const updatedProduct = productSelected
+    ? { ...productSelected, isContentInGrams: isChecked }
+    :  null;
+
+  // Actualizar el estado correspondiente
+  if (productSelected) {
+    setProductSelected(updatedProduct);
+  } 
+};
+
+
+const handleIsContentInMililitersChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const isChecked = event.target.checked;
+
+  // Actualizar el estado
+  setIsContentInGrams(!isChecked);
+
+  // Actualizar el objeto según sea necesario
+  const updatedProduct = productSelected
+    ? { ...productSelected, isContentInGrams: !isChecked }
+    :  null;
+
+  // Actualizar el estado correspondiente
+  if (productSelected) {
+    setProductSelected(updatedProduct);
+  } 
+};
+
+
 
   
 
@@ -148,20 +197,14 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
   
       await productSchema.validate(productToValidate, { abortEarly: false });
   
-      if (productVariantOptions.length === 0) {
-        setSnackbarMessage('Debe agregar al menos una variante al producto.');
-        setSnackbarOpen(true);
-        return; // Terminar la función si hay un error
-      }
+  
 
     
   
       // Crear un objeto con la información del producto
       const productInfo = {
         ...productToValidate,
-       
         createdAt: (productToValidate?.createdAt) ?? getFormattedDate(),
-        productVariants: productVariantOptions.length > 0 ? [...productVariantOptions] : [],
         keywords: (productToValidate?.title ?? "").toLowerCase(),
         images: images.map(image => image.url),
         
@@ -182,7 +225,7 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       setSnackbarOpen(true);
       handleClose();
   
-    } catch (error) {
+    }  catch (error) {
      
 
       if (error instanceof Yup.ValidationError) {
@@ -206,7 +249,7 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       } else {
         // Manejar otros errores aquí
         console.error("Error en handleSubmit:", error);
-        setSnackbarMessage("Modificar el producto");
+        setSnackbarMessage("Error modificar el producto");
         setSnackbarOpen(true);
       }
     }
@@ -236,7 +279,7 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
           
       >
 
-<Card
+        <Card
               sx={{
                 width: '80%',
                 padding: '20px',
@@ -389,7 +432,205 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
                 }
               />
             </Grid>
+          
+
+         
+          <Grid item xs={12} sm={6}>
+            <FormControl fullWidth variant="outlined" sx={{ width: '75%', margin: 'auto' }}>
+              <InputLabel id="type-label">Tipo</InputLabel>
+              <Select
+                labelId="type-label"
+                id="type"
+                name="type"
+                value={productSelected ? productSelected.type || '' : ''}
+                label="Tipo"
+                onChange={handleSelectChange}
+                fullWidth
+              >
+                <MenuItem value="Bulto">Bulto</MenuItem>
+                <MenuItem value="Unidad">Unidad</MenuItem>
+              </Select>
+            </FormControl>
+            <ErrorMessage
+                 messages={
+                   errors.type
+                     ? Array.isArray(errors.type)
+                       ? errors.type
+                       : [errors.type]
+                     : []
+                 }
+               />
+          </Grid>
+
+      
             <Grid item xs={12} sm={6}>
+              <TextField
+                type="number"
+                variant="outlined"
+                label="Costo"
+                name="cost"
+              
+                value={productSelected ? productSelected.cost : ''}
+                onChange={handleChange}
+                fullWidth
+                sx={{ width: '75%', margin: 'auto' }}
+              />
+                  <ErrorMessage
+                    messages={
+                      errors.cost
+                        ? Array.isArray(errors.cost)
+                          ? errors.cost
+                          : [errors.cost]
+                        : []
+                    }
+                  />
+            </Grid>
+      
+            <Grid item xs={12} sm={6}>
+              <TextField
+                type="number"
+                variant="outlined"
+                label="Impuestos"
+                name="taxes"
+              
+                value={productSelected ? productSelected.taxes : ''}
+                onChange={handleChange}
+                fullWidth
+                sx={{ width: '75%', margin: 'auto' }}
+              />
+                  <ErrorMessage
+                    messages={
+                      errors.taxes
+                        ? Array.isArray(errors.taxes)
+                          ? errors.taxes
+                          : [errors.taxes]
+                        : []
+                    }
+                  />
+            </Grid>
+  
+            <Grid item xs={12} sm={6}>
+              <TextField
+                type="number"
+                variant="outlined"
+                label="Margen de Ganancia"
+                name="profitMargin"
+              
+                value={productSelected ? productSelected.profitMargin: ''}
+                onChange={handleChange}
+                fullWidth
+                sx={{ width: '75%', margin: 'auto' }}
+              />
+                <ErrorMessage
+                    messages={
+                      errors.profitMargin
+                        ? Array.isArray(errors.profitMargin)
+                          ? errors.profitMargin
+                          : [errors.profitMargin]
+                        : []
+                    }
+                  />
+            </Grid>
+
+
+      
+            <Grid item xs={12} sm={6}>
+              <TextField
+                type="number"
+                variant="outlined"
+                label="Cantidad"
+                name="quantities"
+              
+                value={productSelected ? productSelected.quantities: ''}
+                onChange={handleChange}
+                fullWidth
+                sx={{ width: '75%', margin: 'auto' }}
+              />
+                <ErrorMessage
+                    messages={
+                      errors.quantities
+                        ? Array.isArray(errors.quantities)
+                          ? errors.quantities
+                          : [errors.quantities]
+                        : []
+                    }
+                  />
+            </Grid>
+
+
+
+            <Grid item xs={12} sm={6}>
+              <TextField
+                type="number"
+                variant="outlined"
+                label="Código de Barra"
+                name="barcode"
+                
+                value={productSelected ? productSelected.barcode: ''}
+                onChange={handleChange}
+                fullWidth
+                sx={{ width: '75%', margin: 'auto' }}
+              />
+                    <ErrorMessage
+                    messages={
+                      errors.barcode
+                        ? Array.isArray(errors.barcode)
+                          ? errors.barcode
+                          : [errors.barcode]
+                        : []
+                    }
+                  />
+            </Grid>
+
+
+            <Grid item xs={12} sm={6}>
+              <TextField
+                type="number"
+                variant="outlined"
+                label="Contenido por Unidad"
+                name="contentPerUnit"    
+                value={productSelected ? productSelected.contentPerUnit: ''}   
+                onChange={handleChange}
+                fullWidth
+                sx={{ width: '75%', margin: 'auto' }}
+              />
+                    <ErrorMessage
+                    messages={
+                      errors.contentPerUnit
+                        ? Array.isArray(errors.contentPerUnit)
+                          ? errors.contentPerUnit
+                          : [errors.contentPerUnit]
+                        : []
+                    }
+                  />
+            </Grid>
+     
+            <Grid item xs={12} sm={6}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={isContentInGrams}
+                  onChange={handleIsContentInGramsChange}
+                />
+              }
+              label="¿El contenido es en gramos?"
+            />
+
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={!isContentInGrams}
+                  onChange={handleIsContentInMililitersChange}
+                />
+              }
+              label="¿El contenido es en mililitros?"
+            />
+        </Grid>
+
+
+
+
+        <Grid item xs={12} sm={6}>
             <TextField
               variant="outlined"
               value={productSelected ? productSelected.location : ''}
@@ -409,17 +650,6 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
               }
             />
           </Grid>
-
-             {/* ProductVariants */}
-             
-             <Grid item xs={12}>
-                <ProductVariants
-                  initialData={selectedProductVariants}
-                />
-              </Grid>
-
-        
-             {/*ProductVariants*/}
    
    
              <Grid item xs={12} sm={6}>
@@ -492,7 +722,10 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
                   onClose={() => setSnackbarOpen(false)}
                   message={snackbarMessage}
                   sx={{
-                    margin: "auto"
+                    margin: 'auto',
+                    bottom: '20px', // Adjust the position as needed
+                    left: '50%',
+                    transform: 'translateX(-50%)',
                   }}
                 />
 

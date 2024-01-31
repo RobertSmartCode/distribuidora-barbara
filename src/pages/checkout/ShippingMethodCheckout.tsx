@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect} from "react";
 import {
   Card,
   CardContent,
@@ -11,20 +11,21 @@ import {
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../firebase/firebaseConfig";
-import { CartContext } from "../../context/CartContext";
-
+import { useShippingMethods } from '../../context/ShippingMethodsContext';
 import { ShippingMethod } from "../../type/type";
 
 
 const ShippingMethodCheckout = () => {
-  const { updateShippingInfo, getSelectedShippingMethod } = useContext(CartContext)!;
+  const { getSelectedShippingMethod, updateShippingMethods } = useShippingMethods()!;
+
 
   const initialSelectedMethod = getSelectedShippingMethod();
 
   const [methods, setMethods] = useState<ShippingMethod[]>([]);
 
   const onSelectMethod = (method: ShippingMethod) => {
-    updateShippingInfo(method, method.price);
+    updateShippingMethods([{ ...method, price: method.price }]);
+
   };
 
   const [showAllOptions, setShowAllOptions] = useState(false);

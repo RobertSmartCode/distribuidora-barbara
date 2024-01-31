@@ -1,9 +1,9 @@
 import { Firestore, getFirestore, collection, query, where, getDocs, DocumentData } from 'firebase/firestore';
 
-export const getProductById = async (productId: string): Promise<DocumentData[]> => {
+export const getProductByBarCode = async (barcode: string): Promise<DocumentData[]> => {
   const firestore: Firestore = getFirestore();
   const productsCollection = collection(firestore, 'products');
-  const q = query(productsCollection, where('id', '==', productId));
+  const q = query(productsCollection, where('barcode', '==', barcode));
 
   try {
     const querySnapshot = await getDocs(q);
@@ -16,7 +16,7 @@ export const getProductById = async (productId: string): Promise<DocumentData[]>
 
     return products;
   } catch (error) {
-    console.error('Error fetching product by ID:', error);
+    console.error('Error fetching product by BarCode:', error);
     throw error;
   }
 };

@@ -1,9 +1,6 @@
 // StoreDataContext.tsx
 import React, { createContext, useContext, useState} from "react";
-
-
 import { StoreData,  SelectedLocation } from "../type/type";
-
 
 interface StoreDataContextProps {
   children: React.ReactNode;
@@ -28,7 +25,7 @@ export const useStoreData = () => {
   return context;
 };
 
-const StoreDataProvider: React.FC<StoreDataContextProps> = ({ children }) => {
+const StoreDataContextComponent: React.FC<StoreDataContextProps> = ({ children }) => {
   const [storeData, setStoreData] = useState<StoreData[]>([]);
   const [selectedLocation, setSelectedLocation] = useState<SelectedLocation>({
     sucursal: "",
@@ -57,5 +54,4 @@ const StoreDataProvider: React.FC<StoreDataContextProps> = ({ children }) => {
   );
 };
 
-export { StoreDataProvider };
-
+export default StoreDataContextComponent;

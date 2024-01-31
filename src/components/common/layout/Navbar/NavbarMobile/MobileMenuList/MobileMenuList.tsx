@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   IconButton,
   List,
@@ -20,39 +20,25 @@ import { Link, useNavigate } from "react-router-dom";
 import { menuItems } from "../../../../../../router/navigation";
 import { logout } from "../../../../../../firebase/firebaseConfig";
 import { AuthContext } from "../../../../../../context/AuthContext";
+import {customColors } from "../../../../../../styles/styles";
 
-// Define colores personalizados
-const customColors = {
-  primary: {
-    main: '#000',
-    contrastText: '#000',
-  },
-  secondary: {
-    main: '#fff',
-    contrastText: '#FFFFFF',
-  },
-};
+
 
 interface MobileMenuListProps {
   container?: any;
   Top: string;
 }
 
-const MobileMenuList: React.FC<MobileMenuListProps> = ({
- 
-  container,
-  Top
-}) => {
+const MobileMenuList: React.FC<MobileMenuListProps> = ({ container, Top }) => {
   const { logoutContext, isLogged, user } = useContext(AuthContext)!;
   const rolAdmin = import.meta.env.VITE_ROL_ADMIN;
+  const rolCajero = import.meta.env.VITE_ROL_CASHIER;
+  const rolCobrador = import.meta.env.VITE_ROL_COLLECTOR;
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  
   const handleMenuToggle = () => {
-    setIsMenuOpen(!isMenuOpen);
+    setIsMenuOpen((prevIsMenuOpen) => !prevIsMenuOpen);
   };
-
-
 
   const navigate = useNavigate();
 
@@ -62,9 +48,8 @@ const MobileMenuList: React.FC<MobileMenuListProps> = ({
     navigate("/login");
   };
 
-
   return (
-    <div>
+    <>
       <IconButton
         color="secondary"
         aria-label="toggle menu"
@@ -120,21 +105,39 @@ const MobileMenuList: React.FC<MobileMenuListProps> = ({
             ))}
 
             {!isLogged ? (
-              <Link to="/login" onClick={handleMenuToggle}>
-                <ListItem disablePadding>
-                  <ListItemButton>
-                    <ListItemIcon>
-                      <LoginIcon sx={{ color: customColors.secondary.contrastText }} />
-                    </ListItemIcon>
-                    <ListItemText
-                      primary={"Iniciar sesión"}
-                      primaryTypographyProps={{
-                        sx: { color: customColors.secondary.contrastText },
-                      }}
-                    />
-                  </ListItemButton>
-                </ListItem>
-              </Link>
+              <>
+                <Link key="login" to="/login" onClick={handleMenuToggle}>
+                  <ListItem disablePadding>
+                    <ListItemButton>
+                      <ListItemIcon>
+                        <LoginIcon sx={{ color: customColors.secondary.contrastText }} />
+                      </ListItemIcon>
+                      <ListItemText
+                        primary={"Iniciar sesión"}
+                        primaryTypographyProps={{
+                          sx: { color: customColors.secondary.contrastText },
+                        }}
+                      />
+                    </ListItemButton>
+                  </ListItem>
+                </Link>
+
+                <Link key="register" to="/register" onClick={handleMenuToggle}>
+                  <ListItem disablePadding>
+                    <ListItemButton>
+                      <ListItemIcon>
+                        <LoginIcon sx={{ color: customColors.secondary.contrastText }} />
+                      </ListItemIcon>
+                      <ListItemText
+                        primary={"Crear Cuenta"}
+                        primaryTypographyProps={{
+                          sx: { color: customColors.secondary.contrastText },
+                        }}
+                      />
+                    </ListItemButton>
+                  </ListItem>
+                </Link>
+              </>
             ) : null}
 
             {isLogged && user.rol === rolAdmin && (
@@ -156,21 +159,59 @@ const MobileMenuList: React.FC<MobileMenuListProps> = ({
             )}
 
             {isLogged && user.rol !== rolAdmin && (
-              <Link to="/user-orders" onClick={handleMenuToggle}>
-                <ListItem disablePadding>
-                  <ListItemButton>
-                    <ListItemIcon>
-                      <ShopIcon sx={{ color: customColors.secondary.contrastText }} />
-                    </ListItemIcon>
-                    <ListItemText
-                      primary={"Mis compras"}
-                      primaryTypographyProps={{
-                        sx: { color: customColors.secondary.contrastText },
-                      }}
-                    />
-                  </ListItemButton>
-                </ListItem>
-              </Link>
+              <>
+                <Link to="/user-orders" onClick={handleMenuToggle}>
+                  <ListItem disablePadding>
+                    <ListItemButton>
+                      <ListItemIcon>
+                        <ShopIcon sx={{ color: customColors.secondary.contrastText }} />
+                      </ListItemIcon>
+                      <ListItemText
+                        primary={"Mis compras"}
+                        primaryTypographyProps={{
+                          sx: { color: customColors.secondary.contrastText },
+                        }}
+                      />
+                    </ListItemButton>
+                  </ListItem>
+                </Link>
+
+                {user.rol === rolCajero && (
+                  <Link to="/cashier" onClick={handleMenuToggle}>
+                    <ListItem disablePadding>
+                      <ListItemButton>
+                        <ListItemIcon>
+                          <DashboardIcon sx={{ color: customColors.secondary.contrastText }} />
+                        </ListItemIcon>
+                        <ListItemText
+                          primary={"Caja"}
+                          primaryTypographyProps={{
+                            sx: { color: customColors.secondary.contrastText },
+                          }}
+                        />
+                      </ListItemButton>
+                    </ListItem>
+                  </Link>
+                )}
+
+                {user.rol === rolCobrador && (
+                  <Link to="/collector" onClick={handleMenuToggle}>
+                    <ListItem disablePadding>
+                      <ListItemButton>
+                        <ListItemIcon>
+                          <DashboardIcon sx={{ color: customColors.secondary.contrastText }} />
+                        </ListItemIcon>
+                        <ListItemText
+                          primary={"Cobrar"}
+                          primaryTypographyProps={{
+                            sx: { color: customColors.secondary.contrastText },
+                          }}
+                        />
+                      </ListItemButton>
+                    </ListItem>
+                  </Link>
+                )}
+              </>
             )}
 
             {isLogged && (
@@ -191,10 +232,8 @@ const MobileMenuList: React.FC<MobileMenuListProps> = ({
           </List>
         </SwipeableDrawer>
       )}
-    </div>
+    </>
   );
 };
 
 export default MobileMenuList;
-  
-

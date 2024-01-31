@@ -7,18 +7,15 @@ export interface Product {
   category: string;
   discount: number;
   unitperpack: number;
- 
-  productVariants: {
-    type: string;
-    cost: number;
-    taxes: number;
-    profitMargin: number;
-    price: number;
-    quantities: number;
-    barcode: number;
-    contentPerUnit: number;  
-    isContentInGrams: boolean;
-  }[];
+  type: string;
+  cost: number;
+  taxes: number;
+  profitMargin: number;
+  price: number;
+  quantities: number;
+  barcode: number;
+  contentPerUnit: number;  
+  isContentInGrams: boolean;
   keywords: string;
   salesCount: string;
   featured: boolean;
@@ -26,35 +23,8 @@ export interface Product {
   createdAt: string;
   online: boolean;
   location: string;
+  quantity?: number; 
 }
-
-export interface ProductVariantsProps {
-  initialData?: {
-    type: string;
-    cost: number;
-    taxes: number;
-    profitMargin: number;
-    price: number;
-    quantities: number;
-    barcode: number; 
-    contentPerUnit: number;  
-    isContentInGrams: boolean; 
-   
-  }[];
-}
-
-export interface ProductVariantOption {
-  type: string
-  cost: number 
-  taxes: number 
-  profitMargin: number 
-  price: number 
-  quantities: number  
-  barcode: number;
-  contentPerUnit: number;  
-  isContentInGrams: boolean; 
-}
-
 
 
 export interface ProductsEditDesktopProps {
@@ -64,16 +34,13 @@ export interface ProductsEditDesktopProps {
 }
 
 
+// Asegúrate de ajustar los tipos según tus necesidades reales
 export interface ProductsFormDesktopProps {
   productSelected: Product | null;
   setProductSelected: React.Dispatch<React.SetStateAction<Product | null>>;
   handleClose: () => void;
-}
-
-export interface ColorData {
-  color: string;
-  sizes: string[];
-  quantities: number[];
+  setIsChange: React.Dispatch<React.SetStateAction<boolean>>;
+  products: Product[]; // Agrega esta línea
 }
 
 
@@ -84,14 +51,6 @@ export interface Image {
 
 export interface CartItem extends Product {
   quantity: number;
-  selectedColor: string; 
-  selectedSize: string;  
-  
- colors: {
-    color: string;
-    sizes: string[];
-    quantities: number[];
-  }[]; 
 }
 
 
@@ -101,7 +60,7 @@ export  interface ProductsFormProps {
     productSelected: Product | null;
     setProductSelected: (product: Product | null) => void;
     products: Product[];
-    updateColors: (newColors: { color: string; sizes: string[]; quantities: number[] }[]) => void;
+ 
   }
 
 export interface ShippingMethod {
@@ -227,4 +186,13 @@ export interface SelectedLocation {
 }
 
 
+// types.ts
+export interface Order {
+  id: string;
+  customerName: string;
+  totalAmount: number;
+  timestamp: Date;
+  completedTimestamp: Date;
+  // Agrega más propiedades según la estructura de tu orden
+}
 

@@ -12,6 +12,10 @@ import ProtectedAdmin from "./ProtectedAdmin";
 import ProtectedUsers from "./ProtectedUsers";
 import PaymentSuccess  from "../pages/checkout/PaymentSuccess";
 import PendingVerification from "../pages/checkout/PendingVerification";
+import ProtectedCashier from "./ProtectedCashier";
+import CashRegister from "../pages/cashregister/CashRegister";
+import ProtectedCollector from "./ProtectedCollector";
+import CashCollector from "../pages/cashcollector/CashCollector";
 
 
 const AppRouter = () => {
@@ -40,6 +44,23 @@ const AppRouter = () => {
        
       </Route>
 
+
+       {/* Rutas para usuarios cajeros */}
+
+      <Route element={<ProtectedCashier/>}>
+
+      <Route path="/cashier" element={<CashRegister/>} />
+      
+      </Route>
+
+       {/* Rutas para usuarios cobradores */}
+
+       <Route element={<ProtectedCollector/>}>
+
+      <Route path="/collector" element={<CashCollector/>} />
+
+      </Route>
+
       {/* Login */}
       <Route path="/login" element={<Login />} />
 
@@ -56,10 +77,10 @@ const AppRouter = () => {
        <Route path="/checkout/next" element={<CheckoutNext />} /> 
 
         {/* Paymentsuccess*/}
-        <Route path="/checkout/paymentsuccess" element={<PaymentSuccess />} /> 
+      <Route path="/checkout/paymentsuccess" element={<PaymentSuccess />} /> 
 
-          {/* PendingVerification*/}
-          <Route path="/checkout/pendingverification" element={<PendingVerification />} /> 
+      {/* PendingVerification*/}
+      <Route path="/checkout/pendingverification" element={<PendingVerification />} /> 
 
        
 

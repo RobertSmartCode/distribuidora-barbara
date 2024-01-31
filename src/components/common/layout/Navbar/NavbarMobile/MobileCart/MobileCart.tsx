@@ -7,14 +7,14 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 
 import { CartContext } from '../../../../../../context/CartContext';
-import { Link } from 'react-router-dom';
-
+import { customColors  } from '../../../../../../styles/styles';
 import CartItemList from './CartItemList'; 
-import ShippingMethods from './ShippingMethods/ShippingMethods'; 
-import { Button } from '@mui/material';
-
 import useMediaQuery from '@mui/material/useMediaQuery';
-import {ShippingMethod} from "../../../../../../type/type"
+import ShippingMethods from './ShippingMethods/ShippingMethods';
+import { useShippingMethods } from '../../../../../../context/ShippingMethodsContext';
+import { Link } from 'react-router-dom';
+import { Button } from '@mui/material';
+import { useNavigate } from 'react-router-dom'; 
 
 
 
@@ -23,18 +23,9 @@ const MobileCart: React.FC = () => {
   
   
   const [cartOpen, setCartOpen] = useState(false);
- 
-  const { cart, getTotalPrice, getTotalQuantity,  updateShippingInfo, getSelectedShippingMethod } = useContext(CartContext)! ?? {};
-
-
-
-  
-    
-const handleShippingMethodSelect = (method: ShippingMethod) => {
-  updateShippingInfo(method, method.price);
-};
-
-
+  const { cart, getTotalQuantity} = useContext(CartContext)! ?? {};
+  const { getSelectedShippingMethod } = useShippingMethods()!;
+  const navigate = useNavigate();  // Utiliza useNavigate
   const isDesktop = useMediaQuery('(min-width: 768px)');
 
   const handleCartClick = () => {
@@ -42,27 +33,8 @@ const handleShippingMethodSelect = (method: ShippingMethod) => {
   };
   
 // Obtener el subtotal sin envío
-const subtotal = getTotalPrice ? getTotalPrice() : 0;
 
 
-// Obtener el costo de envío del método seleccionado
-const shippingCost = (getSelectedShippingMethod())?.price || 0;
-
-// Calcular el total sumando el subtotal y el costo de envío
-const total = subtotal + shippingCost;
-
-
-
-  const customColors = {
-    primary: {
-      main: '#000',
-      contrastText: '#000',
-    },
-    secondary: {
-      main: '#fff',
-      contrastText: '#fff',
-    },
-  };
 
   const cartContainerStyles = {
     display: "flex",
@@ -103,17 +75,6 @@ const total = subtotal + shippingCost;
     fontSize: '24px',
   };
 
-  const buyButtonStyles = {
-    backgroundColor: customColors.primary.main, // Color de fondo del botón
-    color: customColors.secondary.contrastText, // Color del texto del botón
-    '&:hover, &:focus': {
-      backgroundColor: customColors.secondary.main,
-      color: customColors.primary.contrastText},
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    margin: "25px", 
-  };
 
 
   const searchTextStyles = {
@@ -135,15 +96,34 @@ const total = subtotal + shippingCost;
     zIndex: 1300,
   };
 
+  const buyButtonStyles = {
+    backgroundColor: customColors.primary.main,
+    color: customColors.secondary.contrastText,
+    '&:hover, &:focus': {
+      backgroundColor: customColors.secondary.main,
+      color: customColors.primary.contrastText
+    },
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    margin: "25px",
+  };
 
+  const handleStartCheckout = () => {
+    if (getSelectedShippingMethod()) {
+      navigate('/checkout');  // Utiliza navigate
+    } else {
+      console.error('Seleccione un método de envío para continuar.');
+    }
+  };
   
-  return (
+   return (
     <Box sx={cartContainerStyles}>
       <IconButton
         aria-label="shopping cart"
         onClick={handleCartClick}
       >
-        <ShoppingCartIcon sx={cartIconStyles} /> 
+        <ShoppingCartIcon sx={cartIconStyles} />
         <Typography sx={itemCountStyles}>
           {getTotalQuantity ? getTotalQuantity() : 0}
         </Typography>
@@ -156,7 +136,7 @@ const total = subtotal + shippingCost;
         sx={{
           display: { xs: "block" },
           flexShrink: 0,
-          "& .MuiDrawer-paper": drawerPaperStyles
+          "& .MuiDrawer-paper": drawerPaperStyles,
         }}
       >
         <Box sx={topBarStyles}>
@@ -177,56 +157,44 @@ const total = subtotal + shippingCost;
           {cart?.length ?? 0 > 0 ? (
             <>
               <CartItemList />
-              <ShippingMethods
-              onSelectMethod={handleShippingMethodSelect}
-              initialSelectedMethod={null}
-            />
-              <Box  style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <Typography style={{ fontSize: '1.2rem', fontWeight: 'bold', paddingLeft: '30px' }}>Total:</Typography>
-              <Typography style={{ fontSize: '1.2rem', fontWeight: 'bold', paddingRight: '50px' }}>${total}</Typography>
+              <ShippingMethods />
+              <Box style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <Typography style={{ fontSize: '1.2rem', fontWeight: 'bold', paddingLeft: '30px' }}>Total:</Typography>
+                <Typography style={{ fontSize: '1.2rem', fontWeight: 'bold', paddingRight: '50px' }}>${}</Typography>
               </Box>
-
-              <Box 
-                  style={{ display: "flex", justifyContent: "center", alignItems: "center"}}
-                  onClick={handleCartClick}
-                  
-                  >
-                {/* Renderiza los productos del carrito aquí */}
-                
+              <Box
+                style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+                onClick={handleStartCheckout}
+              >
                 {!getSelectedShippingMethod() && (
                   <Typography style={{ fontSize: '1rem', color: 'red', marginTop: '20px', marginBottom: '30px' }}>
-                   Seleccione un método de envío para continuar.
+                    Seleccione un método de envío para continuar.
                   </Typography>
                 )}
-
                 {getSelectedShippingMethod() && (
-                <Link to="/checkout">
-                <Button
-                  sx={{ ...buyButtonStyles, backgroundColor: !getSelectedShippingMethod()? '#ccc' : buyButtonStyles.backgroundColor }}
-                  variant="contained"
-                  size="medium"
-                  disabled={!getSelectedShippingMethod()}
-                >
-                  Iniciar Compra
-                </Button>
-                </Link>
+                  <Link to="/checkout">
+                    <Button
+                      sx={{ ...buyButtonStyles, backgroundColor: !getSelectedShippingMethod() ? '#ccc' : buyButtonStyles.backgroundColor }}
+                      variant="contained"
+                      size="medium"
+                      disabled={!getSelectedShippingMethod()}
+                    >
+                      Iniciar Compra
+                    </Button>
+                  </Link>
                 )}
-
               </Box>
-              
             </>
           ) : (
             <Box
               style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
               }}
             >
               <Typography variant="body1">El carrito está vacío</Typography>
             </Box>
-
           )}
         </Box>
       </Drawer>

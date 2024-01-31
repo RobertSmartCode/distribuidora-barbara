@@ -8,27 +8,40 @@ import {
   Grid,
   Snackbar,
   MenuItem,
-  Card
-
+  Card,
+  FormControl,
+  InputLabel,
+  Select,
+  Checkbox,
+  FormControlLabel,
+  SelectChangeEvent,
 } from "@mui/material";
-
-
-
 import { Product,  Image, ProductsFormDesktopProps } from '../../../../type/type';
 import { getFormattedDate } from '../../../../utils/dateUtils';
 import { ErrorMessage } from '../../../../messages/ErrorMessage';
 import { productSchema } from '../../../../schema/productSchema';
 import { useSelectedItemsContext } from '../../../../context/SelectedItems';
-import { useProductVariantsContext } from '../../../../context/ProductVariantsContext'; 
-
 import ImageManager from '../ImageManager';
 import { useImagesContext } from "../../../../context/ImagesContext";
-import ProductVariants from "./ProductVariants";
+
 
 
 const ProductsFormDesktop: React.FC<ProductsFormDesktopProps> = (props) => {
-  const { productSelected, setProductSelected  } = props;
+  
+  const calculatePrice = (cost: string, taxes: string, profitMargin: string): number => {
+    // Convierte los valores a números o usa 0 si no son válidos
+    const numericCost = parseFloat(cost) || 0;
+    const numericTaxes = parseFloat(taxes) || 0;
+    const numericProfitMargin = parseFloat(profitMargin) || 0;
+  
+    const totalPrice = numericCost + (numericCost * numericTaxes / 100) + (numericCost * numericProfitMargin / 100);
+    return Math.round(totalPrice);
+  };
+  
+  
 
+
+  const { productSelected, setProductSelected  } = props;
 
   const [isLoading] = useState<boolean>(false);
 
@@ -42,17 +55,15 @@ const ProductsFormDesktop: React.FC<ProductsFormDesktopProps> = (props) => {
     category: "",
     discount: 0,
     unitperpack: 10,
-    productVariants: [{
-      type: "",
-      cost: 0,
-      taxes: 0,
-      profitMargin: 0,
-      price: 0,
-      quantities: 0,
-      barcode: 0,
-      contentPerUnit: 0, 
-      isContentInGrams: true,  
-    }],
+    type: "",
+    cost: 0,
+    taxes: 0,
+    profitMargin: 0,
+    price: 0,
+    quantities: 0,
+    barcode: 0,
+    contentPerUnit: 0, 
+    isContentInGrams: true,  
     keywords: "",
     salesCount: "",
     featured: false,
@@ -84,7 +95,7 @@ const setErrorTimeoutAndClear = () => {
   setErrorTimeout(timeout);
 };
 
-const { productVariantOptions } = useProductVariantsContext()!;
+
 
 const { images, updateImages} = useImagesContext()!;
 
@@ -93,29 +104,16 @@ const [selectedImages, setSelectedImages] = useState<Image[]>([]);
 
 
 
-const [selectedProductVariants, setSelectedProductVariants] = useState<{ 
-  type: string; 
-  cost: number; 
-  taxes: number; 
-  profitMargin: number; 
-  price: number; 
-  quantities: number;
-  barcode: number;
-  contentPerUnit: number;  
-  isContentInGrams: boolean;
-  
-   }[]>([]);
+
  
 useEffect(() => {
   if (productSelected) {
-   
-    setSelectedProductVariants(productSelected.productVariants || []);
      // Convierte las URLs en objetos Image y actualiza el estado
      const imageObjects: Image[] = productSelected.images.map((url) => ({ url }));
      setSelectedImages(imageObjects);
   } else {
    
-    setSelectedProductVariants([]);
+
   }
 }, [productSelected, newProduct]);
 
@@ -139,6 +137,64 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
   }
 };
 
+// Manejador para cambios en el componente Select
+const handleSelectChange = (event: SelectChangeEvent<string>) => {
+  const { name, value } = event.target;
+
+  const updatedProduct = productSelected
+    ? { ...productSelected, [name]: value }
+    : { ...newProduct, [name]: value };
+
+  if (productSelected) {
+    setProductSelected(updatedProduct);
+  } else {
+    setNewProduct(updatedProduct);
+  }
+};
+
+
+
+
+
+const [isContentInGrams, setIsContentInGrams] = useState<boolean>(true);
+
+const handleIsContentInGramsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const isChecked = event.target.checked;
+  
+  // Actualizar el estado
+  setIsContentInGrams(isChecked);
+
+  // Actualizar el objeto según sea necesario
+  const updatedProduct = productSelected
+    ? { ...productSelected, isContentInGrams: isChecked }
+    : { ...newProduct, isContentInGrams: isChecked };
+
+  // Actualizar el estado correspondiente
+  if (productSelected) {
+    setProductSelected(updatedProduct);
+  } else {
+    setNewProduct(updatedProduct);
+  }
+};
+
+const handleIsContentInMililitersChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const isChecked = event.target.checked;
+
+  // Actualizar el estado
+  setIsContentInGrams(!isChecked);
+
+  // Actualizar el objeto según sea necesario
+  const updatedProduct = productSelected
+    ? { ...productSelected, isContentInGrams: !isChecked }
+    : { ...newProduct, isContentInGrams: !isChecked };
+
+  // Actualizar el estado correspondiente
+  if (productSelected) {
+    setProductSelected(updatedProduct);
+  } else {
+    setNewProduct(updatedProduct);
+  }
+};
 
 
   const updateProduct = async (
@@ -162,7 +218,7 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
   ) => {
     try {
       const newDocRef = await addDoc(collectionRef, productInfo);
-      console.log("New product ID:", newDocRef.id);
+     
       return newDocRef.id; 
     } catch (error) {
       console.error("Error creating product:", error);
@@ -184,23 +240,25 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
   
       await productSchema.validate(productToValidate, { abortEarly: false });
   
-      if (productVariantOptions.length === 0) {
-        setSnackbarMessage('Debe agregar al menos una variante al producto.');
-        setSnackbarOpen(true);
-        return; // Terminar la función si hay un error
-      }
+   
 
       const convertImagesToStringArray = (images: Image[]): string[] => {
         return images.map(image => image.url);
       };
       
-  
+
+         // Calcular el precio antes de enviar la información al servidor
+         const calculatedPrice = calculatePrice(
+          productToValidate.cost.toString(),
+          productToValidate.taxes.toString(),
+          productToValidate.profitMargin.toString()
+        );
+        
       // Crear un objeto con la información del producto
       const productInfo = {
         ...productToValidate,
-       
+        price: calculatedPrice, // Asignar el precio calculado
         createdAt: productToValidate.createdAt ?? getFormattedDate(),
-        productVariants:productVariantOptions.length > 0 ? [...productVariantOptions] : [],
         keywords: productToValidate.title.toLowerCase(),
         images: convertImagesToStringArray(images),
       };
@@ -251,6 +309,9 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       }
     }
   };
+
+
+
 
 return (
     <>
@@ -397,6 +458,205 @@ return (
                 }
               />
             </Grid>
+
+
+
+            <Grid item xs={12} sm={6}>
+            <FormControl fullWidth variant="outlined" sx={{ width: '75%', margin: 'auto' }}>
+              <InputLabel id="type-label">Tipo</InputLabel>
+              <Select
+                labelId="type-label"
+                id="type"
+                name="type"
+                value={productSelected ? productSelected.type : newProduct.type}
+                label="Tipo"
+                onChange={handleSelectChange}
+                fullWidth
+              >
+                <MenuItem value="Bulto">Bulto</MenuItem>
+                <MenuItem value="Unidad">Unidad</MenuItem>
+              </Select>
+            </FormControl>
+            <ErrorMessage
+                 messages={
+                   errors.type
+                     ? Array.isArray(errors.type)
+                       ? errors.type
+                       : [errors.type]
+                     : []
+                 }
+               />
+          </Grid>
+
+      
+            <Grid item xs={12} sm={6}>
+              <TextField
+                type="number"
+                variant="outlined"
+                label="Costo"
+                name="cost"
+              
+                value={productSelected ? productSelected.cost : newProduct.cost}
+                onChange={handleChange}
+                fullWidth
+                sx={{ width: '75%', margin: 'auto' }}
+              />
+                  <ErrorMessage
+                    messages={
+                      errors.cost
+                        ? Array.isArray(errors.cost)
+                          ? errors.cost
+                          : [errors.cost]
+                        : []
+                    }
+                  />
+            </Grid>
+      
+            <Grid item xs={12} sm={6}>
+              <TextField
+                type="number"
+                variant="outlined"
+                label="Impuestos"
+                name="taxes"
+              
+                value={productSelected ? productSelected.taxes : newProduct.taxes}
+                onChange={handleChange}
+                fullWidth
+                sx={{ width: '75%', margin: 'auto' }}
+              />
+                  <ErrorMessage
+                    messages={
+                      errors.taxes
+                        ? Array.isArray(errors.taxes)
+                          ? errors.taxes
+                          : [errors.taxes]
+                        : []
+                    }
+                  />
+            </Grid>
+  
+            <Grid item xs={12} sm={6}>
+              <TextField
+                type="number"
+                variant="outlined"
+                label="Margen de Ganancia"
+                name="profitMargin"
+              
+                value={productSelected ? productSelected.profitMargin: newProduct.profitMargin}
+                onChange={handleChange}
+                fullWidth
+                sx={{ width: '75%', margin: 'auto' }}
+              />
+                <ErrorMessage
+                    messages={
+                      errors.profitMargin
+                        ? Array.isArray(errors.profitMargin)
+                          ? errors.profitMargin
+                          : [errors.profitMargin]
+                        : []
+                    }
+                  />
+            </Grid>
+
+
+      
+            <Grid item xs={12} sm={6}>
+              <TextField
+                type="number"
+                variant="outlined"
+                label="Cantidad"
+                name="quantities"
+              
+                value={productSelected ? productSelected.quantities: newProduct.quantities}
+                onChange={handleChange}
+                fullWidth
+                sx={{ width: '75%', margin: 'auto' }}
+              />
+                <ErrorMessage
+                    messages={
+                      errors.quantities
+                        ? Array.isArray(errors.quantities)
+                          ? errors.quantities
+                          : [errors.quantities]
+                        : []
+                    }
+                  />
+            </Grid>
+
+
+
+            <Grid item xs={12} sm={6}>
+              <TextField
+                type="number"
+                variant="outlined"
+                label="Código de Barra"
+                name="barcode"
+                
+                value={productSelected ? productSelected.barcode: newProduct.barcode}
+                onChange={handleChange}
+                fullWidth
+                sx={{ width: '75%', margin: 'auto' }}
+              />
+                    <ErrorMessage
+                    messages={
+                      errors.barcode
+                        ? Array.isArray(errors.barcode)
+                          ? errors.barcode
+                          : [errors.barcode]
+                        : []
+                    }
+                  />
+            </Grid>
+
+
+            <Grid item xs={12} sm={6}>
+              <TextField
+                type="number"
+                variant="outlined"
+                label="Contenido por Unidad"
+                name="contentPerUnit"    
+                value={productSelected ? productSelected.contentPerUnit: newProduct.contentPerUnit}   
+                onChange={handleChange}
+                fullWidth
+                sx={{ width: '75%', margin: 'auto' }}
+              />
+                    <ErrorMessage
+                    messages={
+                      errors.contentPerUnit
+                        ? Array.isArray(errors.contentPerUnit)
+                          ? errors.contentPerUnit
+                          : [errors.contentPerUnit]
+                        : []
+                    }
+                  />
+            </Grid>
+     
+            <Grid item xs={12} sm={6}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={isContentInGrams}
+                  onChange={handleIsContentInGramsChange}
+                />
+              }
+              label="¿El contenido es en gramos?"
+            />
+
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={!isContentInGrams}
+                  onChange={handleIsContentInMililitersChange}
+                />
+              }
+              label="¿El contenido es en mililitros?"
+            />
+        </Grid>
+
+
+
+
+
             <Grid item xs={12} sm={6}>
             <TextField
               variant="outlined"
@@ -418,13 +678,7 @@ return (
             />
           </Grid>
 
-             {/* ProductVariants */}
-             <Grid item xs={12} sm={12}>
-                <ProductVariants
-                  initialData={selectedProductVariants}
-                />
-              </Grid>
-             {/*ProductVariants*/}
+     
    
    
              <Grid item xs={12} sm={6}>
