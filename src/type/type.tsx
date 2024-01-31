@@ -166,7 +166,7 @@ export interface SocialMedia {
 
 
 export interface Branch {
-  id: string; 
+  id?: string; 
   name: string;
   address: string;
   phone: string;

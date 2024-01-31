@@ -167,7 +167,7 @@ useEffect(() => {
                 {product.title}
               </Typography>
               <Typography variant="subtitle2" color="textSecondary" sx={productPriceStyles}>
-                Precio: ${product.unit_price}
+                Precio: ${product.price}
               </Typography>
               <Box sx={buttonContainerStyles}>
                 <Button

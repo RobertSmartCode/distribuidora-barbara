@@ -22,7 +22,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import { StoreData, SocialMedia, Branch, Box } from "../../../type/type";
-
+import { v4 as uuidv4 } from 'uuid';
 
 
 
@@ -235,7 +235,7 @@ const handleEditBox = (branchIndex: number, boxIndex: number) => {
 
 const handleAddBox = (branchIndex: number) => {
   // Lógica para agregar la caja a la sucursal correspondiente
-  const newBox: Box = { number: boxNumber, location: boxLocation, branchIndex };
+  const newBox: Box = { id: uuidv4(), number: boxNumber, location: boxLocation, branchIndex };
 
   setBranches((prevBranches) => {
     const updatedBranches = [...prevBranches];
