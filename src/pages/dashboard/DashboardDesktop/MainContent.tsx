@@ -7,7 +7,7 @@ import StoreDataDesktop from '../StoreData/StoreDataDesktop';
 import PromoCodeDesktop from '../PromoCode/PromoCodeDesktop';
 import ProductsFormDesktop from '../Products/ProductDesktop/ProductsFormDesktop';
 import CompletedOrderList from '../MyOrders/CompletedOrderList';
-
+import {ProductsFormDesktopProps}from "../../../type/type";
 
 
 const MainContent = () => {
@@ -15,6 +15,15 @@ const MainContent = () => {
 
   // Obtén la primera selección (puedes ajustar según tus necesidades)
   const selectedItem = selectedItems[0]?.name || '';
+
+
+  const productsFormDesktopProps: ProductsFormDesktopProps = {
+    productSelected: null,
+    setProductSelected: () => {},
+    handleClose: () => {},
+    setIsChange: () => {},
+    products: [],
+  };
 
   return (
     <>
@@ -25,7 +34,7 @@ const MainContent = () => {
 
         {/* Renderizar el componente correspondiente según la selección */}
         {selectedItem === 'Ordenes' && <CompletedOrderList/>}
-        {selectedItem === 'Agregar Producto' && <ProductsFormDesktop />}
+          {selectedItem === 'Agregar Producto' && <ProductsFormDesktop {...productsFormDesktopProps} />}
         {selectedItem === 'Mis Productos' && <ProductsListDesktop/>}
         {selectedItem === 'Métodos de Pago' && <PaymentMethodsDesktop />}
         {selectedItem === 'Métodos de Envío' && <ShippingMethodsDesktop/>}
