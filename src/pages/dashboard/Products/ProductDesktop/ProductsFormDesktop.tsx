@@ -52,13 +52,14 @@ const ProductsFormDesktop: React.FC<ProductsFormDesktopProps> = (props) => {
     title: "",
     brand: "",
     description: "",
+    sector: "",
     category: "",
     discount: 0,
     unitperpack: 10,
     type: "",
     cost: 0,
-    taxes: 0,
-    profitMargin: 0,
+    taxes: 21,
+    profitMargin: 30,
     price: 0,
     quantities: 0,
     barcode: 0,
@@ -393,6 +394,27 @@ return (
                      : []
                  }
                />
+          
+             </Grid>
+             <Grid item xs={12} sm={6}>
+               <TextField
+                 variant="outlined"
+                 value={productSelected ? productSelected.sector : newProduct.sector}
+                 label="Rubro"
+                 name="sector"
+                 onChange={handleChange}
+                 fullWidth
+                 sx={{ width: '75%', margin: 'auto' }}
+               />
+                <ErrorMessage
+                 messages={
+                   errors.sector
+                     ? Array.isArray(errors.sector)
+                       ? errors.sector
+                       : [errors.sector]
+                     : []
+                 }
+               />
  
              </Grid>
              <Grid item xs={12} sm={6}>
@@ -416,6 +438,8 @@ return (
                />
  
              </Grid>
+           
+
 
              <Grid item xs={12} sm={6}>
                <TextField

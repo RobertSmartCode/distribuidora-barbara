@@ -38,6 +38,7 @@ const ProductsListDesktop = () => {
           title: productData.title || "",
           brand: productData.brand || "",
           description: productData.description || "",
+          sector: productData.sector || "",
           category: productData.category || "",
           discount: productData.discount || 0,
           unitperpack: productData.unitperpack || 0,

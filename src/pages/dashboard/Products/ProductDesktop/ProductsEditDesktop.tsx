@@ -45,7 +45,7 @@ const ProductsEditDesktop: React.FC<ProductsEditDesktopProps> = ({ productSelect
 
   useEffect(() => {
     if (productSelected) {
-   
+      console.log(productSelected)
       setIsModalOpen(true);
     }
   }, [productSelected]); 
@@ -96,19 +96,18 @@ const [selectedImages, setSelectedImages] = useState<Image[]>([]);
 
 // Función para manejar la eliminación de imágenes existentes
 
-
 const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-  
-    const updatedProduct = productSelected
-      ? { ...productSelected, [name]: value }
-      : null;  // Asegúrate de ajustar esta parte según tus necesidades
-  
-    if (productSelected) {
-      setProductSelected(updatedProduct);
-    }
-  };
-  
+  const { name, value } = e.target;
+
+  const updatedProduct = productSelected
+    ? { ...productSelected, [name]: value }
+    : null;
+
+  if (productSelected) {
+    setProductSelected(updatedProduct);
+  }
+};
+
 
 // Manejador para cambios en el componente Select
 const handleSelectChange = (event: SelectChangeEvent<string>) => {
@@ -369,6 +368,28 @@ const handleIsContentInMililitersChange = (event: React.ChangeEvent<HTMLInputEle
                />
  
              </Grid>
+
+             <Grid item xs={12} sm={6}>
+              <TextField
+                variant="outlined"
+                value={productSelected ? productSelected.sector : ''}
+                label="Rubro"
+                name="sector"
+                onChange={handleChange}
+                fullWidth
+                sx={{ width: '75%', margin: 'auto' }}
+              />
+              <ErrorMessage
+                messages={
+                  errors.sector
+                    ? Array.isArray(errors.sector)
+                      ? errors.sector
+                      : [errors.sector]
+                    : []
+                }
+              />
+            </Grid>
+
              <Grid item xs={12} sm={6}>
                <TextField
                  variant="outlined"
@@ -388,9 +409,10 @@ const handleIsContentInMililitersChange = (event: React.ChangeEvent<HTMLInputEle
                      : []
                  }
                />
- 
              </Grid>
+            
 
+             
              <Grid item xs={12} sm={6}>
                <TextField
                  variant="outlined"

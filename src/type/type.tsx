@@ -5,6 +5,7 @@ export interface Product {
   brand: string;
   description: string;
   category: string;
+  sector?: string;
   discount: number;
   unitperpack: number;
   type: string;
