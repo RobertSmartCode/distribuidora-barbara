@@ -23,8 +23,8 @@ const Banner = () => {
           padding: "20px",
         }}
       >
-        <Typography variant="h4">E-nfinity</Typography>
-        <Typography variant="subtitle1">¡Viste a la moda!</Typography>
+        <Typography variant="h4">Barbara</Typography>
+        <Typography variant="subtitle1">¡Excelencia en Cada Entrega!</Typography>
       </Box>
     </Link>
   );
