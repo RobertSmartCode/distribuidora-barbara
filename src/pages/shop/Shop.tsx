@@ -5,15 +5,13 @@ import { Link } from "react-router-dom";
 import { Grid, Card, CardContent, Typography, Button, IconButton, Box, CardMedia } from "@mui/material";
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Product } from '../../type/type';
-import { useTheme, useMediaQuery } from '@mui/material';
 import SelectionCard from "../../components/pageComponents/SelectionCard/SelectionCard";
 
 const Shop: React.FC = () => {
   const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+ 
   const [isComponentReady, setIsComponentReady] = useState(false);
   const [loadedImageCount, setLoadedImageCount] = useState(0);
 
@@ -61,86 +59,71 @@ const Shop: React.FC = () => {
     setSelectedProduct(product);
   };
 
+ 
   return (
+
     <div>
-      {isComponentReady && (
-        <Grid container spacing={2} sx={containerStyles}>
-         <Grid item xs={12} md={isMobile ? 3 : 2} lg={isMobile ? 3 : 2}>
-            {isMobile ? (
-              <Grid container spacing={2} justifyContent="left" sx={{ marginLeft: 1 }}>
-                {/* Renderizar componente FilterProduct aquí si es necesario */}
-              </Grid>
-            ) : (
-              null
-              // Renderizar componente Filter aquí si es necesario
-            )}
-            {isMobile && (
-              <Grid container spacing={2} justifyContent="left" sx={{ margin: 1, marginTop: 1 }}>
-                {/* Renderizar componente AppliedFilters aquí si es necesario */}
-              </Grid>
-            )}
-          </Grid>
-
-
-          <Grid item container xs={12} md={isMobile ? 9 : 10} lg={isMobile ? 9 : 10} spacing={1}>
-            {products.map((product) => (
-              <Grid item xs={6} sm={4} md={3} lg={3} key={product.id}>
-                <Card sx={productStyles}>
-                <CardMedia
-                  component="img"
-                  height="140"
-                  image={product.images[0]}
-                  alt={product.title}
-                  style={{ objectFit: "contain", width: "100%", 
-                  marginBottom: '8px',
-                  borderBottom: "1px solid #000", }}
-                  onLoad={handleImageLoad} 
+       {isComponentReady && (
+   
+    <Grid container spacing={2} sx={containerStyles}>
+    
+  
+      {/* Productos más vendidos */}
+      {products.map((product) => (
+        <Grid item xs={6} sm={4} md={4} lg={3} key={product.id}>
+          <Card sx={productStyles}>
+          <CardMedia
+            component="img"
+            height="140"
+            image={product.images[0]}
+            alt={product.title}
+            style={{ objectFit: "contain", width: "100%", 
+            marginBottom: '8px',
+            borderBottom: "1px solid #000", }}
+            onLoad={handleImageLoad} 
+            />
+             {selectedProduct === product ?  (
+                  <SelectionCard
+                    isOpen={true}
+                    onClose={() => setSelectedProduct(null)}
+                    handleBuyClick={handleBuyClick}
+                    product={product}
+                   
                   />
-                  {selectedProduct === product ? (
-                    <SelectionCard
-                      isOpen={true}
-                      onClose={() => setSelectedProduct(null)}
-                      handleBuyClick={handleBuyClick}
-                      product={product}
-                    />
-                  ) : null}
-
-                  <CardContent>
-                    <Typography variant="subtitle1" gutterBottom sx={productTitleStyles}>
-                      {product.title}
-                    </Typography>
-                    <Typography variant="subtitle2" sx={productPriceStyles}>
-                      Precio: ${product.price}
-                      
-                    </Typography>
-                    
-                    <Box sx={buttonContainerStyles}>
-                      <Button
-                        onClick={() => handleBuyClick(product)}
-                        variant="contained"
-                        color="primary"
-                        size="small"
-                        sx={productCartStyles}
-                      >
-                        Comprar
-                      </Button>
-                      <IconButton
-                        component={Link}
-                        to={`/itemDetail/${product.id}`}
-                        aria-label="Ver"
-                        color="secondary"
-                        size="small"
-                        sx={productDetailStyles}
-                      >
-                        <VisibilityIcon sx={iconStyles} />
-                      </IconButton>
-                    </Box>
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
+                ) : null}
+            <CardContent>
+              <Typography variant="subtitle1" gutterBottom sx={productTitleStyles}>
+                {product.title}
+              </Typography>
+              <Typography variant="subtitle2" color="textSecondary" sx={productPriceStyles}>
+                Precio: ${product.price}
+              </Typography>
+              <Box sx={buttonContainerStyles}>
+                <Button
+                  onClick={() => handleBuyClick(product)} 
+                  variant="contained"
+                  color="primary"
+                  size="small"
+                  sx={productCartStyles}
+                >
+                  Comprar
+                </Button>
+                <IconButton
+                  component={Link}
+                  to={`/itemDetail/${product.id}`}
+                  aria-label="Ver"
+                  color="secondary"
+                  size="small"
+                  sx={productDetailStyles}
+                >
+                  <VisibilityIcon sx={iconStyles} />
+                </IconButton>
+              </Box>
+            </CardContent>
+          </Card>
         </Grid>
+      ))}
+    </Grid>
       )}
     </div>
   );

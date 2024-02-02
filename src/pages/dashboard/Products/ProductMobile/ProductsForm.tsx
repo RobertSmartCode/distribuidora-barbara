@@ -22,8 +22,6 @@ import { useImagesContext } from "../../../../context/ImagesContext";
 const ProductsFormDesktop: React.FC<ProductsFormDesktopProps> = (props) => {
   
 
-
-
   const { productSelected, setProductSelected  } = props;
 
   const [isLoading] = useState<boolean>(false);

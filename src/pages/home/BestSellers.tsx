@@ -1,13 +1,13 @@
 // BestSellers.tsx
-import React, { useContext, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import { db } from "../../firebase/firebaseConfig";
 import { getDocs, collection } from "firebase/firestore";
 import { Link } from "react-router-dom";
 import { Grid, Card, CardContent, Typography, Button, IconButton, Box, CardMedia } from "@mui/material";
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import {Product, CartItem } from "../../type/type"
+import {Product} from "../../type/type"
 import SelectionCard from "../../components/pageComponents/SelectionCard/SelectionCard";
-import { CartContext } from "../../context/CartContext";
+
 
 
 
@@ -19,7 +19,7 @@ const [products, setProducts] = useState<Product[]>([]);
 const [isComponentReady, setIsComponentReady] = useState(false);
 const [loadedImageCount, setLoadedImageCount] = useState(0);
 const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-const { addToCart } = useContext(CartContext)!;
+
 
 
 const handleImageLoad = () => {
@@ -128,13 +128,8 @@ useEffect(() => {
   };
 
   const handleBuyClick = (product: Product) => {
-    const cartItem: CartItem = {
-      ...product,
-      quantity: 1,
-    };
-    addToCart(cartItem);
+    setSelectedProduct(product);
   };
-
 
   return (
 
