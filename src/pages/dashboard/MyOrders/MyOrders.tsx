@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import OrderDetails from './OrderDetails';
-
 import {
   Button,
   IconButton,
@@ -9,44 +8,38 @@ import {
   Typography,
  
 } from "@mui/material";
-
 import CloseIcon from "@mui/icons-material/Close";
+import {
+    customColors,
 
-const customColors = {
-    primary: {
-      main: '#000',
-      contrastText: '#000',
-    },
-    secondary: {
-      main: '#fff',
-      contrastText: '#fff',
-    },
-  };
+    } from '../../../styles/styles';
 
-  const topBarStyles = {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    flexDirection: "row", 
-    padding: "12px 8px",
-    width: "100%",
-    margin: "0 auto", 
-    backgroundColor: customColors.primary.main,
-    color: customColors.secondary.main,
-  };
 
-  const closeButtonStyles = {
-    color: customColors.secondary.main,
-    marginRight: '2px',
-    marginLeft: '0',
-    fontSize: '24px',
-  };
+    export const topBarStyles = {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      flexDirection: "row", 
+      padding: "12px 8px",
+      width: "100%",
+      margin: "0 auto", 
+      backgroundColor: customColors.primary.main,
+      color: customColors.secondary.main,
+    };
+    
+    export const textStyles = {
+      fontSize: '20px',
+      color: customColors.secondary.main,
+      marginLeft: '24px',
+    };
+  
+const closeButtonStyles = {
+      color: customColors.secondary.main,
+      marginRight: '2px',
+      marginLeft: '0',
+      fontSize: '24px',
+    };
 
-  const textStyles = {
-    fontSize: '20px',
-    color: customColors.secondary.main,
-    marginLeft: '24px',
-  };
 
 const MyOrders: React.FC = () => {
  
@@ -60,9 +53,6 @@ const MyOrders: React.FC = () => {
   const handleClose = () => {
     setOpen(false);
   };
-
-  
-
 
   return (
     <Box>

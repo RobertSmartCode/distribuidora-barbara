@@ -34,7 +34,7 @@ const MainContent = () => {
 
         {/* Renderizar el componente correspondiente según la selección */}
         {selectedItem === 'Ordenes' && <CompletedOrderList/>}
-          {selectedItem === 'Agregar Producto' && <ProductsFormDesktop {...productsFormDesktopProps} />}
+        {selectedItem === 'Agregar Producto' && <ProductsFormDesktop {...productsFormDesktopProps} />}
         {selectedItem === 'Mis Productos' && <ProductsListDesktop/>}
         {selectedItem === 'Métodos de Pago' && <PaymentMethodsDesktop />}
         {selectedItem === 'Métodos de Envío' && <ShippingMethodsDesktop/>}

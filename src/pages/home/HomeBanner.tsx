@@ -2,23 +2,22 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Grid } from "@mui/material";
 
-
-
 const HomeBanner: React.FC = () => {
-  const banner= "https://firebasestorage.googleapis.com/v0/b/distribuidora-barbara.appspot.com/o/Logos%2FBannerDB.png?alt=media&token=a03cc02a-3c41-4074-bf4e-8a12b42adcee"
+  const videoUrl =
+    "https://firebasestorage.googleapis.com/v0/b/distribuidora-barbara.appspot.com/o/Imagen%2FHaz%20clik%20aqui%20para%20ver%20los%20productos.mp4?alt=media&token=3c0662d3-c120-4008-8cb2-c7d2e20372c5";
+
   return (
     <Grid container justifyContent="center" alignItems="center" marginTop="0px">
       <Grid item xs={12} lg={6}>
         <Link to="/shop">
-          <img
-            src={banner}
-            alt="Banner"
-            style={{
-              width: "100%", // Ajusta el ancho según tus necesidades
-              height: "auto", // Ajusta la altura automáticamente
-              cursor: "pointer", // Cambia el cursor al pasar el ratón
-            }}
-          />
+        <video
+            width="100%" // Ajusta el ancho según tus necesidades
+            height="auto" // Ajusta la altura automáticamente
+            autoPlay // Reproducción automática
+          >
+            <source src={videoUrl} type="video/mp4" />
+            Tu navegador no soporta el elemento de video.
+          </video>
         </Link>
       </Grid>
     </Grid>

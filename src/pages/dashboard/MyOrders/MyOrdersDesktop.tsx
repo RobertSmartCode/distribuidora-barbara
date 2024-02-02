@@ -33,7 +33,7 @@ const MyOrdersDesktop : React.FC = () => {
           // Convertir el _Timestamp a un objeto Date
           date: order.data().date.toDate(),
         })) as Order[];
-
+        console.log(newArr)
         setMyOrders(newArr);
       })
       .catch((error) => console.log(error));
