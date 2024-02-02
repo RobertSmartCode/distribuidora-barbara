@@ -9,9 +9,6 @@ export interface Product {
   discount: number;
   unitperpack: number;
   type: string;
-  cost: number;
-  taxes: number;
-  profitMargin: number;
   price: number;
   quantities: number;
   barcode: number;

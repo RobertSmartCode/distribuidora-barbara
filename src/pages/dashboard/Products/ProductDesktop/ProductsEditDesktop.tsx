@@ -488,70 +488,28 @@ const handleIsContentInMililitersChange = (event: React.ChangeEvent<HTMLInputEle
               <TextField
                 type="number"
                 variant="outlined"
-                label="Costo"
-                name="cost"
+                label="Precio"
+                name="price"
               
-                value={productSelected ? productSelected.cost : ''}
+                value={productSelected ? productSelected.price : ''}
                 onChange={handleChange}
                 fullWidth
                 sx={{ width: '75%', margin: 'auto' }}
               />
                   <ErrorMessage
                     messages={
-                      errors.cost
-                        ? Array.isArray(errors.cost)
-                          ? errors.cost
-                          : [errors.cost]
+                      errors.price
+                        ? Array.isArray(errors.price)
+                          ? errors.price
+                          : [errors.price]
                         : []
                     }
                   />
             </Grid>
       
-            <Grid item xs={12} sm={6}>
-              <TextField
-                type="number"
-                variant="outlined"
-                label="Impuestos"
-                name="taxes"
-              
-                value={productSelected ? productSelected.taxes : ''}
-                onChange={handleChange}
-                fullWidth
-                sx={{ width: '75%', margin: 'auto' }}
-              />
-                  <ErrorMessage
-                    messages={
-                      errors.taxes
-                        ? Array.isArray(errors.taxes)
-                          ? errors.taxes
-                          : [errors.taxes]
-                        : []
-                    }
-                  />
-            </Grid>
+          
   
-            <Grid item xs={12} sm={6}>
-              <TextField
-                type="number"
-                variant="outlined"
-                label="Margen de Ganancia"
-                name="profitMargin"
-              
-                value={productSelected ? productSelected.profitMargin: ''}
-                onChange={handleChange}
-                fullWidth
-                sx={{ width: '75%', margin: 'auto' }}
-              />
-                <ErrorMessage
-                    messages={
-                      errors.profitMargin
-                        ? Array.isArray(errors.profitMargin)
-                          ? errors.profitMargin
-                          : [errors.profitMargin]
-                        : []
-                    }
-                  />
-            </Grid>
+        
 
 
       
