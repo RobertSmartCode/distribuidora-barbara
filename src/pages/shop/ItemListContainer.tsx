@@ -6,8 +6,7 @@ import { Grid, Card, CardContent, Typography, Button, IconButton, Box } from "@m
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { CartContext } from "../../context/CartContext";
 import {Product, CartItem} from "../../type/type"
-
-
+import {customColors} from "../../styles/styles"
 
 const ItemListContainer: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -25,17 +24,7 @@ const ItemListContainer: React.FC = () => {
       .catch((err) => console.log(err));
   }, []);
 
-  // Colores personalizados
-  const customColors = {
-    primary: {
-      main: '#000',
-      contrastText: '#000',
-    },
-    secondary: {
-      main: '#fff',
-      contrastText: '#fff',
-    },
-  };
+
 
   // Estilos con enfoque sx
   const containerStyles = {
