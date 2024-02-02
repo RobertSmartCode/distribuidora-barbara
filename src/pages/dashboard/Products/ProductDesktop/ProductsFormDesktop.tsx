@@ -39,8 +39,6 @@ const ProductsFormDesktop: React.FC<ProductsFormDesktopProps> = (props) => {
   };
   
   
-
-
   const { productSelected, setProductSelected  } = props;
 
   const [isLoading] = useState<boolean>(false);
@@ -55,7 +53,7 @@ const ProductsFormDesktop: React.FC<ProductsFormDesktopProps> = (props) => {
     sector: "",
     category: "",
     discount: 0,
-    unitperpack: 10,
+    unitperpack: 0,
     type: "",
     cost: 0,
     taxes: 0,
