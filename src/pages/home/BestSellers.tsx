@@ -1,13 +1,13 @@
 // BestSellers.tsx
-import React, { useEffect, useState} from "react";
+import React, { useContext, useEffect, useState} from "react";
 import { db } from "../../firebase/firebaseConfig";
 import { getDocs, collection } from "firebase/firestore";
 import { Link } from "react-router-dom";
-import { Grid, Card, CardContent, Typography, Button, IconButton, Box } from "@mui/material";
+import { Grid, Card, CardContent, Typography, Button, IconButton, Box, CardMedia } from "@mui/material";
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import {Product} from "../../type/type"
+import {Product, CartItem } from "../../type/type"
 import SelectionCard from "../../components/pageComponents/SelectionCard/SelectionCard";
-
+import { CartContext } from "../../context/CartContext";
 
 
 
@@ -19,6 +19,8 @@ const [products, setProducts] = useState<Product[]>([]);
 const [isComponentReady, setIsComponentReady] = useState(false);
 const [loadedImageCount, setLoadedImageCount] = useState(0);
 const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+const { addToCart } = useContext(CartContext)!;
+
 
 const handleImageLoad = () => {
   // Incrementa el contador de imágenes cargadas
@@ -27,6 +29,8 @@ const handleImageLoad = () => {
     return newCount;
   });
 };
+
+
 useEffect(() => {
 
 
@@ -83,11 +87,7 @@ useEffect(() => {
     color: customColors.primary.main,
   };
 
-  const productImageStyles = {
-    width: "100%", 
-    marginBottom: '8px',
-    borderBottom: "1px solid #000",
-  };
+
   
 
   const productTitleStyles = {
@@ -128,9 +128,13 @@ useEffect(() => {
   };
 
   const handleBuyClick = (product: Product) => {
-    setSelectedProduct(product);
+    const cartItem: CartItem = {
+      ...product,
+      quantity: 1,
+    };
+    addToCart(cartItem);
   };
-  
+
 
   return (
 
@@ -147,10 +151,14 @@ useEffect(() => {
       {products.map((product) => (
         <Grid item xs={6} sm={4} md={4} lg={3} key={product.id}>
           <Card sx={productStyles}>
-            <img 
-            src={product.images[0]}
+          <CardMedia
+            component="img"
+            height="140"
+            image={product.images[0]}
             alt={product.title}
-            style={productImageStyles}
+            style={{ objectFit: "contain", width: "100%", 
+            marginBottom: '8px',
+            borderBottom: "1px solid #000", }}
             onLoad={handleImageLoad} 
             />
              {selectedProduct === product ?  (

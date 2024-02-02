@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { db } from "../../firebase/firebaseConfig";
 import { collection, query, getDocs } from "firebase/firestore";
 import { Link } from "react-router-dom";
-import { Grid, Card, CardContent, Typography, Button, IconButton, Box } from "@mui/material";
+import { Grid, Card, CardContent, Typography, Button, IconButton, Box, CardMedia } from "@mui/material";
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Product } from '../../type/type';
 import { useTheme, useMediaQuery } from '@mui/material';
@@ -50,7 +50,6 @@ const Shop: React.FC = () => {
 
   const containerStyles = { padding: '8px' };
   const productStyles = { border: "1px solid gray", padding: '8px', marginBottom: '8px', display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", backgroundColor: '#fff', color: '#000' };
-  const productImageStyles = { width: "100%", marginBottom: '8px', borderBottom: "1px solid #000" };
   const productTitleStyles = { fontSize: "1rem", fontWeight: "bold" };
   const productPriceStyles = { fontSize: "1.2rem", color: '#000', marginBottom: '24px' };
   const productDetailStyles = { backgroundColor: '#fff', color: '#000', border: '2px solid #000', borderRadius: '50%', padding: '8px' };
@@ -87,7 +86,16 @@ const Shop: React.FC = () => {
             {products.map((product) => (
               <Grid item xs={6} sm={4} md={3} lg={3} key={product.id}>
                 <Card sx={productStyles}>
-                  <img src={product.images[0]} alt={product.title} style={productImageStyles} onLoad={handleImageLoad} />
+                <CardMedia
+                  component="img"
+                  height="140"
+                  image={product.images[0]}
+                  alt={product.title}
+                  style={{ objectFit: "contain", width: "100%", 
+                  marginBottom: '8px',
+                  borderBottom: "1px solid #000", }}
+                  onLoad={handleImageLoad} 
+                  />
                   {selectedProduct === product ? (
                     <SelectionCard
                       isOpen={true}
