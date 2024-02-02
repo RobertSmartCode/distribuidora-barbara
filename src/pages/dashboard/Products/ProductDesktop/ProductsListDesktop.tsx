@@ -99,8 +99,9 @@ const ProductsListDesktop = () => {
         <Table aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell variant="head" align="center">Id</TableCell>
+              
               <TableCell variant="head" align="justify">Título</TableCell>
+              <TableCell variant="head" align="justify">Precio</TableCell>
               <TableCell variant="head" align="justify">Imagen</TableCell>
               <TableCell variant="head" align="justify">Categoria</TableCell> 
               <TableCell variant="head" align="justify">Acciones</TableCell>
@@ -112,11 +113,12 @@ const ProductsListDesktop = () => {
                 key={product.id}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
-                <TableCell component="th" scope="row" align="left">
-                  {product.id}
-                </TableCell> 
+                
                  <TableCell component="th" scope="row" align="justify" style={{ width: 'auto' , maxWidth: "100%" }}>
                   {product.title}
+                 </TableCell>
+                 <TableCell component="th" scope="row" align="justify" style={{ width: 'auto' , maxWidth: "100%" }}>
+                  {product.price}
                  </TableCell>
                  <TableCell component="th" scope="row" align="justify">
                   <img
