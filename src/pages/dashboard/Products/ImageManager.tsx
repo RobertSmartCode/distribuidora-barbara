@@ -3,10 +3,14 @@ import { Button, Card, CardActions, CardContent, CardMedia, Grid } from '@mui/ma
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { useImagesContext } from '../../../context/ImagesContext';
 import { uploadFile } from "../../../firebase/firebaseConfig";
-import { Image } from '../../../type/type';
+
 
 interface ImageManagerProps {
   initialData: Image[]; 
+}
+
+interface Image {
+  url: string;
 }
 
 const ImageManager: React.FC<ImageManagerProps> = ({ initialData }) => {
@@ -25,8 +29,6 @@ const ImageManager: React.FC<ImageManagerProps> = ({ initialData }) => {
      
     }
   }, [initialData]);
-
- 
 
   const transformBlobToFirebase = async (blobUrl: string): Promise<string | null> => {
     if (!blobUrl.startsWith('blob:')) {
@@ -50,22 +52,55 @@ const ImageManager: React.FC<ImageManagerProps> = ({ initialData }) => {
     }
   };
   
-
- 
-
-  const normalizeImages = async (imageFiles: Image[]) => {
-    const normalizedImages: Image[] = await Promise.all(imageFiles.map(async (image) => {
-      const url = image.url;
+  const resizeImage = async (file: Blob, targetWidth: number, targetHeight: number): Promise<Blob> => {
+    return new Promise((resolve) => {
+      const img = new Image();
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
   
-      if (url.startsWith('blob:')) {
-        // Si es una URL local (blob), cárgala a Firebase
-        const firebaseUrl = await transformBlobToFirebase(url);
-        return { url: firebaseUrl || url }; // Devuelve la URL de Firebase si está disponible, de lo contrario, devuelve la URL original
-      } else {
-        // Si es una URL de Firebase o cualquier otro tipo, déjala tal como está
-        return { url };
-      }
-    }));
+      img.onload = () => {
+        canvas.width = targetWidth;
+        canvas.height = targetHeight;
+  
+        // Redimensionar la imagen en el lienzo
+        ctx?.drawImage(img, 0, 0, targetWidth, targetHeight);
+  
+        // Obtener el Blob de la imagen redimensionada
+        canvas.toBlob((blob) => {
+          if (blob) {
+            resolve(blob);
+          } else {
+            // En caso de error, resolver con un Blob vacío
+            resolve(new Blob());
+          }
+        }, 'image/jpeg', 0.9); // Puedes ajustar la calidad aquí (0.9 es una calidad alta)
+      };
+  
+      img.src = URL.createObjectURL(file);
+    });
+  };
+  
+  const normalizeImages = async (imageFiles: Image[]): Promise<Image[]> => {
+    const normalizedImages: Image[] = await Promise.all(
+      imageFiles.map(async (image) => {
+        const url = image.url;
+  
+        if (url.startsWith('blob:')) {
+          // Si es una URL local (blob), redimensiona la imagen y cárgala a Firebase
+          const resizedBlob = await resizeImage(
+            await fetch(url).then((response) => response.blob()),
+            300,
+            300
+          );
+          const firebaseUrl = await transformBlobToFirebase(URL.createObjectURL(resizedBlob));
+  
+          return { url: firebaseUrl || url }; // Devuelve la URL de Firebase si está disponible, de lo contrario, devuelve la URL original
+        } else {
+          // Si es una URL de Firebase o cualquier otro tipo, déjala tal como está
+          return { url };
+        }
+      })
+    );
   
     return normalizedImages;
   };
