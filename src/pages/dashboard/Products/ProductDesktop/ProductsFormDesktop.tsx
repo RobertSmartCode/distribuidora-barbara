@@ -58,8 +58,8 @@ const ProductsFormDesktop: React.FC<ProductsFormDesktopProps> = (props) => {
     unitperpack: 10,
     type: "",
     cost: 0,
-    taxes: 21,
-    profitMargin: 30,
+    taxes: 0,
+    profitMargin: 0,
     price: 0,
     quantities: 0,
     barcode: 0,
@@ -277,9 +277,13 @@ const handleIsContentInMililitersChange = (event: React.ChangeEvent<HTMLInputEle
       // Limpiar el estado y mostrar un mensaje de éxito
    
       updateImages([]); 
-      setSnackbarMessage("Producto creado/modificado con éxito");
-      updateSelectedItems([{ name: 'Mis Productos' }]);
+      setSnackbarMessage("Producto creado con éxito");
       setSnackbarOpen(true);
+
+      setTimeout(() => {
+        updateSelectedItems([{ name: 'Mis Productos' }]);
+      
+      }, 1000);
   
     } catch (error) {
      

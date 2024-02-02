@@ -15,7 +15,7 @@ const PromoCodeDesktop: React.FC = () => {
   };
 
   return (
-    <Box style={{  marginRight:"150px" }}>
+    <Box style={{  textAlign: 'center' }}>
      
         <div style={{ margin: '0 auto', textAlign: 'center', marginTop:"20px", marginBottom:"20px" }}>
             <Button

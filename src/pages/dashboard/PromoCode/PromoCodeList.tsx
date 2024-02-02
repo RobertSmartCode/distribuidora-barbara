@@ -15,7 +15,7 @@ import {
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import InfoIcon from '@mui/icons-material/Info';
-import { collection, getDocs, deleteDoc, doc } from 'firebase/firestore';
+import { collection, deleteDoc, doc, onSnapshot } from 'firebase/firestore';
 import { db } from '../../../firebase/firebaseConfig';
 import { Tooltip } from '@mui/material';
 import FileCopyIcon from '@mui/icons-material/FileCopy';
@@ -25,12 +25,13 @@ const PromoCodeList: React.FC = () => {
   const [showDetails, setShowDetails] = useState<boolean>(false);
   const [selectedCodeDetails, setSelectedCodeDetails] = useState<any>(null);
 
+
+
   useEffect(() => {
-    const fetchPromoCodes = async () => {
+    // Suscribe a cambios en la colección 'promoCodes'
+    const unsubscribe = onSnapshot(collection(db, 'promoCodes'), (snapshot) => {
       try {
-        const promoCodesCollection = collection(db, 'promoCodes');
-        const querySnapshot = await getDocs(promoCodesCollection);
-        const codes = querySnapshot.docs.map((doc) => ({
+        const codes = snapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         }));
@@ -38,10 +39,15 @@ const PromoCodeList: React.FC = () => {
       } catch (error) {
         console.error('Error al obtener los códigos de descuento:', error);
       }
-    };
-
-    fetchPromoCodes();
+    });
+  
+    // Limpia la suscripción cuando el componente se desmonta
+    return () => unsubscribe();
   }, []);
+  
+
+
+  
 
   const handleDelete = async (id: string) => {
     try {
@@ -72,15 +78,8 @@ const PromoCodeList: React.FC = () => {
     }
   };
 
-  // Función para calcular la fecha de vencimiento
-  const calculateExpirationDate = (createdAt: Date, durationInDays: number): string => {
-    const expirationDate = new Date(createdAt);
-    expirationDate.setDate(expirationDate.getDate() + durationInDays);
-    return expirationDate.toLocaleString();
-  };
-
   return (
-    <div>
+    <div style={{ margin: '10px auto', textAlign: 'center', marginTop: '20px', maxWidth: '800px' }}>
       <Typography variant="h5" gutterBottom>
         Lista de Códigos Generados
       </Typography>
@@ -88,28 +87,24 @@ const PromoCodeList: React.FC = () => {
         {promoCodes.map((code) => (
           <div key={code.id}>
             <ListItem>
-            <ListItemText
+              <ListItemText
                 primary={
-                    <Tooltip title="Clic para copiar">
+                  <Tooltip title="Clic para copiar">
                     <span
-                        style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
-                        onClick={() => handleCopyToClipboard(code.promoCode)}
-                        >
-                        Código: {code.promoCode}{' '}
-                        <FileCopyIcon
-                            fontSize="small" // Ajusta el tamaño del ícono según tus preferencias
-                            style={{ marginLeft: '4px' }} // Agrega espacio entre el texto y el ícono
-                        />
-                        </span>
-
-                    </Tooltip>
+                      style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+                      onClick={() => handleCopyToClipboard(code.promoCode)}
+                    >
+                      Código: {code.promoCode}{' '}
+                      <FileCopyIcon
+                        fontSize="small"
+                        style={{ marginLeft: '4px' }}
+                      />
+                    </span>
+                  </Tooltip>
                 }
-                secondary={`Porcentaje de Descuento: ${code.discountPercentage}% | Fecha de Vencimiento: ${calculateExpirationDate(
-                    code.createdAt.toDate(),
-                    code.duration
-                )}`}
-                />
-
+               
+              />
+  
               <ListItemSecondaryAction>
                 <IconButton
                   edge="end"
@@ -131,7 +126,7 @@ const PromoCodeList: React.FC = () => {
           </div>
         ))}
       </List>
-
+  
       {/* Detalles del código */}
       <Dialog open={showDetails} onClose={handleCloseDetails}>
         <DialogTitle>Detalles del Código</DialogTitle>

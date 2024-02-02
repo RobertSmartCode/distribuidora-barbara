@@ -181,11 +181,7 @@ const handleIsContentInMililitersChange = (event: React.ChangeEvent<HTMLInputEle
     }
   };
 
-
-  
-  
    // Función para manejar el envío del formulario
-
 
    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -220,9 +216,12 @@ const handleIsContentInMililitersChange = (event: React.ChangeEvent<HTMLInputEle
    
       updateImages([]); 
       setSnackbarMessage("Producto Modificado con éxito");
-      updateSelectedItems([{ name: 'Mis Productos' }]);
       setSnackbarOpen(true);
-      handleClose();
+
+      setTimeout(() => {
+        updateSelectedItems([{ name: 'Mis Productos' }]);
+        handleClose();
+      }, 1000);
   
     }  catch (error) {
      
@@ -728,10 +727,6 @@ const handleIsContentInMililitersChange = (event: React.ChangeEvent<HTMLInputEle
                     </Button>
                   )}
                 </Grid>
-          
-
-
-              
            </Grid>
          </form>
 
@@ -747,7 +742,7 @@ const handleIsContentInMililitersChange = (event: React.ChangeEvent<HTMLInputEle
                     margin: 'auto',
                     bottom: '20px', // Adjust the position as needed
                     left: '50%',
-                    transform: 'translateX(-50%)',
+                    transform: 'translateX(50%)',
                   }}
                 />
 
