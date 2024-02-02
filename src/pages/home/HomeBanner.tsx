@@ -10,10 +10,11 @@ const HomeBanner: React.FC = () => {
     <Grid container justifyContent="center" alignItems="center" marginTop="0px">
       <Grid item xs={12} lg={6}>
         <Link to="/shop">
-        <video
-            width="100%" // Ajusta el ancho según tus necesidades
-            height="auto" // Ajusta la altura automáticamente
-            autoPlay // Reproducción automática
+          <video
+            width="100%" 
+            height="auto"
+            autoPlay
+            muted // Silenciar el video
           >
             <source src={videoUrl} type="video/mp4" />
             Tu navegador no soporta el elemento de video.
@@ -25,3 +26,4 @@ const HomeBanner: React.FC = () => {
 };
 
 export default HomeBanner;
+
