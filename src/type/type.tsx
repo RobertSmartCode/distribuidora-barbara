@@ -141,8 +141,6 @@ export interface Order {
   };
 }
 
-
-
 export interface StoreData {
   id?: string;
   storeName: string;

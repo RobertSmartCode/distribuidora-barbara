@@ -10,6 +10,7 @@ interface ImageManagerProps {
 }
 
 const ImageManager: React.FC<ImageManagerProps> = ({ initialData }) => {
+
   const { images, updateImages } = useImagesContext()!;
   const [files, setFiles] = useState<Image[]>(initialData || []);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -21,44 +22,47 @@ const ImageManager: React.FC<ImageManagerProps> = ({ initialData }) => {
   useEffect(() => {
     if (initialData) {
       setFiles(initialData);
+     
     }
   }, [initialData]);
+
+ 
 
   const transformBlobToFirebase = async (blobUrl: string): Promise<string | null> => {
     if (!blobUrl.startsWith('blob:')) {
       return null; // No es una URL blob
     }
-
+  
     try {
       // Obtén el blob directamente de la URL local
       const blob = await fetch(blobUrl).then(response => response.blob());
-
+  
       // Crea un objeto File a partir del Blob
       const file = new File([blob], 'filename', { lastModified: new Date().getTime() });
-
+  
       // Carga el archivo a Firebase y obtén la nueva URL
       const firebaseUrl = await uploadFile(file);
-
+  
       return firebaseUrl;
     } catch (error) {
       console.error('Error al transformar la URL blob a Firebase:', error);
       return null;
     }
   };
-
+  
   const resizeImage = async (file: Blob, targetWidth: number, targetHeight: number): Promise<Blob> => {
     return new Promise((resolve) => {
       const img = new Image();
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
-
+  
       img.onload = () => {
         canvas.width = targetWidth;
         canvas.height = targetHeight;
-
+  
         // Redimensionar la imagen en el lienzo
         ctx?.drawImage(img, 0, 0, targetWidth, targetHeight);
-
+  
         // Obtener el Blob de la imagen redimensionada
         canvas.toBlob((blob) => {
           if (blob) {
@@ -69,16 +73,16 @@ const ImageManager: React.FC<ImageManagerProps> = ({ initialData }) => {
           }
         }, 'image/jpeg', 0.9); // Puedes ajustar la calidad aquí (0.9 es una calidad alta)
       };
-
+  
       img.src = URL.createObjectURL(file);
     });
   };
-
+  
   const normalizeImages = async (imageFiles: Image[]) => {
     const normalizedImages: Image[] = await Promise.all(
       imageFiles.map(async (image) => {
         const url = image.url;
-
+  
         if (url.startsWith('blob:')) {
           // Si es una URL local (blob), redimensiona la imagen y cárgala a Firebase
           const resizedBlob = await resizeImage(
@@ -87,7 +91,7 @@ const ImageManager: React.FC<ImageManagerProps> = ({ initialData }) => {
             300
           );
           const firebaseUrl = await transformBlobToFirebase(URL.createObjectURL(resizedBlob));
-
+  
           return { url: firebaseUrl || url }; // Devuelve la URL de Firebase si está disponible, de lo contrario, devuelve la URL original
         } else {
           // Si es una URL de Firebase o cualquier otro tipo, déjala tal como está
@@ -95,15 +99,17 @@ const ImageManager: React.FC<ImageManagerProps> = ({ initialData }) => {
         }
       })
     );
-
+  
     return normalizedImages;
   };
-
+  
+  
+  
   const handleRemoveImage = (index: number) => {
     const updatedImages = [...images];
     const updatedFiles = [...files];
-    updatedImages.splice(index, 1);
-    updatedFiles.splice(index, 1);
+    updatedImages.splice(index, 1)[0];
+    updatedFiles.splice(index, 1)[0];
     setSelectedImageCount(updatedImages.length);
     setUploadMessage("");
     updateImages(updatedImages);
@@ -119,16 +125,15 @@ const ImageManager: React.FC<ImageManagerProps> = ({ initialData }) => {
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const selectedFiles = Array.from(e.target.files);
-
+  
       if (
         selectedFiles.length + selectedImageCount <= 8 &&
         selectedFiles.length + selectedImageCount >= 1
       ) {
-        const updatedFiles = [
-          ...files,
-          ...selectedFiles.map(file => ({ url: URL.createObjectURL(file) }))
-        ];
-
+        console.log("Selected Files:", selectedFiles);
+        const updatedFiles = [...files, ...selectedFiles.map(file => ({ url: URL.createObjectURL(file) }))];
+        console.log("Updated Files:", updatedFiles);
+  
         setFiles(updatedFiles);
         setSelectedImageCount(selectedImageCount + selectedFiles.length);
         setUploadMessage("");
@@ -139,7 +144,7 @@ const ImageManager: React.FC<ImageManagerProps> = ({ initialData }) => {
       }
     }
   };
-
+  
   useEffect(() => {
     const updateImagesAsync = async () => {
       try {
@@ -150,10 +155,12 @@ const ImageManager: React.FC<ImageManagerProps> = ({ initialData }) => {
         setUploadMessage("Error al cargar las imágenes");
       }
     };
-
+  
     // Llamar a la función de actualización de imágenes después de que files se haya actualizado
     updateImagesAsync();
   }, [files]);  // Dependencia de useEffect: files
+  
+  
 
   return (
     <div>
@@ -193,8 +200,9 @@ const ImageManager: React.FC<ImageManagerProps> = ({ initialData }) => {
         <Button variant="contained" color="primary" onClick={openFileInput}>
           Subir foto
         </Button>
-      </Grid>
-      <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+
+        </Grid>
+        <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         {selectedImageCount >= 1 && selectedImageCount < 8 && <p>Puedes subir otra foto.</p>}
         {selectedImageCount === 8 && <p>Llegaste al máximo de fotos permitido.</p>}
         <input
