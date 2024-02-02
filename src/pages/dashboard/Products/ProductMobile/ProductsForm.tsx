@@ -21,17 +21,7 @@ import { useImagesContext } from "../../../../context/ImagesContext";
 
 const ProductsFormDesktop: React.FC<ProductsFormDesktopProps> = (props) => {
   
-  const calculatePrice = (cost: string, taxes: string, profitMargin: string): number => {
-    // Convierte los valores a números o usa 0 si no son válidos
-    const numericCost = parseFloat(cost) || 0;
-    const numericTaxes = parseFloat(taxes) || 0;
-    const numericProfitMargin = parseFloat(profitMargin) || 0;
-  
-    const totalPrice = numericCost + (numericCost * numericTaxes / 100) + (numericCost * numericProfitMargin / 100);
-    return Math.round(totalPrice);
-  };
-  
-  
+
 
 
   const { productSelected, setProductSelected  } = props;
@@ -49,9 +39,6 @@ const ProductsFormDesktop: React.FC<ProductsFormDesktopProps> = (props) => {
     discount: 0,
     unitperpack: 10,
     type: "",
-    cost: 0,
-    taxes: 0,
-    profitMargin: 0,
     price: 0,
     quantities: 0,
     barcode: 0,
@@ -240,17 +227,10 @@ const handleIsContentInMililitersChange = (event: React.ChangeEvent<HTMLInputEle
       };
       
 
-         // Calcular el precio antes de enviar la información al servidor
-         const calculatedPrice = calculatePrice(
-          productToValidate.cost.toString(),
-          productToValidate.taxes.toString(),
-          productToValidate.profitMargin.toString()
-        );
-        
       // Crear un objeto con la información del producto
       const productInfo = {
         ...productToValidate,
-        price: calculatedPrice, // Asignar el precio calculado
+       
         createdAt: productToValidate.createdAt ?? getFormattedDate(),
         keywords: productToValidate.title.toLowerCase(),
         images: convertImagesToStringArray(images),
@@ -486,72 +466,24 @@ return (
               <TextField
                 type="number"
                 variant="outlined"
-                label="Costo"
-                name="cost"
+                label="Precio"
+                name="price"
               
-                value={productSelected ? productSelected.cost : newProduct.cost}
+                value={productSelected ? productSelected.price: newProduct.price}
                 onChange={handleChange}
                 fullWidth
                 sx={{ width: '75%', margin: 'auto' }}
               />
                   <ErrorMessage
                     messages={
-                      errors.cost
-                        ? Array.isArray(errors.cost)
-                          ? errors.cost
-                          : [errors.cost]
+                      errors.price
+                        ? Array.isArray(errors.price)
+                          ? errors.price
+                          : [errors.price]
                         : []
                     }
                   />
             </Grid>
-      
-            <Grid item xs={12} sm={6}>
-              <TextField
-                type="number"
-                variant="outlined"
-                label="Impuestos"
-                name="taxes"
-              
-                value={productSelected ? productSelected.taxes : newProduct.taxes}
-                onChange={handleChange}
-                fullWidth
-                sx={{ width: '75%', margin: 'auto' }}
-              />
-                  <ErrorMessage
-                    messages={
-                      errors.taxes
-                        ? Array.isArray(errors.taxes)
-                          ? errors.taxes
-                          : [errors.taxes]
-                        : []
-                    }
-                  />
-            </Grid>
-  
-            <Grid item xs={12} sm={6}>
-              <TextField
-                type="number"
-                variant="outlined"
-                label="Margen de Ganancia"
-                name="profitMargin"
-              
-                value={productSelected ? productSelected.profitMargin: newProduct.profitMargin}
-                onChange={handleChange}
-                fullWidth
-                sx={{ width: '75%', margin: 'auto' }}
-              />
-                <ErrorMessage
-                    messages={
-                      errors.profitMargin
-                        ? Array.isArray(errors.profitMargin)
-                          ? errors.profitMargin
-                          : [errors.profitMargin]
-                        : []
-                    }
-                  />
-            </Grid>
-
-
       
             <Grid item xs={12} sm={6}>
               <TextField
