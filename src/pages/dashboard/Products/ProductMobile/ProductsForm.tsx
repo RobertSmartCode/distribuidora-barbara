@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import * as Yup from "yup";
 import { db } from "../../../../firebase/firebaseConfig";
 import { addDoc, collection, doc, updateDoc, CollectionReference} from "firebase/firestore";
-import {Button, TextField, Grid, Snackbar, MenuItem, Card, FormControl, InputLabel, Select, Checkbox, FormControlLabel, SelectChangeEvent, Container, Paper,
+import {Button, TextField, Grid, Snackbar, MenuItem, FormControl, InputLabel, Select, Checkbox, FormControlLabel, SelectChangeEvent, Container, Paper,
 } from "@mui/material";
 
 
@@ -285,43 +285,32 @@ const handleIsContentInMililitersChange = (event: React.ChangeEvent<HTMLInputEle
 
 
 return (
+  
   <Container 
-  maxWidth="xs"
-  sx={{
-    height: "100vh",
-    overflowY: "auto",
-    marginLeft: "auto",
-    marginRight: "auto", 
-    padding: "20px", 
-    border: "1px solid #ccc", 
-  }}
->
-  <Paper elevation={3} style={{ padding: "20px" }}>
+      maxWidth="xs"
+      sx={{
+        height: "100vh",
+        overflowY: "auto",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",  
+        padding: "20px", 
+        border: "1px solid #ccc", 
+      }}
+    >
+      
+  <Paper elevation={2} style={{ padding: "20px" }}>
     <form
       onSubmit={handleSubmit}
       style={{
         width: "100%",
         display: "flex",
         flexDirection: "column",
-        marginLeft: "40px", 
-        marginRight: "40px",
-        gap: "20px",
       }}
     >
-        <Card
-          sx={{
-            width: '80%',
-            padding: '20px',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            margin: 'auto', // Centra el Card dentro del Box
-          }}
-        >
-         <form
-           onSubmit={handleSubmit}
-           
-         >
+   
+         <form onSubmit={handleSubmit}>
+
            <Grid container spacing={2} sx={{ textAlign: 'center' }}>
              <Grid item xs={12} sm={6} >
                <TextField
@@ -387,6 +376,8 @@ return (
                />
  
              </Grid>
+
+
              <Grid item xs={12} sm={6}>
                <TextField
                  variant="outlined"
@@ -406,7 +397,6 @@ return (
                      : []
                  }
                />
- 
              </Grid>
 
              <Grid item xs={12} sm={6}>
@@ -430,6 +420,8 @@ return (
                    }
                  />
              </Grid>
+
+
              <Grid item xs={12} sm={6}>
               <TextField
                 variant="outlined"
@@ -680,16 +672,8 @@ return (
                      </Button>
                  )}
                  </Grid>
-
-              
- 
            </Grid>
-
-
          </form>
-
-         </Card>
-        
             <Snackbar
                   open={snackbarOpen}
                   autoHideDuration={4000}
@@ -700,8 +684,9 @@ return (
                   }}
                 />
 
-</Paper>
-  </Container>
+             </form>
+          </Paper>
+       </Container>
     
    );
    
