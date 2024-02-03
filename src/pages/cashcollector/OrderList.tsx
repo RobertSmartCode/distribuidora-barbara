@@ -113,7 +113,7 @@ const OrderList: React.FC = () => {
               DNI: {order.customerName}
             </Typography>
             <Typography variant="body1">
-              Total Amount: {order.totalAmount}
+              Total: {order.totalAmount}
             </Typography>
             <Typography variant="body1">
               Productos:
