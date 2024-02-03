@@ -73,7 +73,7 @@ const OrderList: React.FC = () => {
   const handlePaymentMethod = async () => {
     if (selectedOrder) {
       const firestore = getFirestore();
-      const ordersCollection = collection(firestore, 'orders');
+      const ordersCollection = collection(firestore, 'ordersbox');
       const completedOrdersCollection = collection(firestore, 'completedOrders');
   
       try {
