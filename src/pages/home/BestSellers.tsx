@@ -118,7 +118,7 @@ useEffect(() => {
 
   const buttonContainerStyles = {
     display: "flex",
-    gap: '8px',
+    gap: '9px',
     marginTop: '16px',
     marginLeft: '32px',
     marginRight: '32px',
