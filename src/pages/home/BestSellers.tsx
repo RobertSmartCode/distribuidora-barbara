@@ -11,8 +11,6 @@ import SelectionCard from "../../components/pageComponents/SelectionCard/Selecti
 
 
 
-
-
 const BestSellers: React.FC = () => {
 
 const [products, setProducts] = useState<Product[]>([]);
@@ -167,7 +165,7 @@ useEffect(() => {
                 ) : null}
             <CardContent>
               <Typography variant="subtitle1" gutterBottom sx={productTitleStyles}>
-                {product.title}
+                {product.description}
               </Typography>
               <Typography variant="subtitle2" color="textSecondary" sx={productPriceStyles}>
                 Precio: ${product.price}
