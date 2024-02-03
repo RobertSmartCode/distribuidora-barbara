@@ -25,7 +25,6 @@ import { StoreData } from "../../../type/type";
 
   const StoreDataDesktop: React.FC = () => {
   const [storeData, setStoreData] = useState<StoreData[]>([]);
-console.log(storeData)
   const [openForm, setOpenForm] = useState<boolean>(false); 
   const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false); 
   const [snackbarMessage, setSnackbarMessage] = useState<string>(""); 

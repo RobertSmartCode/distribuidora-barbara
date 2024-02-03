@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import * as Yup from "yup";
 import { db } from "../../../../firebase/firebaseConfig";
 import { addDoc, collection, doc, updateDoc, CollectionReference} from "firebase/firestore";
-import {Button, TextField, Grid, Snackbar, MenuItem, Card, FormControl, InputLabel, Select, Checkbox, FormControlLabel, SelectChangeEvent,
+import {Button, TextField, Grid, Snackbar, MenuItem, Card, FormControl, InputLabel, Select, Checkbox, FormControlLabel, SelectChangeEvent, Container, Paper,
 } from "@mui/material";
 
 
@@ -285,8 +285,29 @@ const handleIsContentInMililitersChange = (event: React.ChangeEvent<HTMLInputEle
 
 
 return (
-    <>
-
+  <Container 
+  maxWidth="xs"
+  sx={{
+    height: "100vh",
+    overflowY: "auto",
+    marginLeft: "auto",
+    marginRight: "auto", 
+    padding: "20px", 
+    border: "1px solid #ccc", 
+  }}
+>
+  <Paper elevation={3} style={{ padding: "20px" }}>
+    <form
+      onSubmit={handleSubmit}
+      style={{
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
+        marginLeft: "40px", 
+        marginRight: "40px",
+        gap: "20px",
+      }}
+    >
         <Card
           sx={{
             width: '80%',
@@ -679,7 +700,8 @@ return (
                   }}
                 />
 
-       </>
+</Paper>
+  </Container>
     
    );
    

@@ -137,6 +137,8 @@ const ProductsList = () => {
       sx={{
         backgroundColor: customColors.primary.main,
         color: customColors.secondary.contrastText,
+        width: '70vw', // 70% del ancho de la ventana
+        margin: '0 auto', // Centra horizontalmente
       }}
     >
       Mis Productos
@@ -231,13 +233,18 @@ const ProductsList = () => {
         aria-describedby="modal-modal-description"
       >
         <Box sx={{ position: 'relative' }}>
-          <IconButton
-            aria-label="close"
-            onClick={handleClose}
-            sx={{ position: 'absolute', top: '20px', right: '20px' }}
-          >
-            <CloseIcon />
-          </IconButton>
+        <IconButton
+          aria-label="close"
+          onClick={handleClose}
+          sx={{
+            position: 'absolute',
+            top: '5%',    
+            right: '5%',   
+            bottom: 'auto',  
+          }}
+        >
+          <CloseIcon />
+        </IconButton>
 
           <ProductsForm
             handleClose={handleClose}

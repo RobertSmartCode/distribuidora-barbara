@@ -20,7 +20,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { collection, deleteDoc, doc, getDocs, updateDoc } from "firebase/firestore";
 import { db } from "../../../firebase/firebaseConfig";
 import PaymentMethodsForm from "./PaymentMethodsForm"; // Cambio en la importación
-
+import { customColors  } from "../../../styles/styles";
 // Define el tipo PaymentMethod (actualizado con propiedades específicas de pago)
 interface PaymentMethod {
   id: string;
@@ -110,16 +110,6 @@ const PaymentMethodsList: React.FC = () => {
     setSnackbarOpen(false);
   };
 
-  const customColors = {
-    primary: {
-      main: '#000',
-      contrastText: '#000',
-    },
-    secondary: {
-      main: '#fff',
-      contrastText: '#fff',
-    },
-  };
 
   const topBarStyles = {
     display: "flex",
@@ -155,6 +145,8 @@ const PaymentMethodsList: React.FC = () => {
         sx={{
           backgroundColor: customColors.primary.main,
           color: customColors.secondary.contrastText,
+          width: '70vw', // 70% del ancho de la ventana
+          margin: '0 auto', // Centra horizontalmente
         }}
       >
         Métodos de Pago

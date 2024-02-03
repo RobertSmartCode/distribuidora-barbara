@@ -57,16 +57,18 @@ const MyOrders: React.FC = () => {
   return (
     <Box>
       <Button 
-      variant="contained"
-      onClick={handleBtnClick}
-      sx={{
-        backgroundColor: customColors.primary.main,
-        color: customColors.secondary.contrastText,
-      }}
+        variant="contained"
+        onClick={handleBtnClick}
+        sx={{
+          backgroundColor: customColors.primary.main,
+          color: customColors.secondary.contrastText,
+          width: '70vw', // 70% del ancho de la ventana
+          margin: '0 auto', // Centra horizontalmente
+        }}
       >
         Mis Ordenes
       </Button>
-
+  
       <Drawer
         anchor="left"
         open={open}
@@ -92,11 +94,11 @@ const MyOrders: React.FC = () => {
             <CloseIcon />
           </IconButton>
         </Box>
-       <OrderDetails/>
+        <OrderDetails/>
       </Drawer>
-
     </Box>
   );
+  
 };
 
 export default MyOrders;

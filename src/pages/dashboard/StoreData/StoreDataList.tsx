@@ -174,6 +174,8 @@ const handleEditStoreData = (data: StoreData) => {
         sx={{
           backgroundColor: customColors.primary.main,
           color: customColors.secondary.contrastText,
+          width: '70vw', 
+          margin: '0 auto', 
         }}
       >
         Datos de la Tienda

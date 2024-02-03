@@ -14,7 +14,7 @@ const HomeBanner: React.FC = () => {
             width="100%" 
             height="auto"
             autoPlay
-            muted // Silenciar el video
+            muted 
           >
             <source src={videoUrl} type="video/mp4" />
             Tu navegador no soporta el elemento de video.

@@ -23,24 +23,22 @@ const containerStyles = {
 const Dashboard: React.FC = () => {
 
   return (
-    <Box 
-        sx={containerStyles}>
-          <CssBaseline />
-        <Link to="/" style={{ textDecoration: 'none' }}>
-            <IconButton>
-              <HomeIcon />
-            </IconButton>
-          </Link>
-        
-        <MyOrders />
-        <ProductAddForm />
-        <ProductsList />
-        <PaymentMethodsList/>
-        <ShippingMethodsList/>
-        <StoreDataList/>
-        <PromoCode/>
+    <Box sx={containerStyles}>
+      <CssBaseline />
+      <Link to="/" style={{ textDecoration: 'none' }}>
+        <IconButton>
+          <HomeIcon style={{ fontSize: '3rem', marginTop:"30px" }} />
+        </IconButton>
+      </Link>
+      <MyOrders />
+      <ProductAddForm />
+      <ProductsList />
+      <PaymentMethodsList />
+      <ShippingMethodsList />
+      <StoreDataList />
+      <PromoCode />
     </Box>
-  );
+  );  
 };
 
 export default Dashboard;
