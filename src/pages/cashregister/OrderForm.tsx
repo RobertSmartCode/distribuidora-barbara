@@ -59,7 +59,7 @@ const OrderForm: React.FC = () => {
 
     // Lógica para enviar la orden a Firebase
     const firestore = getFirestore();
-    const ordersCollection = collection(firestore, 'orders');
+    const ordersCollection = collection(firestore, 'ordersbox');
 
     try {
       await validationSchema.validate({ dni: customerName });

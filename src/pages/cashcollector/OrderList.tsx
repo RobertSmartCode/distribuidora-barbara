@@ -21,8 +21,29 @@ import {
   FormControl,
   InputLabel,
 } from '@mui/material';
-import { Order } from '../../type/type'; 
+// import { Order } from '../../type/type'; 
 import { doc, deleteDoc, addDoc } from 'firebase/firestore';
+
+
+export interface Product {
+  id: string;
+  title: string;
+  quantity: number;
+  price: number;
+  // Agrega más propiedades según la estructura de tu producto
+}
+
+export interface Order {
+  id: string;
+  customerName: string;
+  totalAmount: number;
+  timestamp: Date;
+  completedTimestamp: Date;
+  products: Product[]; 
+}
+
+
+
 
 const OrderList: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -32,7 +53,7 @@ const OrderList: React.FC = () => {
 
   useEffect(() => {
     const firestore = getFirestore();
-    const ordersCollection = collection(firestore, 'orders');
+    const ordersCollection = collection(firestore, 'ordersbox');
   
     // Obtener la función para dejar de escuchar cambios al desmontar el componente
     const unsubscribe = onSnapshot(ordersCollection, (querySnapshot) => {
@@ -80,35 +101,45 @@ const OrderList: React.FC = () => {
 
   return (
     <Grid container spacing={2}>
-      {orders.map((order) => (
-        <Grid key={order.id} item xs={12} sm={6} md={4} lg={3}>
-          <Card style={{ width: '100%', height: '100%' }}>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
-                Orden
-              </Typography>
-              {/* Agrega más detalles según la estructura de tu orden */}
-              <Typography variant="body1">
-                DNI: {order.customerName}
-              </Typography>
-              <Typography variant="body1">
-                Total Amount: {order.totalAmount}
-              </Typography>
-              <Button
-                variant="contained"
-                color="primary"
-                fullWidth
-                onClick={() => {
-                  setSelectedOrder(order);
-                  setOpenDialog(true);
-                }}
-              >
-                Selecciona método de Pago
-              </Button>
-            </CardContent>
-          </Card>
-        </Grid>
-      ))}
+        {orders.map((order) => (
+      <Grid key={order.id} item xs={12} sm={6} md={4} lg={3}>
+        <Card style={{ width: '100%', height: '100%' }}>
+          <CardContent>
+            <Typography variant="h6" gutterBottom>
+              Orden
+            </Typography>
+            {/* Agrega más detalles según la estructura de tu orden */}
+            <Typography variant="body1">
+              DNI: {order.customerName}
+            </Typography>
+            <Typography variant="body1">
+              Total Amount: {order.totalAmount}
+            </Typography>
+            <Typography variant="body1">
+              Productos:
+              <ul>
+                {order.products.map((product) => (
+                  <li key={product.id}>
+                    {product.title} - Cantidad: {product.quantity} - Precio: {product.price}
+                  </li>
+                ))}
+              </ul>
+            </Typography>
+            <Button
+              variant="contained"
+              color="primary"
+              fullWidth
+              onClick={() => {
+                setSelectedOrder(order);
+                setOpenDialog(true);
+              }}
+            >
+              Selecciona método de Pago
+            </Button>
+          </CardContent>
+        </Card>
+      </Grid>
+    ))}
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
         <DialogTitle>Selecciona método de Pago</DialogTitle>
         <DialogContent>

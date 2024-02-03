@@ -24,17 +24,8 @@ import PaymentMethodsInfo from "./PaymentMethodsInfo";
 import ShippingMethodsInfo from "./ShippingMethodsInfo"; 
 import ProductDetailsInfo from "./ProductDetailsInfo"; 
 import {CartItem } from "../../../type/type"
+import {customColors} from "../../../styles/styles"
 
-const customColors = {
-  primary: {
-    main: "#000",
-    contrastText: "#000",
-  },
-  secondary: {
-    main: "#FFFFFF",
-    contrastText: "#FFFFFF",
-  },
-};
 
 const ItemDetail: React.FC = () => {
   const { id } = useParams<{ id: string | undefined }>();
