@@ -120,13 +120,14 @@ useEffect(() => {
 
   const buttonContainerStyles = {
     display: "flex",
+    justifyContent: "center", // Centra los elementos horizontalmente
     gap: '8px',
     marginTop: '16px',
     marginLeft: '32px',
     marginRight: '32px',
     marginBottom: '0px',
   };
-
+  
   const handleBuyClick = (product: Product) => {
     setSelectedProduct(product);
   };

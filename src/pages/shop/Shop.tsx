@@ -53,7 +53,16 @@ const Shop: React.FC = () => {
   const productDetailStyles = { backgroundColor: '#fff', color: '#000', border: '2px solid #000', borderRadius: '50%', padding: '8px' };
   const iconStyles = { fontSize: '1rem' };
   const productCartStyles = { backgroundColor: '#000', color: '#fff' };
-  const buttonContainerStyles = { display: "flex", gap: '8px', marginTop: '16px', marginLeft: '32px', marginRight: '32px', marginBottom: '0px' };
+  const buttonContainerStyles = {
+    display: "flex",
+    justifyContent: "center", // Centra los elementos horizontalmente
+    gap: '8px',
+    marginTop: '16px',
+    marginLeft: '32px',
+    marginRight: '32px',
+    marginBottom: '0px',
+  };
+  
 
   const handleBuyClick = (product: Product) => {
     setSelectedProduct(product);
