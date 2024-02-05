@@ -82,11 +82,7 @@ const MobileCart: React.FC = () => {
     marginLeft: '24px',
   };
 
-  const cartTitleStyles = {
-    fontSize: '1.5rem',
-    marginBottom: '16px',
-    color: customColors.secondary.main,
-  };
+
 
   const drawerPaperStyles = {
     boxSizing: "border-box",
@@ -141,10 +137,7 @@ const MobileCart: React.FC = () => {
           </IconButton>
         </Box>
         <Box sx={cartIconStyles}>
-          <Typography variant="h6" sx={cartTitleStyles}>
-            Carrito de compras
-          </Typography>
-
+          
           {cart?.length ?? 0 > 0 ? (
             <>
               <CartItemList />
