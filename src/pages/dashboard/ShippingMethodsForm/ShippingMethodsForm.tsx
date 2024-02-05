@@ -39,8 +39,9 @@ const Transition = React.forwardRef<unknown, TransitionProps>((props: Transition
 
 const validationSchema = yup.object({
   name: yup.string().required("El nombre es requerido"),
-  price: yup.number().positive("El precio debe ser positivo").required("El precio es requerido"),
+  price: yup.number().min(0, "El precio debe ser no negativo").required("El precio es requerido"),
 });
+
 
 const ShippingMethodsForm: React.FC<ShippingMethodsFormProps> = ({
   open,
