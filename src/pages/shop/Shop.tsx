@@ -108,7 +108,7 @@ const Shop: React.FC = () => {
     justifyContent: 'center', // Centra los elementos horizontalmente
     marginTop: '2%',
     "& > *": {
-      marginRight: '5%', // Ajusta el margen entre los elementos
+      marginRight: '8%', // Ajusta el margen entre los elementos
     },
   };
   

@@ -39,30 +39,25 @@ const ShippingMethodsList: React.FC = () => {
 
   useEffect(() => {
     fetchShippingMethods();
-   
   }, []);
 
   const fetchShippingMethods = async () => {
     try {
       const querySnapshot = await getDocs(collection(db, "shippingMethods"));
       const methodsData: ShippingMethod[] = [];
-  
+
       querySnapshot.forEach((doc) => {
         const methodData = doc.data();
-        if (methodData.name && typeof methodData.price === 'number') {
+        if (methodData.name && methodData.price) {
           methodsData.push({ id: doc.id, name: methodData.name, price: methodData.price });
-        } else {
-          console.warn(`Skipping method with invalid data: ${JSON.stringify(methodData)}`);
         }
       });
-  
-      console.log("Methods data:", methodsData);
+
       setMethods(methodsData);
     } catch (error) {
       console.error("Error al obtener los métodos de envío:", error);
     }
   };
-  
 
   const handleEditMethod = (method: ShippingMethod) => {
     setEditMethod(method);
@@ -88,28 +83,20 @@ const ShippingMethodsList: React.FC = () => {
     fetchShippingMethods();
   };
 
-// Dentro de la función handleUpdateMethod
-const handleUpdateMethod = async (methodId: string, updatedMethod: ShippingMethod) => {
-  try {
-    const methodRef = doc(db, "shippingMethods", methodId);
-    const { name, price } = updatedMethod;
-
-    if (typeof price !== 'number') {
-      console.warn(`Invalid price provided: ${price}`);
-      return;
+  const handleUpdateMethod = async (methodId: string, updatedMethod: ShippingMethod) => {
+    try {
+      const methodRef = doc(db, "shippingMethods", methodId);
+      const { name, price } = updatedMethod;
+      await updateDoc(methodRef, { name, price });
+      setSnackbarMessage("Método de envío actualizado con éxito.");
+      setSnackbarOpen(true);
+      fetchShippingMethods();
+    } catch (error) {
+      console.error("Error al actualizar el método de envío:", error);
+      setSnackbarMessage("Error al actualizar el método de envío.");
+      setSnackbarOpen(true);
     }
-
-    await updateDoc(methodRef, { name, price });
-    setSnackbarMessage("Método de envío actualizado con éxito.");
-    setSnackbarOpen(true);
-    fetchShippingMethods();
-  } catch (error) {
-    console.error("Error al actualizar el método de envío:", error);
-    setSnackbarMessage("Error al actualizar el método de envío.");
-    setSnackbarOpen(true);
-  }
-};
-
+  };
 
   const handleBtnClick = () => {
     setShippingOpen(!shippingOpen);

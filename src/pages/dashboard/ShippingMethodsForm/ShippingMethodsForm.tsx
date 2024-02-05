@@ -39,7 +39,7 @@ const Transition = React.forwardRef<unknown, TransitionProps>((props: Transition
 
 const validationSchema = yup.object({
   name: yup.string().required("El nombre es requerido"),
-  price: yup.number().min(0, "El precio debe ser no negativo").required("El precio es requerido"),
+  price: yup.number().required("El precio es requerido"),
 });
 
 
