@@ -8,9 +8,9 @@ import HomeIcon from '@mui/icons-material/Home';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import PaymentIcon from '@mui/icons-material/Payment';
-import LocalShippingIcon from '@mui/icons-material/LocalShipping';
+
 import StorefrontIcon from '@mui/icons-material/Storefront';
-import LocalOfferIcon from '@mui/icons-material/LocalOffer';
+
 // import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import { Link } from 'react-router-dom';
 
@@ -56,24 +56,14 @@ const Sidebar = () => {
           </ListItemIcon>
           <ListItemText primary="Métodos de Pago" />
         </ListItem>
-        <ListItem button  onClick={() => handleItemClick('Métodos de Envío')}>
-          <ListItemIcon>
-            <LocalShippingIcon />
-          </ListItemIcon>
-          <ListItemText primary="Métodos de Envío" />
-        </ListItem>
+       
         <ListItem button onClick={() => handleItemClick('Datos de la Tienda')}>
           <ListItemIcon>
             <StorefrontIcon />
           </ListItemIcon>
           <ListItemText primary="Datos de la Tienda" />
         </ListItem>
-        <ListItem button  onClick={() => handleItemClick('Cupones y Ofertas')}>
-          <ListItemIcon>
-            <LocalOfferIcon />
-          </ListItemIcon>
-          <ListItemText primary="Cupones y Ofertas" />
-        </ListItem>
+       
         {/* <ListItem button  onClick={() => handleItemClick('Reportes de Ventas')}>
           <ListItemIcon>
             <MonetizationOnIcon />

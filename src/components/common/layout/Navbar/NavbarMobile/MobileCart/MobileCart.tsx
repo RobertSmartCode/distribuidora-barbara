@@ -10,31 +10,32 @@ import { CartContext } from '../../../../../../context/CartContext';
 import { customColors  } from '../../../../../../styles/styles';
 import CartItemList from './CartItemList'; 
 import useMediaQuery from '@mui/material/useMediaQuery';
-import ShippingMethods from './ShippingMethods/ShippingMethods';
-import { useShippingMethods } from '../../../../../../context/ShippingMethodsContext';
+
 import { Link } from 'react-router-dom';
 import { Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom'; 
 
-
-
 const MobileCart: React.FC = () => {
- 
-  
-  
   const [cartOpen, setCartOpen] = useState(false);
-  const { cart, getTotalQuantity} = useContext(CartContext)! ?? {};
-  const { getSelectedShippingMethod } = useShippingMethods()!;
-  const navigate = useNavigate();  // Utiliza useNavigate
+  const { cart, getTotalQuantity, getTotalPrice } = useContext(CartContext)! ?? {};
+  const navigate = useNavigate();
   const isDesktop = useMediaQuery('(min-width: 768px)');
 
   const handleCartClick = () => {
     setCartOpen(!cartOpen);
   };
-  
-// Obtener el subtotal sin envío
 
+  const minimumOrderAmount = 150000; // Cambiar según tu requisito
 
+  const isMinimumOrderReached = () => getTotalPrice() && getTotalPrice() >= minimumOrderAmount;
+
+  const handleStartCheckout = () => {
+    if (isMinimumOrderReached()) {
+      navigate('/checkout');
+    } else {
+      console.error('Seleccione un método de envío válido y asegúrese de que el total del carrito sea superior a $150,000.');
+    }
+  };
 
   const cartContainerStyles = {
     display: "flex",
@@ -75,8 +76,6 @@ const MobileCart: React.FC = () => {
     fontSize: '24px',
   };
 
-
-
   const searchTextStyles = {
     fontSize: '20px',
     color: customColors.secondary.main,
@@ -109,15 +108,7 @@ const MobileCart: React.FC = () => {
     margin: "25px",
   };
 
-  const handleStartCheckout = () => {
-    if (getSelectedShippingMethod()) {
-      navigate('/checkout');  // Utiliza navigate
-    } else {
-      console.error('Seleccione un método de envío para continuar.');
-    }
-  };
-  
-   return (
+  return (
     <Box sx={cartContainerStyles}>
       <IconButton
         aria-label="shopping cart"
@@ -157,27 +148,31 @@ const MobileCart: React.FC = () => {
           {cart?.length ?? 0 > 0 ? (
             <>
               <CartItemList />
-              <ShippingMethods />
+
               <Box style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Typography style={{ fontSize: '1.2rem', fontWeight: 'bold', paddingLeft: '30px' }}>Total:</Typography>
-                <Typography style={{ fontSize: '1.2rem', fontWeight: 'bold', paddingRight: '50px' }}>${}</Typography>
+                <Typography style={{ fontSize: '1.2rem', fontWeight: 'bold', paddingRight: '50px' }}>
+                  ${getTotalPrice ? getTotalPrice().toFixed(2) : '0.00'}
+                </Typography>
               </Box>
+
               <Box
                 style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
-                onClick={handleStartCheckout}
               >
-                {!getSelectedShippingMethod() && (
+                {!isMinimumOrderReached() && (
                   <Typography style={{ fontSize: '1rem', color: 'red', marginTop: '20px', marginBottom: '30px' }}>
-                    Seleccione un método de envío para continuar.
+                    La compra mínima es de ${minimumOrderAmount.toFixed(2)}
                   </Typography>
                 )}
-                {getSelectedShippingMethod() && (
+                {isMinimumOrderReached() && (
                   <Link to="/checkout">
                     <Button
-                      sx={{ ...buyButtonStyles, backgroundColor: !getSelectedShippingMethod() ? '#ccc' : buyButtonStyles.backgroundColor }}
+                      sx={{
+                        ...buyButtonStyles,
+                      }}
                       variant="contained"
                       size="medium"
-                      disabled={!getSelectedShippingMethod()}
+                      onClick={handleStartCheckout}
                     >
                       Iniciar Compra
                     </Button>
