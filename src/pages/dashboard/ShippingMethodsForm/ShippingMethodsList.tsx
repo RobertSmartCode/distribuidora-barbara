@@ -39,6 +39,7 @@ const ShippingMethodsList: React.FC = () => {
 
   useEffect(() => {
     fetchShippingMethods();
+   
   }, []);
 
   const fetchShippingMethods = async () => {
