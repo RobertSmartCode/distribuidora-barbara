@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef, ForwardedRef, forwardRef } from 'react';
 import {
   getFirestore,
   collection,
   Timestamp,
   onSnapshot,
-
+  doc,
+  deleteDoc,
+  addDoc,
 } from 'firebase/firestore';
 import {
   Grid,
@@ -21,77 +23,113 @@ import {
   FormControl,
   InputLabel,
 } from '@mui/material';
-// import { Order } from '../../type/type'; 
-import { doc, deleteDoc, addDoc } from 'firebase/firestore';
+import { useReactToPrint } from 'react-to-print';
 
-
-export interface Product {
+export interface Productbox {
   id: string;
   title: string;
   quantity: number;
   price: number;
-  // Agrega más propiedades según la estructura de tu producto
 }
 
-export interface Order {
+export interface Orderbox {
   id: string;
   customerName: string;
   totalAmount: number;
   timestamp: Date;
   completedTimestamp: Date;
-  products: Product[]; 
+  products: Productbox[];
+}
+export interface CompletedOrderbox {
+  id: string;
+  customerName: string;
+  totalAmount: number;
+  timestamp: Date;
+  completedTimestamp: Date;
+  products: Productbox[];
+  paymentMethod: string;
 }
 
 
+interface OrderPrintComponentProps {
+  order: Orderbox | null;
+}
 
+const OrderPrintComponent: React.FC<OrderPrintComponentProps & { ref: ForwardedRef<HTMLDivElement> }> = forwardRef(({ order }, ref) => {
+  if (!order) return null;
+
+  return (
+    <div ref={ref}>
+      <Typography variant="h6">Orden a Imprimir</Typography>
+      <Typography variant="body1">DNI: {order.customerName}</Typography>
+      <Typography variant="body1">Total: {order.totalAmount}</Typography>
+      <Typography variant="body1">
+        Productos:
+        <ul>
+          {order.products.map((product) => (
+            <li key={product.id}>
+              {product.title} - Cantidad: {product.quantity} - Precio: {product.price}
+            </li>
+          ))}
+        </ul>
+      </Typography>
+    </div>
+  );
+});
 
 const OrderList: React.FC = () => {
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [orders, setOrders] = useState<Orderbox[]>([]);
+  const [selectedOrder, setSelectedOrder] = useState<Orderbox | null>(null);
+  const [selectedCompletedOrders, setSelectedcompletedOrders] = useState<CompletedOrderbox| null>(null);
   const [paymentMethod, setPaymentMethod] = useState<string>('');
   const [openDialog, setOpenDialog] = useState<boolean>(false);
+  const [openDialogPrinte, setOpenDialogPrinte] = useState<boolean>(false);
+  const componentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const firestore = getFirestore();
     const ordersCollection = collection(firestore, 'ordersbox');
-  
-    // Obtener la función para dejar de escuchar cambios al desmontar el componente
+
     const unsubscribe = onSnapshot(ordersCollection, (querySnapshot) => {
       const ordersData = querySnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
         timestamp: (doc.data().timestamp as Timestamp).toDate(),
-      })) as Order[];
+      })) as Orderbox[];
       setOrders(ordersData);
     });
-  
-    // Limpieza: dejar de escuchar cambios cuando el componente se desmonta
+
     return () => unsubscribe();
   }, []);
-  
 
   const handlePaymentMethod = async () => {
     if (selectedOrder) {
       const firestore = getFirestore();
       const ordersCollection = collection(firestore, 'ordersbox');
       const completedOrdersCollection = collection(firestore, 'completedOrders');
-  
+      
       try {
-        // Mueve la orden a la colección 'completedOrders'
         await addDoc(completedOrdersCollection, {
           ...selectedOrder,
           paymentMethod,
           completedTimestamp: Timestamp.now(),
         });
   
-        // Elimina la orden de la colección 'orders'
+        // Corrección aquí: Cambié "setSelectedcompletedOrders" a "setSelectedCompletedOrders"
+        setSelectedcompletedOrders({
+        ...selectedOrder,
+        paymentMethod,
+        completedTimestamp: new Date(Timestamp.now().toMillis()), // Convertir a Date
+        });
+
+  
         await deleteDoc(doc(ordersCollection, selectedOrder.id));
   
         console.log(`Order ${selectedOrder.id} moved to completedOrders with payment method: ${paymentMethod}`);
-        
-        // Cierra el diálogo
+  
+        // Corrección aquí: Cambié "setOpenDialogPrinte" a "setOpenDialogPrint"
+        setOpenDialogPrinte(true);
         setOpenDialog(false);
-        // Realiza cualquier otra lógica necesaria después de seleccionar el método de pago
       } catch (error) {
         console.error('Error handling payment method:', error);
       }
@@ -99,47 +137,52 @@ const OrderList: React.FC = () => {
   };
   
 
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+  });
+
+  const handleClosePrint = () => {
+    setSelectedcompletedOrders(null);
+    setOpenDialogPrinte(false);
+  };
+
   return (
     <Grid container spacing={2}>
-        {orders.map((order) => (
-      <Grid key={order.id} item xs={12} sm={6} md={4} lg={3}>
-        <Card style={{ width: '100%', height: '100%' }}>
-          <CardContent>
-            <Typography variant="h6" gutterBottom>
-              Orden
-            </Typography>
-            {/* Agrega más detalles según la estructura de tu orden */}
-            <Typography variant="body1">
-              DNI: {order.customerName}
-            </Typography>
-            <Typography variant="body1">
-              Total: {order.totalAmount}
-            </Typography>
-            <Typography variant="body1">
-              Productos:
-              <ul>
-                {order.products.map((product) => (
-                  <li key={product.id}>
-                    {product.title} - Cantidad: {product.quantity} - Precio: {product.price}
-                  </li>
-                ))}
-              </ul>
-            </Typography>
-            <Button
-              variant="contained"
-              color="primary"
-              fullWidth
-              onClick={() => {
-                setSelectedOrder(order);
-                setOpenDialog(true);
-              }}
-            >
-              Selecciona método de Pago
-            </Button>
-          </CardContent>
-        </Card>
-      </Grid>
-    ))}
+      {orders.map((order) => (
+        <Grid key={order.id} item xs={12} sm={6} md={4} lg={3}>
+          <Card style={{ width: '100%', height: '100%' }}>
+            <CardContent>
+              <Typography variant="h6" gutterBottom>
+                Orden
+              </Typography>
+              <Typography variant="body1">DNI: {order.customerName}</Typography>
+              <Typography variant="body1">Total: {order.totalAmount}</Typography>
+              <Typography variant="body1">
+                Productos:
+                <ul>
+                  {order.products.map((product) => (
+                    <li key={product.id}>
+                      {product.title} - Cantidad: {product.quantity} - Precio: {product.price}
+                    </li>
+                  ))}
+                </ul>
+              </Typography>
+              <Button
+                variant="contained"
+                color="primary"
+                fullWidth
+                onClick={() => {
+                  setSelectedOrder(order);
+                  setOpenDialog(true);
+                }}
+              >
+                Selecciona método de Pago
+              </Button>
+            </CardContent>
+          </Card>
+        </Grid>
+      ))}
+
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
         <DialogTitle>Selecciona método de Pago</DialogTitle>
         <DialogContent>
@@ -163,10 +206,16 @@ const OrderList: React.FC = () => {
           <Button onClick={handlePaymentMethod}>Confirmar</Button>
         </DialogActions>
       </Dialog>
+
+      <Dialog open={openDialogPrinte} onClose={handleClosePrint}>
+        
+        {/* Componente oculto para imprimir */}
+        <OrderPrintComponent order={selectedCompletedOrders} ref={componentRef} />
+        <Button onClick={handlePrint}>Imprimir Orden </Button>
+        <Button onClick={handleClosePrint}>Cancelar</Button>
+      </Dialog>
     </Grid>
   );
 };
 
 export default OrderList;
-
-

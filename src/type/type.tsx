@@ -189,6 +189,7 @@ export interface Order {
   totalAmount: number;
   timestamp: Date;
   completedTimestamp: Date;
+  
   // Agrega más propiedades según la estructura de tu orden
 }
 
