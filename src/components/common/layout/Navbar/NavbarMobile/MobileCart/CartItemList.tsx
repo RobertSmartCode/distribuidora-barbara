@@ -181,7 +181,7 @@ const CartItemList = () => {
                 }}
               >
                 <Typography variant="body2" style={{ paddingLeft: '20px' }}>
-                  Sub Total (Sin Envío)
+                  Sub Total 
                 </Typography>
                 <Typography variant="body1" style={{ paddingRight: '30px' }}>
                   ${calculateSubtotal()}
