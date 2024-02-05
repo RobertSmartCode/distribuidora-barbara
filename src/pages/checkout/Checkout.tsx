@@ -2,7 +2,6 @@ import { Box,} from "@mui/material";
 import BannerSecure from "./BannerSecure"
 import Banner from "./Banner"
 import CartCheckout from './CartCheckout '; 
-import ShippingMethodCheckout from './ShippingMethodCheckout'; 
 import CheckoutForm from './CheckoutForm'; 
 
 
@@ -27,7 +26,7 @@ const Checkout: React.FC = () => {
               <BannerSecure/>
               <Banner/>
               <CartCheckout/>
-              <ShippingMethodCheckout/>
+             
               <CheckoutForm/>
       
     
