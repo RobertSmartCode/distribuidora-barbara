@@ -15,7 +15,6 @@ import { Link } from 'react-router-dom';
 import { Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom'; 
 
-import '../../../../../../styles/styles.css';
 
 
 const MobileCart: React.FC = () => {
@@ -31,7 +30,7 @@ const MobileCart: React.FC = () => {
 
   useEffect(() => {
     // Esto es solo un ejemplo, puedes usar algún evento para cambiar el estado
-    const timeout = setTimeout(() => setShowTitle(!showTitle), 1500);
+    const timeout = setTimeout(() => setShowTitle(!showTitle), 500);
 
     return () => clearTimeout(timeout);
   }, [showTitle]);
