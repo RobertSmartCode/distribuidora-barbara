@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, } from 'react';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import CloseIcon from "@mui/icons-material/Close";
 import IconButton from '@mui/material/IconButton';
@@ -16,10 +16,15 @@ import { Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom'; 
 
 const MobileCart: React.FC = () => {
+
   const [cartOpen, setCartOpen] = useState(false);
+  
+
   const { cart, getTotalQuantity, getTotalPrice } = useContext(CartContext)! ?? {};
   const navigate = useNavigate();
   const isDesktop = useMediaQuery('(min-width: 768px)');
+
+
 
   const handleCartClick = () => {
     setCartOpen(!cartOpen);
@@ -82,7 +87,14 @@ const MobileCart: React.FC = () => {
     marginLeft: '24px',
   };
 
-
+  const cartTitleStyles = {
+    fontSize: '1.5rem',
+    margin: '16px auto', 
+    textAlign: 'center',  
+    color: customColors.primary.main,
+  };
+  
+  
 
   const drawerPaperStyles = {
     boxSizing: "border-box",
@@ -136,8 +148,18 @@ const MobileCart: React.FC = () => {
             <CloseIcon />
           </IconButton>
         </Box>
+
         <Box sx={cartIconStyles}>
-          
+
+
+        <Typography
+        variant="h6"
+        sx={cartTitleStyles}
+       
+      >
+        Envío gratis a CABA y AMBA
+      </Typography>
+
           {cart?.length ?? 0 > 0 ? (
             <>
               <CartItemList />
