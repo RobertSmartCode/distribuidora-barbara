@@ -6,8 +6,11 @@ import { Grid, Card, CardContent, Typography, Button, IconButton, Box, CardMedia
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Product } from '../../type/type';
 import SelectionCard from "../../components/pageComponents/SelectionCard/SelectionCard";
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 const Shop: React.FC = () => {
+  const isMobile = useMediaQuery('(max-width: 600px)');
+  const maxTitleLength = isMobile ? 15 : 29;
   const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
@@ -101,9 +104,13 @@ const Shop: React.FC = () => {
                   />
                 ) : null}
             <CardContent>
-              <Typography variant="subtitle1" gutterBottom sx={productTitleStyles}>
-                {product.title}
-              </Typography>
+
+            <Typography variant="subtitle1" gutterBottom sx={productTitleStyles}>
+                {product.title.length > maxTitleLength
+                  ? `${product.title.substring(0, maxTitleLength)}...`
+                  : product.title}
+            </Typography>
+
               <Typography variant="subtitle2" color="textSecondary" sx={productPriceStyles}>
                 Precio: ${product.price}
               </Typography>
