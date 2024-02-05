@@ -1,0 +1,17 @@
+.title-enter {
+  opacity: 0;  /* Inicia con opacidad 0 al entrar */
+}
+
+.title-enter-active {
+  opacity: 1;  /* Cambia gradualmente la opacidad a 1 */
+  transition: opacity 500ms;  /* Aplica la transición solo a la propiedad de opacidad */
+}
+
+.title-exit {
+  opacity: 1;  /* Mantiene la opacidad a 1 al salir */
+}
+
+.title-exit-active {
+  opacity: 0.01;  /* Cambia gradualmente la opacidad a un valor muy cercano a 0 */
+  transition: opacity 500ms;  /* Aplica la transición solo a la propiedad de opacidad */
+}

@@ -1,4 +1,4 @@
-import React, { useState, useContext, } from 'react';
+import React, { useState, useContext, useEffect, } from 'react';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import CloseIcon from "@mui/icons-material/Close";
 import IconButton from '@mui/material/IconButton';
@@ -15,6 +15,9 @@ import { Link } from 'react-router-dom';
 import { Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom'; 
 
+import '../../../../../../styles/styles.css';
+
+
 const MobileCart: React.FC = () => {
 
   const [cartOpen, setCartOpen] = useState(false);
@@ -23,6 +26,15 @@ const MobileCart: React.FC = () => {
   const { cart, getTotalQuantity, getTotalPrice } = useContext(CartContext)! ?? {};
   const navigate = useNavigate();
   const isDesktop = useMediaQuery('(min-width: 768px)');
+
+  const [showTitle, setShowTitle] = useState(true);
+
+  useEffect(() => {
+    // Esto es solo un ejemplo, puedes usar algún evento para cambiar el estado
+    const timeout = setTimeout(() => setShowTitle(!showTitle), 1500);
+
+    return () => clearTimeout(timeout);
+  }, [showTitle]);
 
 
 
@@ -38,7 +50,7 @@ const MobileCart: React.FC = () => {
     if (isMinimumOrderReached()) {
       navigate('/checkout');
     } else {
-      console.error('Seleccione un método de envío válido y asegúrese de que el total del carrito sea superior a $150,000.');
+      console.error('Asegúrese de que el total del carrito sea superior a $150,000.');
     }
   };
 
@@ -92,8 +104,9 @@ const MobileCart: React.FC = () => {
     margin: '16px auto', 
     textAlign: 'center',  
     color: customColors.primary.main,
+    overflow: 'hidden',
   };
-  
+
   
 
   const drawerPaperStyles = {
@@ -151,14 +164,10 @@ const MobileCart: React.FC = () => {
 
         <Box sx={cartIconStyles}>
 
+        <Typography variant="h6" sx={{ ...cartTitleStyles, opacity: showTitle ? 1 : 0 }}>
+          ENVÍOS GRATIS A CABA Y AMBA
+        </Typography>
 
-        <Typography
-        variant="h6"
-        sx={cartTitleStyles}
-       
-      >
-        Envío gratis a CABA y AMBA
-      </Typography>
 
           {cart?.length ?? 0 > 0 ? (
             <>

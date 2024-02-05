@@ -15,7 +15,11 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { Product } from '../../../../../../type/type';
 
+
+
 const CartItemList = () => {
+
+
   const { cart, deleteByBarcode, updateQuantityByBarcode } = useContext(CartContext)! || {};
   const [productCounters, setProductCounters] = useState<{ [key: string]: number }>({});
   const [exceededMaxInCart, setExceededMaxInCart] = useState<{ [key: string]: boolean }>({});
