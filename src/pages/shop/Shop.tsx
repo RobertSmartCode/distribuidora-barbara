@@ -14,6 +14,14 @@ const Shop: React.FC = () => {
   const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [clickedProduct, setClickedProduct] = useState<string | null>(null);
+  const handleTitleClick = (title: string) => {
+    setClickedProduct((prevClickedProduct) =>
+      prevClickedProduct === title ? null : title
+    );
+  };
+  
+  
  
   const [isComponentReady, setIsComponentReady] = useState(false);
   const [loadedImageCount, setLoadedImageCount] = useState(0);
@@ -105,11 +113,24 @@ const Shop: React.FC = () => {
                 ) : null}
             <CardContent>
 
-            <Typography variant="subtitle1" gutterBottom sx={productTitleStyles}>
-                {product.title.length > maxTitleLength
-                  ? `${product.title.substring(0, maxTitleLength)}...`
-                  : product.title}
+            <Typography
+              variant="subtitle1"
+              gutterBottom
+              sx={{
+                ...productTitleStyles,
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+              }}
+              onClick={() => handleTitleClick(product.title)}
+            >
+              {clickedProduct === product.title
+                ? product.title
+                : product.title.length > maxTitleLength
+                ? `${product.title.substring(0, maxTitleLength)}...`
+                : product.title}
             </Typography>
+
 
               <Typography variant="subtitle2" color="textSecondary" sx={productPriceStyles}>
                 Precio: ${product.price}
