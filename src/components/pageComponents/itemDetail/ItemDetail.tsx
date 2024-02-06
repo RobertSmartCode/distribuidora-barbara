@@ -10,7 +10,6 @@ import {
   CardActions,
   Box,
   Grid,
-  Divider,
   Stack,
   Paper,
 } from "@mui/material";
@@ -29,13 +28,12 @@ import {customColors} from "../../../styles/styles"
 
 const ItemDetail: React.FC = () => {
   const { id } = useParams<{ id: string | undefined }>();
-  const { getQuantityByBarcode, addToCart, getTotalQuantity } = useContext(CartContext)!;
+  const { getQuantityByBarcode, addToCart, getTotalQuantity,  checkStock } = useContext(CartContext)!;
   const [product, setProduct] = useState<any>(null);
   const [counter, setCounter] = useState<number>(1);
-  const [selectedColor, setSelectedColor] = useState<string>("");
-  const [selectedSize, setSelectedSize] = useState<string>("");
-
-  const [availableSizes, setAvailableSizes] = useState<string[]>();
+ 
+  const [showError, setShowError] = useState(false);
+  const errorMessage = "Ha ocurrido un error al agregar el producto al carrito. Por favor, intenta nuevamente.";
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -58,22 +56,6 @@ const ItemDetail: React.FC = () => {
     fetchProduct();
   }, [id]);
   
-  useEffect(() => {
-    if (product) {
-      const initialAvailableSizes: string[] = product.colors
-        ? product.colors
-            .find((colorObject: { color: string }) => colorObject.color === colorsArray[0])
-            ?.sizes || []
-        : [];
-
-      setAvailableSizes(initialAvailableSizes);
-
-      // Si hay tallas disponibles, seleccionar la primera por defecto
-      if (initialAvailableSizes.length > 0) {
-        setSelectedSize(initialAvailableSizes[0]);
-      }
-    }
-  }, [product]);
 
   const handleCounterChange = (value: number) => {
     if (value >= 1 && value <= product?.stock) {
@@ -81,50 +63,34 @@ const ItemDetail: React.FC = () => {
     }
   };
 
-  const handleColorChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const color = event.target.value;
-    setSelectedColor(color);
-  
-    // Filtrar las tallas disponibles para el color seleccionado
-    const selectedColorObject = product?.colors.find((c: any) => c.color === color);
-    const availableSizes = selectedColorObject?.sizes || [];
-    
-    // Actualizar las tallas disponibles
-    setAvailableSizes(availableSizes);
-  
-    // Si hay tallas disponibles, seleccionar la primera por defecto
-    if (availableSizes.length > 0) {
-      setSelectedSize(availableSizes[0]);
-    }
-  
-  };
-  
-  const handleSizeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedSize(event.target.value);
-  };
   
 
   const handleAddToCart = () => {
-    const cartItem: CartItem = {
-      ...product,
-      quantity: counter,
-      colors: [{ color: selectedColor, sizes: [selectedSize], quantities: [1] }],
-    };
-  
-    addToCart(cartItem);
-  };
-  
+    let quantityToAdd = 1;
 
-  const colorsArray: string[] = product?.colors
-    ? product.colors.map((colorObject: { color: string }) => colorObject.color)
-    : [];
+    // Verifica si hay suficiente stock antes de agregar al carrito
+    const hasEnoughStock = checkStock(product);
+
+    if (hasEnoughStock) {
+      const cartItem: CartItem = {
+        ...product,
+        quantity: quantityToAdd,
+      };
+
+      addToCart(cartItem);
+
+    } else {
+      setShowError(true);
+      setTimeout(() => {
+        setShowError(false);
+      }, 1000);
+    }
+  };
+
+
  
 
-  const originalPrice = product?.unit_price || 0;
-  const discountPercentage = product?.discount || 0;
-  const finalPrice = originalPrice - (originalPrice * (discountPercentage / 100));
-
-  console.log(finalPrice,product?.unit_price)
+console.log(product)
 
   return (
     <Box
@@ -151,13 +117,15 @@ const ItemDetail: React.FC = () => {
                 overflow: "hidden",
               }}
             >
-              <Carousel
-                showThumbs={false}
-                dynamicHeight={true}
-                emulateTouch={true}
-              >
-                {product?.images.map((image: string, index: number) => (
-                  <div key={index}>
+            <Carousel
+              showThumbs={false}
+              dynamicHeight={true}
+              emulateTouch={true}
+            >
+              {product?.images.map((image: string, index: number) => (
+                <div key={index}>
+                                  
+                  {product?.discount !== "0" && (
                     <Paper
                       elevation={0}
                       sx={{
@@ -179,29 +147,22 @@ const ItemDetail: React.FC = () => {
                         <span style={{ fontSize: "14px" }}>OFF</span>
                       </Typography>
                     </Paper>
-                    <img
-                      src={image}
-                      alt={`Imagen ${index + 1}`}
-                      style={{
-                        width: "100%",
-                        maxHeight: "400px",
-                        objectFit: "contain",
-                        paddingBottom: "60px",
-                      }}
-                    />
-                  </div>
-                ))}
-              </Carousel>
-              <Divider
-                sx={{
-                  backgroundColor: customColors.primary.main,
-                  position: "absolute",
-                  bottom: "1",
-                  left: "0",
-                  right: "0",
-                  width: "100%",
-                }}
-              />
+                  )}
+
+                  <img
+                    src={image}
+                    alt={`Imagen ${index + 1}`}
+                    style={{
+                      width: "100%",
+                      maxHeight: "400px",
+                      objectFit: "contain",
+                      paddingBottom: "60px",
+                    }}
+                  />
+                </div>
+              ))}
+            </Carousel>
+             
             </Box>
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -232,7 +193,7 @@ const ItemDetail: React.FC = () => {
                     color: customColors.primary.main
                   }}
                 >
-                  ${product?.unit_price}
+                  ${product?.price}
                 </Typography>
                 <Typography
                   variant="body1"
@@ -242,99 +203,31 @@ const ItemDetail: React.FC = () => {
                     fontSize: "24px"
                   }}
                 >
-                   ${!isNaN(finalPrice) ? finalPrice : 0}
+                 ${product?.price}
                 </Typography>
               </Typography>
   
               <PaymentMethodsInfo />
               <ShippingMethodsInfo />
 
-
-
-
-              {product && (
-                <Box sx={{ textAlign: "center", marginTop: 2 }}>
-                  {Array.isArray(colorsArray) && colorsArray.length > 0 && (
-                    <div style={{ marginBottom: '16px' }}>
-                      <label htmlFor="colorSelect" style={{ fontSize: '18px', fontWeight: 'bold', color: customColors.primary.main, display: 'flex', alignItems: 'start' }}>
-                        Colores:
-                      </label>
-                      <select
-                        id="colorSelect"
-                        value={selectedColor}
-                        onChange={handleColorChange}
-                        style={{
-                          padding: '10px',
-                          border:  `1px solid ${customColors.primary.main}`,
-                          borderRadius: '4px',
-                          fontSize: '16px',
-                          backgroundColor: customColors.secondary.main,
-                          color: customColors.primary.main,
-                          width: '100%',
-                          outline: 'none',
-                        }}
-                      >
-                        {colorsArray.map((color, index) => (
-                          <option
-                            style={{ padding: '8px' }}
-                            key={index}
-                            value={color}
-                          >
-                            {color}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  )}
-  
-                  {/* Mostrar tallas disponibles para el color seleccionado */}
-                  {Array.isArray(availableSizes) && availableSizes.length > 0 && (
-                    <div>
-                      <label htmlFor="sizeSelect" style={{ fontSize: '18px', fontWeight: 'bold', color: customColors.primary.main, display: 'flex', alignItems: 'start'}}>
-                        Tallas:
-                      </label>
-                      <select
-                        id="sizeSelect"
-                        value={selectedSize}
-                        onChange={handleSizeChange}
-                        style={{
-                          padding: '10px',
-                          border: `1px solid ${customColors.primary.main}`,
-                          borderRadius: '4px',
-                          fontSize: '16px',
-                          backgroundColor: customColors.secondary.main,
-                          color: customColors.primary.main,
-                          width: '100%',
-                          outline: 'none',
-                        }}
-                      >
-                        {availableSizes.map((size, index) => (
-                          <option
-                            style={{ padding: '8px' }}
-                            key={index}
-                            value={size}
-                          >
-                            {size}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  )}
-                </Box>
-              )}
             </CardContent>
           </Grid>
         </Grid>
-  
-
-
-
-
+        
         <Grid item xs={12} sm={6}>
           <CardContent>
             <ProductDetailsInfo />
           </CardContent>
         </Grid>
+          {/* Agregar aquí el bloque para mostrar el mensaje de error */}
+          <Grid item xs={12}>
+          {showError && (
+            <Typography variant="body1" color="error" align="center">
+              {errorMessage}
+            </Typography>
+          )}
+        </Grid>
+        {/* Fin del bloque para mostrar el mensaje de error */}
   
         <CardActions>
           <Stack
