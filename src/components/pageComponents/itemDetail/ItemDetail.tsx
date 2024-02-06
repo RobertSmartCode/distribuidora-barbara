@@ -88,10 +88,6 @@ const ItemDetail: React.FC = () => {
   };
 
 
- 
-
-console.log(product)
-
   return (
     <Box
       sx={{
@@ -125,29 +121,29 @@ console.log(product)
               {product?.images.map((image: string, index: number) => (
                 <div key={index}>
                                   
-                                  {parseInt(product?.discount) !== 0 && (
-                                    <Paper
-                                      elevation={0}
-                                      sx={{
-                                        position: "absolute",
-                                        top: 0,
-                                        left: 0,
-                                        backgroundColor: customColors.primary.main,
-                                        color: customColors.secondary.contrastText,
-                                        width: "48px",
-                                        height: "48px",
-                                        borderRadius: "50%",
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                      }}
-                                    >
-                                      <Typography variant="body2">
-                                        {`${product?.discount}% `}
-                                        <span style={{ fontSize: "14px" }}>OFF</span>
-                                      </Typography>
-                                    </Paper>
-                                  )}
+                {parseInt(product?.discount) !== 0 && (
+                  <Paper
+                    elevation={0}
+                    sx={{
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      backgroundColor: customColors.primary.main,
+                      color: customColors.secondary.contrastText,
+                      width: "48px",
+                      height: "48px",
+                      borderRadius: "50%",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Typography variant="body2">
+                      {`${product?.discount}% `}
+                      <span style={{ fontSize: "14px" }}>OFF</span>
+                    </Typography>
+                  </Paper>
+                )}
 
 
                   <img
@@ -155,9 +151,8 @@ console.log(product)
                     alt={`Imagen ${index + 1}`}
                     style={{
                       width: "100%",
-                      maxHeight: "400px",
+                      height: "100%", // Ajusta la altura para que llene el contenedor
                       objectFit: "contain",
-                      paddingBottom: "60px",
                     }}
                   />
                 </div>
