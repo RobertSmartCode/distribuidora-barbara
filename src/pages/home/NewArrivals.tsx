@@ -7,12 +7,25 @@ import { Grid, Card, CardContent, Typography, Button, IconButton, Box, CardMedia
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Product } from "../../type/type";
 import SelectionCard from "../../components/pageComponents/SelectionCard/SelectionCard";
+import useMediaQuery from '@mui/material/useMediaQuery';
+
+
+
 
 const NewArrivals: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [isComponentReady, setIsComponentReady] = useState(false);
   const [loadedImageCount, setLoadedImageCount] = useState(0);
+  const isMobile = useMediaQuery('(max-width: 600px)');
+  const maxTitleLength = isMobile ? 15 : 29;
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [clickedProduct, setClickedProduct] = useState<string | null>(null);
+  const handleTitleClick = (title: string) => {
+    setClickedProduct((prevClickedProduct) =>
+      prevClickedProduct === title ? null : title
+    );
+  };
+  
  
 
 const handleImageLoad = () => {
@@ -164,8 +177,22 @@ useEffect(() => {
                   />
                 ) : null}
             <CardContent>
-              <Typography variant="subtitle1" gutterBottom sx={productTitleStyles}>
-                {product.title}
+                <Typography
+              variant="subtitle1"
+              gutterBottom
+              sx={{
+                ...productTitleStyles,
+                whiteSpace: clickedProduct === product.title ? 'normal' : 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+              }}
+              onClick={() => handleTitleClick(product.title)}
+            >
+              {clickedProduct === product.title
+                ? product.title
+                : product.title.length > maxTitleLength
+                ? `${product.title.substring(0, maxTitleLength)}...`
+                : product.title}
               </Typography>
               <Typography variant="subtitle2" color="textSecondary" sx={productPriceStyles}>
                 Precio: ${product.price}
