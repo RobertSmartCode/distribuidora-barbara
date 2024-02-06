@@ -95,6 +95,10 @@ const ItemDetail: React.FC = () => {
         justifyContent: "center",
         alignItems: "center",
         padding: 1,
+        position: "relative",
+        borderRadius: "25px",
+   
+    
       }}
     >
       <Card
