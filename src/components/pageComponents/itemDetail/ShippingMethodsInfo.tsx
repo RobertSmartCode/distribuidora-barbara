@@ -1,16 +1,26 @@
-import React, {useState } from "react";
+import React, {useEffect, useState } from "react";
 import Drawer from "@mui/material/Drawer";
 import IconButton from "@mui/material/IconButton";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import CloseIcon from "@mui/icons-material/Close";
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { Box, Typography } from "@mui/material";
-import ShippingMethods from "../../common/layout/Navbar/NavbarMobile/MobileCart/ShippingMethods/ShippingMethods";
+
 
 
 const ShippingMethodsInfo: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const isMobile = useMediaQuery('(max-width: 600px)');
+
+  const [showTitle, setShowTitle] = useState(true);
+
+  useEffect(() => {
+    // Esto es solo un ejemplo, puedes usar algún evento para cambiar el estado
+    const timeout = setTimeout(() => setShowTitle(!showTitle), 500);
+
+    return () => clearTimeout(timeout);
+  }, [showTitle]);
+
 
   
 
@@ -59,8 +69,13 @@ const ShippingMethodsInfo: React.FC = () => {
 
   const shippingTextStyles = {
     fontSize: "20px",
+    color: "red", // Establecer el color rojo
+    display: "flex",
+    justifyContent: "center", // Centrar horizontalmente
+    alignItems: "center", // Centrar verticalmente
+    height: "100%", // Ajustar la altura para centrar verticalmente
   };
-
+  
   return (
     <Box>
       <Box display="flex" alignItems="center">
@@ -95,7 +110,7 @@ const ShippingMethodsInfo: React.FC = () => {
       }}
     >
         <Box sx={topBarStyles}>
-          <Typography sx={shippingTextStyles}>Métodos de Envío</Typography>
+          <Typography sx={{ fontSize: "20px" }}>Métodos de Envío</Typography>
           <IconButton
             aria-label="close"
             onClick={handleCloseDrawer}
@@ -104,8 +119,11 @@ const ShippingMethodsInfo: React.FC = () => {
             <CloseIcon />
           </IconButton>
         </Box>
-        <ShippingMethods
-            />
+        
+        <Typography variant="h6" sx={{ ...shippingTextStyles, opacity: showTitle ? 1 : 0 }}>
+          ENVÍOS GRATIS A CABA Y AMBA
+        </Typography>
+      
       </Drawer>
     </Box>
   );

@@ -185,3 +185,6 @@ const Shop: React.FC = () => {
 };
 
 export default Shop;
+
+
+
