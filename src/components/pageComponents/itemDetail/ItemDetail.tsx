@@ -105,6 +105,7 @@ const ItemDetail: React.FC = () => {
         <Grid container spacing={2}>
 
           <Grid item xs={12} sm={6}>
+
             <Box
               sx={{
                 position: "relative",
@@ -158,8 +159,9 @@ const ItemDetail: React.FC = () => {
                 </div>
               ))}
             </Carousel>
-             
             </Box>
+
+            
           </Grid>
           <Grid item xs={12} sm={6}>
             <CardContent>
