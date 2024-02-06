@@ -152,8 +152,8 @@ const ItemDetail: React.FC = () => {
                     alt={`Imagen ${index + 1}`}
                     style={{
                       width: "100%",
-                      height: "100%", // Ajusta la altura para que llene el contenedor
                       objectFit: "contain",
+                      marginBottom: '8px',
                     }}
                   />
                 </div>
