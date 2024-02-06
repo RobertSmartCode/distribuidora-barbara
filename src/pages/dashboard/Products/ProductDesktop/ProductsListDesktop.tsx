@@ -1,5 +1,5 @@
 import  { useEffect, useState } from "react";
-import {IconButton, Modal, TableBody, TableCell, TableContainer, TableHead, TableRow, Table, Card,} from "@mui/material";
+import {IconButton, Modal, TableBody, TableCell, TableContainer, TableHead, TableRow, Table, Card, Typography,} from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { db } from "../../../../firebase/firebaseConfig";
@@ -15,16 +15,24 @@ import { Product} from '../../../../type/type';
 import Box from "@mui/material/Box";
 import CloseIcon from "@mui/icons-material/Close";
 import ProductsEditDesktop from "./ProductsEditDesktop";
-
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 
 
 const ProductsListDesktop = () => {
  
   const [open, setOpen] = useState<boolean>(false);
+  const [isChange, setIsChange] = useState<boolean>(false);
   const [productSelected, setProductSelected] = useState<Product | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
-  const [isChange, setIsChange] = useState<boolean>(false);
+  const isMobile = useMediaQuery('(max-width: 600px)');
+  const maxTitleLength = isMobile ? 15 : 40;
+  const [clickedProduct, setClickedProduct] = useState<string | null>(null);
+  const handleTitleClick = (title: string) => {
+    setClickedProduct((prevClickedProduct) =>
+      prevClickedProduct === title ? null : title
+    );
+  };
 
 
   useEffect(() => {
@@ -97,7 +105,7 @@ const ProductsListDesktop = () => {
           <TableHead>
             <TableRow>
               
-              <TableCell variant="head" align="justify">Título</TableCell>
+              <TableCell variant="head" align="center">Descripción</TableCell>
               <TableCell variant="head" align="justify">Precio</TableCell>
               <TableCell variant="head" align="justify">Imagen</TableCell>
               <TableCell variant="head" align="justify">Categoria</TableCell> 
@@ -110,10 +118,29 @@ const ProductsListDesktop = () => {
                 key={product.id}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
-                
-                 <TableCell component="th" scope="row" align="justify" style={{ width: 'auto' , maxWidth: "100%" }}>
-                  {product.title}
-                 </TableCell>
+                <TableCell component="th" scope="row" align="justify" style={{ width: 'auto', maxWidth: "100%" }}>
+                  <Typography
+                    variant="subtitle1"
+                    gutterBottom
+                    sx={{
+                      whiteSpace: clickedProduct === product.description ? 'normal' : 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      cursor: 'pointer', // Agregar esta línea para cambiar el cursor al pasar el mouse
+                    }}
+                    onClick={() => handleTitleClick(product.description)}
+                  >
+                    {clickedProduct === product.description
+                      ? product.description
+                      : product.description.length > maxTitleLength
+                      ? `${product.description.substring(0, maxTitleLength)}...`
+                      : product.description}
+                  </Typography>
+                </TableCell>
+
+               
+
+
                  <TableCell component="th" scope="row" align="justify" style={{ width: 'auto' , maxWidth: "100%" }}>
                   {product.price}
                  </TableCell>
