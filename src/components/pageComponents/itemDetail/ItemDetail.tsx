@@ -99,9 +99,7 @@ const ItemDetail: React.FC = () => {
       }}
     >
       <Card>
-
-        <Grid container spacing={2}>
-
+       
           <Grid item xs={12} sm={6}>
 
             <Box
@@ -110,16 +108,13 @@ const ItemDetail: React.FC = () => {
                 padding: "10px",
                 borderRadius: "25px",
                 overflow: "hidden",
-                
               }}
             >
-
             <Carousel
               showThumbs={false}
               dynamicHeight={true}
               emulateTouch={true}
             >
-
               {product?.images.map((image: string, index: number) => (
                   <div key={index}>
                                   
@@ -160,7 +155,7 @@ const ItemDetail: React.FC = () => {
               ))}
             </Carousel>
             </Box>
-          </Grid>
+         
 
 
 
