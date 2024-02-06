@@ -164,7 +164,7 @@ useEffect(() => {
             alt={product.title}
             style={{ objectFit: "contain", width: "100%", 
             marginBottom: '8px',
-            borderBottom: "1px solid #000", }}
+             }}
             onLoad={handleImageLoad} 
             />
              {selectedProduct === product ?  (

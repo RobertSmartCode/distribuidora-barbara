@@ -101,7 +101,7 @@ const Shop: React.FC = () => {
             alt={product.title}
             style={{ objectFit: "contain", width: "100%", 
             marginBottom: '8px',
-            borderBottom: "1px solid #000", }}
+            }}
             onLoad={handleImageLoad} 
             />
              {selectedProduct === product ?  (
@@ -123,7 +123,10 @@ const Shop: React.FC = () => {
                 whiteSpace: clickedProduct === product.description ? 'normal' : 'nowrap',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
-                cursor: 'pointer', // Agregar esta línea para cambiar el cursor al pasar el mouse
+                cursor: 'pointer', 
+                overflowWrap: 'break-word',
+                maxWidth: '90%', 
+                marginX: '5%'
               }}
               onClick={() => handleTitleClick(product.description)}
             >
@@ -133,6 +136,8 @@ const Shop: React.FC = () => {
                 ? `${product.description.substring(0, maxTitleLength)}...`
                 : product.description}
             </Typography>
+
+
 
 
               <Typography variant="subtitle2" color="textSecondary" sx={productPriceStyles}>
