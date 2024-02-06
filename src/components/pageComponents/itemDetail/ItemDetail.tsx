@@ -100,13 +100,10 @@ const ItemDetail: React.FC = () => {
         
       }}
     >
-      <Card
-        sx={{
-          backgroundColor: customColors.secondary.main,
-          color: customColors.primary.contrastText,
-        }}
-      >
+      <Card>
+
         <Grid container spacing={2}>
+
           <Grid item xs={12} sm={6}>
             <Box
               sx={{
@@ -114,6 +111,8 @@ const ItemDetail: React.FC = () => {
                 padding: "10px",
                 borderRadius: "25px",
                 overflow: "hidden",
+                maxWidth:"500px",
+                maxHeight:"500px"
               }}
             >
             <Carousel
@@ -147,8 +146,6 @@ const ItemDetail: React.FC = () => {
                     </Typography>
                   </Paper>
                 )}
-
-
                   <img
                     src={image}
                     alt={`Imagen ${index + 1}`}
