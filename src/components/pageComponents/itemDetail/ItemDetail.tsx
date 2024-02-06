@@ -172,6 +172,7 @@ const ItemDetail: React.FC = () => {
                 align="center"
                 sx={{
                   color: customColors.primary.main,
+                  maxWidth:"100%"
                 }}
               >
                 {product?.title}
