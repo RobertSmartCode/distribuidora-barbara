@@ -98,119 +98,114 @@ const ItemDetail: React.FC = () => {
         
       }}
     >
+
+
       <Card>
        
-          <Grid item xs={12} sm={6}>
-
-            <Box
-              sx={{
-                position: "relative",
-                padding: "10px",
-                borderRadius: "25px",
-                overflow: "hidden",
-              }}
-            >
-            <Carousel
-              showThumbs={false}
-              dynamicHeight={true}
-              emulateTouch={true}
-            >
-              {product?.images.map((image: string, index: number) => (
-                  <div key={index}>
-                                  
-                    {parseInt(product?.discount) !== 0 && (
-                      <Paper
-                        elevation={0}
-                        sx={{
-                          position: "absolute",
-                          top: 0,
-                          left: 0,
-                          backgroundColor: customColors.primary.main,
-                          color: customColors.secondary.contrastText,
-                          width: "48px",
-                          height: "48px",
-                          borderRadius: "50%",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                        }}
-                      >
-                        <Typography variant="body2">
-                          {`${product?.discount}% `}
-                          <span style={{ fontSize: "14px" }}>OFF</span>
-                        </Typography>
-                      </Paper>
-                    )}
-                      <img
-                        src={image}
-                        alt={`Imagen ${index + 1}`}
-                        height="350"
-                        style={{
-                          width: "100%",
-                          objectFit: "contain",
-                          
-                        }}
-                      />
-                </div>
-              ))}
-            </Carousel>
-            </Box>
-         
-
-
-
-          <Grid item xs={12} sm={6}>
-            <CardContent>
-              <Typography
-                variant="h5"
-                component="div"
-                align="center"
+      <Grid container spacing={2}>
+  <Grid item xs={12} sm={6}>
+    <Box
+      sx={{
+        position: "relative",
+        padding: "10px",
+        borderRadius: "25px",
+        overflow: "hidden",
+      }}
+    >
+      <Carousel
+        showThumbs={false}
+        dynamicHeight={true}
+        emulateTouch={true}
+      >
+        {product?.images.map((image: string, index: number) => (
+          <div key={index}>
+            {parseInt(product?.discount) !== 0 && (
+              <Paper
+                elevation={0}
                 sx={{
-                  color: customColors.primary.main,
-                  maxWidth:"100%"
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  backgroundColor: customColors.primary.main,
+                  color: customColors.secondary.contrastText,
+                  width: "48px",
+                  height: "48px",
+                  borderRadius: "50%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
                 }}
               >
-                {product?.title}
-              </Typography>
-  
-              <Typography
-                variant="subtitle1"
-                color="textSecondary"
-                sx={{ display: 'flex', alignItems: 'center' }}
-              >
-                <Typography
-                  variant="body2"
-                  style={{
-                    textDecoration: "line-through",
-                    display: "block",
-                    textAlign: "center",
-                    marginRight: "16px",
-                    color: customColors.primary.main
-                  }}
-                >
-                  ${product?.price}
-                    </Typography>
-                        <Typography
-                          variant="body1"
-                          align="center"
-                          style={{
-                            color: customColors.primary.main,
-                            fontSize: "24px"
-                          }}
-                        >
-                        ${product?.price}
-                        </Typography>
-                    </Typography>
+                <Typography variant="body2">
+                  {`${product?.discount}% `}
+                  <span style={{ fontSize: "14px" }}>OFF</span>
+                </Typography>
+              </Paper>
+            )}
+            <img
+              src={image}
+              alt={`Imagen ${index + 1}`}
+              height="350"
+              style={{
+                width: "100%",
+                objectFit: "contain",
+              }}
+            />
+          </div>
+        ))}
+      </Carousel>
+    </Box>
+  </Grid>
+  <Grid item xs={12} sm={6}>
+    <CardContent>
+      <Typography
+        variant="h5"
+        component="div"
+        align="center"
+        sx={{
+          color: customColors.primary.main,
+          maxWidth: "100%",
+        }}
+      >
+        {product?.title}
+      </Typography>
 
-              <PaymentMethodsInfo />
-              <ShippingMethodsInfo />
-              <ProductDetailsInfo />
+      <Typography
+        variant="subtitle1"
+        color="textSecondary"
+        sx={{ display: 'flex', alignItems: 'center' }}
+      >
+        <Typography
+          variant="body2"
+          style={{
+            textDecoration: "line-through",
+            display: "block",
+            textAlign: "center",
+            marginRight: "16px",
+            color: customColors.primary.main
+          }}
+        >
+          ${product?.price}
+        </Typography>
+        <Typography
+          variant="body1"
+          align="center"
+          style={{
+            color: customColors.primary.main,
+            fontSize: "24px"
+          }}
+        >
+          ${product?.price}
+        </Typography>
+      </Typography>
 
-            </CardContent>
-          </Grid>
-        </Grid>
-        
-      
+      <PaymentMethodsInfo />
+      <ShippingMethodsInfo />
+      <ProductDetailsInfo />
+    </CardContent>
+  </Grid>
+</Grid>
+
           {/* Agregar aquí el bloque para mostrar el mensaje de error */}
           <Grid item xs={12}>
           {showError && (
@@ -277,6 +272,8 @@ const ItemDetail: React.FC = () => {
             Ya tienes el máximo en el carrito
           </Typography>
         )}
+
+
       </Card>
     </Box>
   );
