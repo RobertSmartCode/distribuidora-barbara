@@ -150,6 +150,7 @@ const ItemDetail: React.FC = () => {
                   <img
                     src={image}
                     alt={`Imagen ${index + 1}`}
+                    height="140"
                     style={{
                       width: "100%",
                       objectFit: "contain",
