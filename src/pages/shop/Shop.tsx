@@ -115,27 +115,36 @@ const Shop: React.FC = () => {
                 ) : null}
             <CardContent>
 
+
             <Typography
-              variant="subtitle1"
-              gutterBottom
-              sx={{
-                ...productTitleStyles,
-                whiteSpace: clickedProduct === product.description ? 'normal' : 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                cursor: 'pointer', 
-                overflowWrap: 'break-word',
-                maxWidth: '90%', 
-                marginX: '5%'
-              }}
-              onClick={() => handleTitleClick(product.description)}
-            >
-              {clickedProduct === product.description
-                ? product.description
-                : product.description.length > maxTitleLength
-                ? `${product.description.substring(0, maxTitleLength)}...`
-                : product.description}
-            </Typography>
+  variant="subtitle1"
+  gutterBottom
+  sx={{
+    ...productTitleStyles,
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    cursor: 'pointer',
+    ...(clickedProduct === product.description
+      ? {
+          whiteSpace: 'normal',
+          maxWidth: '70%',
+          margin: '0 auto',
+        }
+      : null),
+  }}
+  onClick={() => handleTitleClick(product.description)}
+>
+  {clickedProduct === product.description
+    ? product.description
+    : product.description.length > maxTitleLength
+    ? `${product.description.substring(0, maxTitleLength)}...`
+    : product.description}
+</Typography>
+
+
+
+
 
 
 

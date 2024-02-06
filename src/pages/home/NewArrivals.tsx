@@ -179,16 +179,22 @@ useEffect(() => {
             <CardContent>
 
 
-             <Typography
+            <Typography
               variant="subtitle1"
               gutterBottom
               sx={{
                 ...productTitleStyles,
-                whiteSpace: clickedProduct === product.description ? 'normal' : 'nowrap',
+                whiteSpace: 'nowrap',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
-                cursor: 'pointer', // Agregar esta línea para cambiar el cursor al pasar el mouse
-                overflowWrap: 'break-word', // Agregar esta línea para permitir el salto de línea en palabras largas
+                cursor: 'pointer',
+                ...(clickedProduct === product.description
+                  ? {
+                      whiteSpace: 'normal',
+                      maxWidth: '70%',
+                      margin: '0 auto',
+                    }
+                  : null),
               }}
               onClick={() => handleTitleClick(product.description)}
             >
@@ -197,8 +203,7 @@ useEffect(() => {
                 : product.description.length > maxTitleLength
                 ? `${product.description.substring(0, maxTitleLength)}...`
                 : product.description}
-            </Typography>
-
+              </Typography>
 
 
               <Typography variant="subtitle2" color="textSecondary" sx={productPriceStyles}>
