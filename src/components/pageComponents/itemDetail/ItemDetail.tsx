@@ -27,6 +27,7 @@ import {customColors} from "../../../styles/styles"
 
 
 const ItemDetail: React.FC = () => {
+
   const { id } = useParams<{ id: string | undefined }>();
   const { getQuantityByBarcode, addToCart, getTotalQuantity,  checkStock } = useContext(CartContext)!;
   const [product, setProduct] = useState<any>(null);
@@ -67,10 +68,8 @@ const ItemDetail: React.FC = () => {
 
   const handleAddToCart = () => {
     let quantityToAdd = 1;
-
     // Verifica si hay suficiente stock antes de agregar al carrito
     const hasEnoughStock = checkStock(product);
-
     if (hasEnoughStock) {
       const cartItem: CartItem = {
         ...product,
@@ -95,9 +94,7 @@ const ItemDetail: React.FC = () => {
         justifyContent: "center",
         alignItems: "center",
         padding: 1,
-       
         borderRadius: "25px",
-        
       }}
     >
       <Card>
@@ -115,54 +112,58 @@ const ItemDetail: React.FC = () => {
                 
               }}
             >
-            <Carousel
-              showThumbs={false}
-              dynamicHeight={true}
-              emulateTouch={true}
-            >
+
+<Carousel
+  showThumbs={false}
+  dynamicHeight={true}
+  emulateTouch={true}
+>
+
+
               {product?.images.map((image: string, index: number) => (
-                <div key={index}>
+                  <div key={index}>
                                   
-                {parseInt(product?.discount) !== 0 && (
-                  <Paper
-                    elevation={0}
-                    sx={{
-                      position: "absolute",
-                      top: 0,
-                      left: 0,
-                      backgroundColor: customColors.primary.main,
-                      color: customColors.secondary.contrastText,
-                      width: "48px",
-                      height: "48px",
-                      borderRadius: "50%",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <Typography variant="body2">
-                      {`${product?.discount}% `}
-                      <span style={{ fontSize: "14px" }}>OFF</span>
-                    </Typography>
-                  </Paper>
-                )}
-                  <img
-                    src={image}
-                    alt={`Imagen ${index + 1}`}
-                    height="350"
-                    style={{
-                      width: "100%",
-                      objectFit: "contain",
-                      
-                    }}
-                  />
+                    {parseInt(product?.discount) !== 0 && (
+                      <Paper
+                        elevation={0}
+                        sx={{
+                          position: "absolute",
+                          top: 0,
+                          left: 0,
+                          backgroundColor: customColors.primary.main,
+                          color: customColors.secondary.contrastText,
+                          width: "48px",
+                          height: "48px",
+                          borderRadius: "50%",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <Typography variant="body2">
+                          {`${product?.discount}% `}
+                          <span style={{ fontSize: "14px" }}>OFF</span>
+                        </Typography>
+                      </Paper>
+                    )}
+                      <img
+                        src={image}
+                        alt={`Imagen ${index + 1}`}
+                        height="100%"
+                        style={{
+                          width: "100%",
+                          objectFit: "contain",
+                          
+                        }}
+                      />
                 </div>
               ))}
             </Carousel>
             </Box>
-
-            
           </Grid>
+
+
+
           <Grid item xs={12} sm={6}>
             <CardContent>
               <Typography
@@ -204,9 +205,11 @@ const ItemDetail: React.FC = () => {
                  ${product?.price}
                 </Typography>
               </Typography>
-  
+
+
               <PaymentMethodsInfo />
               <ShippingMethodsInfo />
+
 
             </CardContent>
           </Grid>
