@@ -5,7 +5,7 @@ import CreditCardIcon from "@mui/icons-material/CreditCard";
 import CloseIcon from "@mui/icons-material/Close";
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { Box, Typography } from "@mui/material";
-import PaymentMethodsShow from "./PaymentMethodsShow";
+
 
 const PaymentMethodsInfo: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -84,7 +84,7 @@ const PaymentMethodsInfo: React.FC = () => {
           flexShrink: 0,
           "& .MuiDrawer-paper": {
             boxSizing: "border-box",
-            width: isMobile ? "100%" : 350, // Ajusta el ancho según sea necesario
+            width: isMobile ? "100%" : 350, 
             height: "100%",
             zIndex: 1300,
           },
@@ -101,7 +101,17 @@ const PaymentMethodsInfo: React.FC = () => {
             <CloseIcon />
           </IconButton>
         </Box>
-          <PaymentMethodsShow/>
+
+        <Typography variant="h6"
+         sx ={{
+            fontSize: "20px",
+            display: "flex",
+            justifyContent: "center", 
+            marginTop: "20%",
+            height: "100%", 
+          }} >
+          Efectivo, Transferencias y Tarjetas de Débito.
+        </Typography>
         
       </Drawer>
     </Box>
