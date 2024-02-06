@@ -48,23 +48,26 @@ useEffect(() => {
 
  
 
-  useEffect(() => {
-    const fetchNewArrivals = async () => {
-      try {
-        const productCollection = collection(db, "products");
-        const productQuery = query(productCollection, orderBy("createdAt", "desc"));
-        const querySnapshot = await getDocs(productQuery);
+useEffect(() => {
+  const fetchNewArrivals = async () => {
+    try {
+      const productCollection = collection(db, "products");
+      const productQuery = query(productCollection, orderBy("createdAt", "desc"));
+      const querySnapshot = await getDocs(productQuery);
 
-        const newArrivals = querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id } as Product));
+      const newArrivals = querySnapshot.docs
+        .map((doc) => ({ ...doc.data(), id: doc.id } as Product))
+        .filter((product) => product.online === true); // Filtrar los productos cuya propiedad "online" sea true
 
-        setProducts(newArrivals);
-      } catch (error) {
-        console.error("Error fetching new arrivals:", error);
-      }
-    };
+      setProducts(newArrivals);
+    } catch (error) {
+      console.error("Error fetching new arrivals:", error);
+    }
+  };
 
-    fetchNewArrivals();
-  }, []);
+  fetchNewArrivals();
+}, []);
+
 
 
   // Colores personalizados

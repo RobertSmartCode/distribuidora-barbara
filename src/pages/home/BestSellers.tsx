@@ -51,22 +51,22 @@ useEffect(() => {
   }
 }, [loadedImageCount, products]);
 
-  useEffect(() => {
-    let refCollection = collection(db, "products");
-    getDocs(refCollection)
-      .then((res) => {
-        let newArray: Product[] = res.docs.map((product) => {
-          return { ...product.data(), id: product.id } as Product;
-        });
+useEffect(() => {
+  let refCollection = collection(db, "products");
+  getDocs(refCollection)
+    .then((res) => {
+      let newArray: Product[] = res.docs
+        .map((product) => ({ ...product.data(), id: product.id } as Product))
+        .filter((product) => product.online === true); // Filtrar los productos cuya propiedad "online" sea true
 
-        // Ordenar los productos por salesCount
-        newArray.sort((a, b) => parseInt(b.salesCount, 10) - parseInt(a.salesCount, 10));
+      // Ordenar los productos por salesCount
+      newArray.sort((a, b) => parseInt(b.salesCount, 10) - parseInt(a.salesCount, 10));
 
-        setProducts(newArray);
-      })
-      .catch((err) => console.log(err));
-  }, []);
-  
+      setProducts(newArray);
+    })
+    .catch((err) => console.log(err));
+}, []);
+
 
   // Colores personalizados
   const customColors = {

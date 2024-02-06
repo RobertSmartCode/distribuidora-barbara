@@ -42,22 +42,23 @@ const Shop: React.FC = () => {
     const fetchProducts = async () => {
       const productsCollection = collection(db, "products");
       const productsQuery = query(productsCollection);
-
+  
       try {
         const querySnapshot = await getDocs(productsQuery);
-        const productsData = querySnapshot.docs.map(
-          (doc) => ({ ...doc.data(), id: doc.id } as Product)
-        );
-
+        const productsData = querySnapshot.docs
+          .map((doc) => ({ ...doc.data(), id: doc.id } as Product))
+          .filter((product) => product.online === true); // Filtrar los productos cuya propiedad "online" sea true
+  
         setAllProducts(productsData);
         setProducts(productsData);
       } catch (error) {
         console.error("Error al obtener productos:", error);
       }
     };
-
+  
     fetchProducts();
   }, []);
+  
 
   const containerStyles = { padding: '8px' };
   const productStyles = { border: "1px solid gray", padding: '8px', marginBottom: '8px', display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", backgroundColor: '#fff', color: '#000' };
