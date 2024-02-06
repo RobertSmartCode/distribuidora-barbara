@@ -110,6 +110,8 @@ const ItemDetail: React.FC = () => {
         padding: "10px",
         borderRadius: "25px",
         overflow: "hidden",
+        width: "400px", // Ancho fijo en modo escritorio
+        margin: "0 auto", // Centra horizontalmente en modo escritorio
       }}
     >
       <Carousel
@@ -157,7 +159,12 @@ const ItemDetail: React.FC = () => {
     </Box>
   </Grid>
   <Grid item xs={12} sm={6}>
-    <CardContent>
+    <CardContent
+      sx={{
+        width: "400px", // Ancho fijo en modo escritorio
+        margin: "0 auto", // Centra horizontalmente en modo escritorio
+      }}
+    >
       <Typography
         variant="h5"
         component="div"
@@ -205,6 +212,7 @@ const ItemDetail: React.FC = () => {
     </CardContent>
   </Grid>
 </Grid>
+
 
           {/* Agregar aquí el bloque para mostrar el mensaje de error */}
           <Grid item xs={12}>
