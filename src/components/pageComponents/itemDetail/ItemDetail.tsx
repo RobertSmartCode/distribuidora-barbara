@@ -113,12 +113,11 @@ const ItemDetail: React.FC = () => {
               }}
             >
 
-<Carousel
-  showThumbs={false}
-  dynamicHeight={true}
-  emulateTouch={true}
->
-
+            <Carousel
+              showThumbs={false}
+              dynamicHeight={true}
+              emulateTouch={true}
+            >
 
               {product?.images.map((image: string, index: number) => (
                   <div key={index}>
@@ -149,7 +148,7 @@ const ItemDetail: React.FC = () => {
                       <img
                         src={image}
                         alt={`Imagen ${index + 1}`}
-                        height="100%"
+                        height="350"
                         style={{
                           width: "100%",
                           objectFit: "contain",
