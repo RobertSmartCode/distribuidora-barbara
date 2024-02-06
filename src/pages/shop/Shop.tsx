@@ -22,6 +22,7 @@ const Shop: React.FC = () => {
   };
   
   
+  
  
   const [isComponentReady, setIsComponentReady] = useState(false);
   const [loadedImageCount, setLoadedImageCount] = useState(0);
@@ -118,7 +119,7 @@ const Shop: React.FC = () => {
               gutterBottom
               sx={{
                 ...productTitleStyles,
-                whiteSpace: 'nowrap',
+                whiteSpace: clickedProduct === product.title ? 'normal' : 'nowrap',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
               }}
@@ -129,8 +130,7 @@ const Shop: React.FC = () => {
                 : product.title.length > maxTitleLength
                 ? `${product.title.substring(0, maxTitleLength)}...`
                 : product.title}
-            </Typography>
-
+              </Typography>
 
               <Typography variant="subtitle2" color="textSecondary" sx={productPriceStyles}>
                 Precio: ${product.price}
