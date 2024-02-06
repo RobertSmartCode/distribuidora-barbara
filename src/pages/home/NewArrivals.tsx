@@ -177,7 +177,9 @@ useEffect(() => {
                   />
                 ) : null}
             <CardContent>
-            <Typography
+
+
+             <Typography
               variant="subtitle1"
               gutterBottom
               sx={{
@@ -186,6 +188,7 @@ useEffect(() => {
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
                 cursor: 'pointer', // Agregar esta línea para cambiar el cursor al pasar el mouse
+                overflowWrap: 'break-word', // Agregar esta línea para permitir el salto de línea en palabras largas
               }}
               onClick={() => handleTitleClick(product.description)}
             >
