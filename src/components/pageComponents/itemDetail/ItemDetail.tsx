@@ -192,33 +192,29 @@ const ItemDetail: React.FC = () => {
                   }}
                 >
                   ${product?.price}
-                </Typography>
-                <Typography
-                  variant="body1"
-                  align="center"
-                  style={{
-                    color: customColors.primary.main,
-                    fontSize: "24px"
-                  }}
-                >
-                 ${product?.price}
-                </Typography>
-              </Typography>
+                    </Typography>
+                        <Typography
+                          variant="body1"
+                          align="center"
+                          style={{
+                            color: customColors.primary.main,
+                            fontSize: "24px"
+                          }}
+                        >
+                        ${product?.price}
+                        </Typography>
+                    </Typography>
 
 
               <PaymentMethodsInfo />
               <ShippingMethodsInfo />
-
+              <ProductDetailsInfo />
 
             </CardContent>
           </Grid>
         </Grid>
         
-        <Grid item xs={12} sm={6}>
-          <CardContent>
-            <ProductDetailsInfo />
-          </CardContent>
-        </Grid>
+      
           {/* Agregar aquí el bloque para mostrar el mensaje de error */}
           <Grid item xs={12}>
           {showError && (
