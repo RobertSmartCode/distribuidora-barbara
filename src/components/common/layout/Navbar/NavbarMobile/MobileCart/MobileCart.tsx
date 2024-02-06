@@ -102,7 +102,7 @@ const MobileCart: React.FC = () => {
     fontSize: '1.5rem',
     margin: '16px auto', 
     textAlign: 'center',  
-    color: customColors.primary.main,
+    color: "red",
     overflow: 'hidden',
   };
 
