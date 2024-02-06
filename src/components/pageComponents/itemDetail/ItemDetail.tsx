@@ -158,59 +158,77 @@ const ItemDetail: React.FC = () => {
       </Carousel>
     </Box>
   </Grid>
+
+
   <Grid item xs={12} sm={6}>
-    <CardContent
+  <CardContent
+    sx={{
+      width: "100%", 
+      maxWidth: "400px", 
+      margin: "0 auto",
+    }}
+  >
+    <Typography
+      variant="h5"
+      component="div"
+      align="center"
       sx={{
-        width: "400px", // Ancho fijo en modo escritorio
-        margin: "0 auto", // Centra horizontalmente en modo escritorio
+        color: customColors.primary.main,
+        margin: "0 auto",
       }}
     >
-      <Typography
-        variant="h5"
-        component="div"
-        align="center"
+      {product?.title}
+    </Typography>
+
+    <Typography
+      variant="subtitle1"
+      color="textSecondary"
+      sx={{ display: 'flex', justifyContent: 'center' }}
+    >
+            {parseInt(product?.discount) !== 0 && (
+                <Typography
+                  variant="body2"
+                  style={{
+                    textDecoration: "line-through",
+                    display: "block",
+                    textAlign: "center",
+                    marginRight: "16px",
+                    color: customColors.primary.main
+                  }}
+                >
+                  ${product?.price}
+                </Typography>
+              )}
+
+            <Typography
+              variant="body1"
+              align="center"
+              style={{
+                color: customColors.primary.main,
+                fontSize: "24px"
+              }}
+              >
+            ${product?.price}
+          </Typography> 
+    </Typography>
+
+    <Box
         sx={{
-          color: customColors.primary.main,
-          maxWidth: "100%",
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          marginTop: '20px', // Ajusta el margen superior según sea necesario
         }}
-      >
-        {product?.title}
-      </Typography>
+    >
+    <PaymentMethodsInfo/>
+    <ShippingMethodsInfo/>
+    <ProductDetailsInfo/>
+    </Box>
 
-      <Typography
-        variant="subtitle1"
-        color="textSecondary"
-        sx={{ display: 'flex', alignItems: 'center' }}
-      >
-        <Typography
-          variant="body2"
-          style={{
-            textDecoration: "line-through",
-            display: "block",
-            textAlign: "center",
-            marginRight: "16px",
-            color: customColors.primary.main
-          }}
-        >
-          ${product?.price}
-        </Typography>
-        <Typography
-          variant="body1"
-          align="center"
-          style={{
-            color: customColors.primary.main,
-            fontSize: "24px"
-          }}
-        >
-          ${product?.price}
-        </Typography>
-      </Typography>
+  </CardContent>
+  
+</Grid>
 
-      <PaymentMethodsInfo />
-      <ShippingMethodsInfo />
-      <ProductDetailsInfo />
-    </CardContent>
-  </Grid>
 </Grid>
 
 
