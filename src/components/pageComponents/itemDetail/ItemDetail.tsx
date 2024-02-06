@@ -95,6 +95,7 @@ const ItemDetail: React.FC = () => {
         alignItems: "center",
         padding: 1,
         borderRadius: "25px",
+        maxWidth:"1500px"
       }}
     >
       <Card>
@@ -204,7 +205,6 @@ const ItemDetail: React.FC = () => {
                         ${product?.price}
                         </Typography>
                     </Typography>
-
 
               <PaymentMethodsInfo />
               <ShippingMethodsInfo />
