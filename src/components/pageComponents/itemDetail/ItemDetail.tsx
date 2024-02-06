@@ -97,8 +97,7 @@ const ItemDetail: React.FC = () => {
         padding: 1,
         position: "relative",
         borderRadius: "25px",
-   
-    
+        
       }}
     >
       <Card
