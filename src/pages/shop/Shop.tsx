@@ -9,11 +9,12 @@ import SelectionCard from "../../components/pageComponents/SelectionCard/Selecti
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 const Shop: React.FC = () => {
-  const isMobile = useMediaQuery('(max-width: 600px)');
-  const maxTitleLength = isMobile ? 15 : 29;
+
   const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const isMobile = useMediaQuery('(max-width: 600px)');
+  const maxTitleLength = isMobile ? 15 : 29;
   const [clickedProduct, setClickedProduct] = useState<string | null>(null);
   const handleTitleClick = (title: string) => {
     setClickedProduct((prevClickedProduct) =>
@@ -122,15 +123,17 @@ const Shop: React.FC = () => {
                 whiteSpace: clickedProduct === product.description ? 'normal' : 'nowrap',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
+                cursor: 'pointer', // Agregar esta línea para cambiar el cursor al pasar el mouse
               }}
-              onClick={() => handleTitleClick(product.description )}
+              onClick={() => handleTitleClick(product.description)}
             >
-              {clickedProduct === product.description 
-                ? product.description 
+              {clickedProduct === product.description
+                ? product.description
                 : product.description.length > maxTitleLength
                 ? `${product.description.substring(0, maxTitleLength)}...`
-                : product.description }
-              </Typography>
+                : product.description}
+            </Typography>
+
 
               <Typography variant="subtitle2" color="textSecondary" sx={productPriceStyles}>
                 Precio: ${product.price}
