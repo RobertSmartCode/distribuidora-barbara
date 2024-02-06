@@ -117,30 +117,30 @@ const Shop: React.FC = () => {
 
 
             <Typography
-  variant="subtitle1"
-  gutterBottom
-  sx={{
-    ...productTitleStyles,
-    whiteSpace: 'nowrap',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    cursor: 'pointer',
-    ...(clickedProduct === product.description
-      ? {
-          whiteSpace: 'normal',
-          maxWidth: '70%',
-          margin: '0 auto',
-        }
-      : null),
-  }}
-  onClick={() => handleTitleClick(product.description)}
->
-  {clickedProduct === product.description
-    ? product.description
-    : product.description.length > maxTitleLength
-    ? `${product.description.substring(0, maxTitleLength)}...`
-    : product.description}
-</Typography>
+              variant="subtitle1"
+              gutterBottom
+              sx={{
+                ...productTitleStyles,
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                cursor: 'pointer',
+                ...(clickedProduct === product.description
+                  ? {
+                      whiteSpace: 'normal',
+                      maxWidth: '70%',
+                      margin: '0 auto',
+                    }
+                  : null),
+              }}
+              onClick={() => handleTitleClick(product.description)}
+            >
+              {clickedProduct === product.description
+                ? product.description
+                : product.description.length > maxTitleLength
+                ? `${product.description.substring(0, maxTitleLength)}...`
+                : product.description}
+              </Typography>
 
 
 

@@ -81,8 +81,7 @@ const [selectedImages, setSelectedImages] = useState<Image[]>([]);
 
   useEffect(() => {
     if (productSelected) {
-     
-  
+    
       // Convierte las URLs en objetos Image y actualiza el estado
     const imageObjects: Image[] = productSelected.images.map((url) => ({ url }));
     setSelectedImages(imageObjects);
@@ -122,8 +121,13 @@ const handleSelectChange = (event: SelectChangeEvent<string>) => {
   }
 };
 
-
-
+const handleBooleanChange = (name: string, value: boolean) => {
+  const updatedProduct = {
+    ...productSelected!,
+    [name]: value
+  };
+  setProductSelected(updatedProduct);
+};
 
 
 const [isContentInGrams, setIsContentInGrams] = useState<boolean>(true);
@@ -629,37 +633,37 @@ const handleIsContentInMililitersChange = (event: React.ChangeEvent<HTMLInputEle
               }
             />
           </Grid>
-   
-   
-             <Grid item xs={12} sm={6}>
-               <TextField
-                 variant="outlined"
-                 label="Producto Destacado"
-                 name="featured"
-                 select
-                 fullWidth
-                 sx={{ width: '75%', margin: 'auto' }}
-                 value={productSelected ? productSelected.featured ? "yes" : "no" : ''}
-                 onChange={handleChange}
-               >
-                 <MenuItem value="yes">Si</MenuItem>
-                 <MenuItem value="no">No</MenuItem>
-               </TextField>
-             </Grid>
-             <Grid item xs={12} sm={6}>
-            <TextField
-              variant="outlined"
-              label="En línea"
-              name="online"
-              select
-              fullWidth
-              sx={{ width: '75%', margin: 'auto' }}
-              value={productSelected ? productSelected.online ? "yes" : "no" : '' }
-              onChange={handleChange}
-            >
-              <MenuItem value="yes">Sí</MenuItem>
-              <MenuItem value="no">No</MenuItem>
-            </TextField>
+          <Grid item xs={12} sm={6}>
+          <TextField
+            variant="outlined"
+            label="Producto Destacado"
+            name="featured"
+            select
+            fullWidth
+            sx={{ width: '75%', margin: 'auto' }}
+            value={productSelected ? (productSelected.featured ? "yes" : "no") : ''}
+            onChange={(e) => handleBooleanChange("featured", e.target.value === "yes")}
+          >
+            <MenuItem value="yes">Sí</MenuItem>
+            <MenuItem value="no">No</MenuItem>
+          </TextField>
+          </Grid>
+
+
+          <Grid item xs={12} sm={6}>
+          <TextField
+            variant="outlined"
+            label="En línea"
+            name="online"
+            select
+            fullWidth
+            sx={{ width: '75%', margin: 'auto' }}
+            value={productSelected ? (productSelected.online ? "yes" : "no") : ''}
+            onChange={(e) => handleBooleanChange("online", e.target.value === "yes")}
+          >
+            <MenuItem value="yes">Sí</MenuItem>
+            <MenuItem value="no">No</MenuItem>
+          </TextField>
           </Grid>
 
           {/*ImageManager */}

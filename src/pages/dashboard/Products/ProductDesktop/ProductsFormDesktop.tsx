@@ -140,6 +140,17 @@ const handleSelectChange = (event: SelectChangeEvent<string>) => {
   }
 };
 
+const handleBooleanChange = (name: string, value: boolean) => {
+  const updatedProduct = productSelected
+    ? { ...productSelected, [name]: value }
+    : { ...newProduct, [name]: value };
+
+  if (productSelected) {
+    setProductSelected(updatedProduct);
+  } else {
+    setNewProduct(updatedProduct);
+  }
+};
 
 
 
@@ -643,26 +654,23 @@ return (
               }
             />
           </Grid>
-
-     
-   
-   
-             <Grid item xs={12} sm={6}>
-               <TextField
-                 variant="outlined"
-                 label="Producto Destacado"
-                 name="featured"
-                 select
-                 fullWidth
-                 sx={{ width: '75%', margin: 'auto' }}
-                 value={productSelected ? productSelected.featured ? "yes" : "no" : newProduct.featured ? "yes" : "no"}
-                 onChange={handleChange}
-               >
-                 <MenuItem value="yes">Si</MenuItem>
-                 <MenuItem value="no">No</MenuItem>
-               </TextField>
-             </Grid>
-             <Grid item xs={12} sm={6}>
+          
+          <Grid item xs={12} sm={6}>
+            <TextField
+              variant="outlined"
+              label="Producto Destacado"
+              name="featured"
+              select
+              fullWidth
+              sx={{ width: '75%', margin: 'auto' }}
+              value={productSelected ? productSelected.featured : newProduct.featured ? "yes" : "no"}
+              onChange={(e) => handleBooleanChange("featured", e.target.value === "yes")}
+            >
+              <MenuItem value="yes">Sí</MenuItem>
+              <MenuItem value="no">No</MenuItem>
+            </TextField>
+          </Grid>
+          <Grid item xs={12} sm={6}>
             <TextField
               variant="outlined"
               label="En línea"
@@ -670,13 +678,15 @@ return (
               select
               fullWidth
               sx={{ width: '75%', margin: 'auto' }}
-              value={productSelected ? productSelected.online ? "yes" : "no" : newProduct.online ? "yes" : "no"}
-              onChange={handleChange}
+              value={productSelected ? productSelected.online : newProduct.online ? "yes" : "no"}
+              onChange={(e) => handleBooleanChange("online", e.target.value === "yes")}
             >
               <MenuItem value="yes">Sí</MenuItem>
               <MenuItem value="no">No</MenuItem>
             </TextField>
           </Grid>
+
+
 
           {/*ImageManager */}
           <Grid item xs={12}>
