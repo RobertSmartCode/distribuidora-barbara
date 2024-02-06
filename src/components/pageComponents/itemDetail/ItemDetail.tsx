@@ -112,8 +112,7 @@ const ItemDetail: React.FC = () => {
                 padding: "10px",
                 borderRadius: "25px",
                 overflow: "hidden",
-                maxWidth:"500px",
-                maxHeight:"500px"
+                
               }}
             >
             <Carousel
@@ -154,7 +153,7 @@ const ItemDetail: React.FC = () => {
                     style={{
                       width: "100%",
                       objectFit: "contain",
-                      marginBottom: '8px',
+                      
                     }}
                   />
                 </div>
