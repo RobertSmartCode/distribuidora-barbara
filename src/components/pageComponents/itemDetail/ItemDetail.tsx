@@ -24,17 +24,18 @@ import ShippingMethodsInfo from "./ShippingMethodsInfo";
 import ProductDetailsInfo from "./ProductDetailsInfo"; 
 import {CartItem } from "../../../type/type"
 import {customColors} from "../../../styles/styles"
-
+import { Product } from '../../../type/type';
 
 const ItemDetail: React.FC = () => {
 
   const { id } = useParams<{ id: string | undefined }>();
-  const { getQuantityByBarcode, addToCart, getTotalQuantity,  checkStock } = useContext(CartContext)!;
+  const { addToCart,  checkStock, getStockForProduct } = useContext(CartContext)!;
   const [product, setProduct] = useState<any>(null);
-  const [counter, setCounter] = useState<number>(1);
- 
+  const [productCounters, setProductCounters] = useState<{ [key: string]: number }>({});
+  const [exceededMaxInCart, setExceededMaxInCart] = useState<{ [key: string]: boolean }>({});
+
   const [showError, setShowError] = useState(false);
-  const errorMessage = "Ha ocurrido un error al agregar el producto al carrito. Por favor, intenta nuevamente.";
+  const errorMessage = "Tienes el máximo disponible";
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -42,10 +43,19 @@ const ItemDetail: React.FC = () => {
         const refCollection = collection(db, "products");
         const refDoc = doc(refCollection, id);
         const docSnapshot = await getDoc(refDoc);
-
+  
         if (docSnapshot.exists()) {
           const productData = docSnapshot.data();
           setProduct({ ...productData, id: docSnapshot.id });
+  
+          // Una vez que obtengas el producto, puedes usar su código de barras para inicializar productCounters
+          if (productData && productData.barcode) {
+            setProductCounters({
+              [productData.barcode]: 1 // Inicializa productCounters con el código de barras del producto
+            });
+          } else {
+            console.error("El producto no tiene un código de barras válido.");
+          }
         } else {
           console.log("El producto no existe");
         }
@@ -53,30 +63,68 @@ const ItemDetail: React.FC = () => {
         console.error("Error al obtener el producto:", error);
       }
     };
-
+  
     fetchProduct();
   }, [id]);
   
+  
 
-  const handleCounterChange = (value: number) => {
-    if (value >= 1 && value <= product?.stock) {
-      setCounter(value);
+
+  const handleCounterChange = (product: Product, value: number) => {
+    const combinedKey = `${product.barcode}`;
+    
+    // Obtener la cantidad disponible en el inventario desde la base de datos
+    const inventoryQuantity = getStockForProduct(product);
+   
+    // Verificar si el cambio propuesto está dentro del límite de stock disponible
+    if (value >= 1 && value <= inventoryQuantity) {
+      // Actualizar la cantidad en el carrito solo si el cambio es válido
+      setProductCounters((prevQuantities) => ({
+        ...prevQuantities,
+        [combinedKey]: value,
+      }));
+    
+      // Actualizar el estado de exceder el máximo solo para este producto
+      setExceededMaxInCart((prevExceeded) => ({
+        ...prevExceeded,
+        [combinedKey]: value >= inventoryQuantity,
+      }));
+    
+    } else {
+      // Si el valor no está en el rango válido, activar el estado de exceder el máximo
+      setExceededMaxInCart((prevExceeded) => ({
+        ...prevExceeded,
+        [combinedKey]: value > 1, // Cambiado a value > 1 para no mostrar el mensaje cuando es 1
+      }));
+    
+      // Reiniciar el estado de exceder el máximo después de un tiempo
+      setTimeout(() => {
+        setExceededMaxInCart((prevExceeded) => ({
+          ...prevExceeded,
+          [combinedKey]: false,
+        }));
+      }, 1000);
     }
   };
-
   
 
   const handleAddToCart = () => {
-    let quantityToAdd = 1;
     // Verifica si hay suficiente stock antes de agregar al carrito
     const hasEnoughStock = checkStock(product);
     if (hasEnoughStock) {
+      // Obtener la cantidad del contador o 1 si no existe
+      const quantityToAdd = productCounters[product?.barcode || ""] || 1;
+      
       const cartItem: CartItem = {
         ...product,
         quantity: quantityToAdd,
       };
-
+  
       addToCart(cartItem);
+
+      setProductCounters({
+        [product?.barcode ]: 1 
+      });
 
     } else {
       setShowError(true);
@@ -85,6 +133,7 @@ const ItemDetail: React.FC = () => {
       }, 1000);
     }
   };
+  
 
   const calculateFinalPrice = (price: string, discount: string): number => {
     // Parsear el precio y el descuento a números
@@ -119,6 +168,8 @@ const ItemDetail: React.FC = () => {
       <Card>
        
         <Grid container spacing={2}>
+
+          {/* Imagen del Producto y Descuento */}
            <Grid item xs={12} sm={6}>
             <Box
               sx={{
@@ -262,62 +313,71 @@ const ItemDetail: React.FC = () => {
         </Grid>
         {/* Fin del bloque para mostrar el mensaje de error */}
   
-        <CardActions>
-          <Stack
-            direction="row"
-            justifyContent="center"
-            alignItems="center"
-            spacing={1}
-          >
-            <IconButton
-              color="primary"
-              onClick={() => handleCounterChange(counter - 1)}
-              sx={{ color: customColors.primary.main }}
-            >
-              <RemoveIcon />
-            </IconButton>
-            <Typography variant="body2" sx={{ color: customColors.primary.main }}>
-              {counter}
-            </Typography>
-            <IconButton
-              color="primary"
-              onClick={() => handleCounterChange(counter + 1)}
-              sx={{ color: customColors.primary.main }}
-            >
-              <AddIcon />
-            </IconButton>
-          </Stack>
-  
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleAddToCart}
-            fullWidth
-            size="small"
-            disableRipple 
-            sx={{
-              backgroundColor: customColors.primary.main,
-              color: customColors.secondary.contrastText,
-              '&:hover, &:focus': {
-                backgroundColor: customColors.secondary.main,
-                color: customColors.primary.contrastText,
-              },
-            }}
-          >
-            Agregar al carrito
-          </Button>
-        </CardActions>
-  
-        {typeof id !== 'undefined' && getQuantityByBarcode(Number(id)) && (
-          <Typography variant="h6">
-            Ya tienes {getTotalQuantity()} en el carrito
-          </Typography>
-        )}
-        {typeof id !== 'undefined' && product?.stock === getQuantityByBarcode(Number(id)) && (
-          <Typography variant="h6">
-            Ya tienes el máximo en el carrito
-          </Typography>
-        )}
+              <CardActions>
+
+
+              <Stack
+                direction="row"
+                justifyContent="center"
+                alignItems="center"
+                spacing={1}
+              >
+                {product && (
+                  <IconButton
+                    color="primary"
+                    onClick={() => {
+                      const newValue = productCounters[product.barcode] - 1;
+                      handleCounterChange(product, newValue);
+                    }}
+                    sx={{ color: customColors.primary.main }}
+                  >
+                    <RemoveIcon />
+                  </IconButton>
+                )}
+                <Typography variant="body2" sx={{ color: customColors.primary.main }}>
+                  {productCounters[product?.barcode || ""] || 1}
+                </Typography>
+                {product && (
+                  <IconButton
+                    color="primary"
+                    onClick={() => {
+                      const newValue = productCounters[product.barcode] + 1;
+                      handleCounterChange(product, newValue);
+                    }}
+                    sx={{ color: customColors.primary.main }}
+                  >
+                    <AddIcon />
+                  </IconButton>
+                )}
+              </Stack>
+
+              {product && (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleAddToCart}
+                  fullWidth
+                  size="small"
+                  disableRipple
+                  sx={{
+                    backgroundColor: customColors.primary.main,
+                    color: customColors.secondary.contrastText,
+                    '&:hover, &:focus': {
+                      backgroundColor: customColors.secondary.main,
+                      color: customColors.primary.contrastText,
+                    },
+                  }}
+                >
+                  Agregar al carrito
+                </Button>
+              )}
+            </CardActions>
+
+            {product && exceededMaxInCart[product.barcode] && (
+              <CardContent style={{ color: 'red', marginTop: '10px', textAlign: 'center' }}>
+                <Typography variant="body1">Tienes el máximo disponible.</Typography>
+              </CardContent>
+            )}
 
 
       </Card>
