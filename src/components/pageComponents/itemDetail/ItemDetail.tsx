@@ -86,6 +86,23 @@ const ItemDetail: React.FC = () => {
     }
   };
 
+  const calculateFinalPrice = (price: string, discount: string): number => {
+    // Parsear el precio y el descuento a números
+    const parsedPrice = parseFloat(price);
+    const parsedDiscount = parseInt(discount);
+    
+    // Verifica si el descuento es distinto de cero
+    if (parsedDiscount !== 0) {
+      // Calcula el precio final restando el descuento al precio original
+      const discountedPrice = parsedPrice - (parsedPrice * parsedDiscount) / 100;
+      // Redondea el precio final a dos decimales
+      return Math.round(discountedPrice * 100) / 100;
+    } else {
+      // Si el descuento es cero, devuelve el precio original
+      return parsedPrice;
+    }
+  };
+  
 
   return (
     <Box
@@ -99,137 +116,140 @@ const ItemDetail: React.FC = () => {
       }}
     >
 
-
       <Card>
        
-      <Grid container spacing={2}>
-  <Grid item xs={12} sm={6}>
-    <Box
-      sx={{
-        position: "relative",
-        padding: "10px",
-        borderRadius: "25px",
-        overflow: "hidden",
-        width: "400px", // Ancho fijo en modo escritorio
-        margin: "0 auto", // Centra horizontalmente en modo escritorio
-      }}
-    >
-      <Carousel
-        showThumbs={false}
-        dynamicHeight={true}
-        emulateTouch={true}
-      >
-        {product?.images.map((image: string, index: number) => (
-          <div key={index}>
-            {parseInt(product?.discount) !== 0 && (
-              <Paper
-                elevation={0}
+        <Grid container spacing={2}>
+           <Grid item xs={12} sm={6}>
+            <Box
+              sx={{
+                position: "relative",
+                padding: "10px",
+                borderRadius: "25px",
+                overflow: "hidden",
+                width: "400px", 
+                margin: "0 auto", 
+              }}
+            >
+              <Carousel
+                showThumbs={false}
+                dynamicHeight={true}
+                emulateTouch={true}
+              >
+
+              {product?.images.map((image: string, index: number) => (
+                <div key={index}>
+
+                   {/* Etiqueta de % Descuento  */}
+                  {parseInt(product?.discount) !== 0 && (
+                    <Paper
+                      elevation={0}
+                      sx={{
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        backgroundColor: customColors.primary.main,
+                        color: customColors.secondary.contrastText,
+                        width: "48px",
+                        height: "48px",
+                        borderRadius: "50%",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <Typography variant="body2">
+                        {`${product?.discount}% `}
+                        <span style={{ fontSize: "14px" }}>OFF</span>
+                      </Typography>
+                    </Paper>
+                  )}
+                  {/* Foto de Producto */}
+                  <img
+                    src={image}
+                    alt={`Imagen ${index + 1}`}
+                    height="350"
+                    style={{
+                      width: "100%",
+                      objectFit: "contain",
+                    }}
+                  />
+                </div>
+              ))}
+             </Carousel>
+            </Box>
+           </Grid>
+
+              {/* Contenido de texto */}
+
+           <Grid item xs={12} sm={6}>
+
+            <CardContent
+              sx={{
+                width: "100%", 
+                maxWidth: "400px", 
+                margin: "0 auto",
+              }}
+            >
+              <Typography
+                variant="h5"
+                component="div"
+                align="center"
                 sx={{
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  backgroundColor: customColors.primary.main,
-                  color: customColors.secondary.contrastText,
-                  width: "48px",
-                  height: "48px",
-                  borderRadius: "50%",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
+                  color: customColors.primary.main,
+                  margin: "0 auto",
                 }}
               >
-                <Typography variant="body2">
-                  {`${product?.discount}% `}
-                  <span style={{ fontSize: "14px" }}>OFF</span>
-                </Typography>
-              </Paper>
-            )}
-            <img
-              src={image}
-              alt={`Imagen ${index + 1}`}
-              height="350"
-              style={{
-                width: "100%",
-                objectFit: "contain",
-              }}
-            />
-          </div>
-        ))}
-      </Carousel>
-    </Box>
-  </Grid>
+                {product?.title}
+              </Typography>
 
+              <Typography
+                variant="subtitle1"
+                color="textSecondary"
+                sx={{ display: 'flex', justifyContent: 'center' }}
+              >
+                      {parseInt(product?.discount) !== 0 && (
+                          <Typography
+                            variant="body2"
+                            style={{
+                              textDecoration: "line-through",
+                              display: "block",
+                              textAlign: "center",
+                              marginRight: "16px",
+                              color: customColors.primary.main
+                            }}
+                          >
+                            ${product?.price}
+                          </Typography>
+                        )}
 
-  <Grid item xs={12} sm={6}>
-  <CardContent
-    sx={{
-      width: "100%", 
-      maxWidth: "400px", 
-      margin: "0 auto",
-    }}
-  >
-    <Typography
-      variant="h5"
-      component="div"
-      align="center"
-      sx={{
-        color: customColors.primary.main,
-        margin: "0 auto",
-      }}
-    >
-      {product?.title}
-    </Typography>
+                          <Typography
+                              variant="body1"
+                              align="center"
+                              style={{
+                                color: customColors.primary.main,
+                                fontSize: "24px"
+                              }}
+                              >
+                             ${calculateFinalPrice(product?.price || "0", product?.discount || "0")}
+                          </Typography> 
+              </Typography>
 
-    <Typography
-      variant="subtitle1"
-      color="textSecondary"
-      sx={{ display: 'flex', justifyContent: 'center' }}
-    >
-            {parseInt(product?.discount) !== 0 && (
-                <Typography
-                  variant="body2"
-                  style={{
-                    textDecoration: "line-through",
-                    display: "block",
-                    textAlign: "center",
-                    marginRight: "16px",
-                    color: customColors.primary.main
-                  }}
-                >
-                  ${product?.price}
-                </Typography>
-              )}
-
-            <Typography
-              variant="body1"
-              align="center"
-              style={{
-                color: customColors.primary.main,
-                fontSize: "24px"
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                marginTop: '20px', // Ajusta el margen superior según sea necesario
               }}
               >
-            ${product?.price}
-          </Typography> 
-    </Typography>
+              <PaymentMethodsInfo/>
+              <ShippingMethodsInfo/>
+              <ProductDetailsInfo/>
+            </Box>
 
-    <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          marginTop: '20px', // Ajusta el margen superior según sea necesario
-        }}
-    >
-    <PaymentMethodsInfo/>
-    <ShippingMethodsInfo/>
-    <ProductDetailsInfo/>
-    </Box>
-
-  </CardContent>
-  
-</Grid>
-
-</Grid>
+          </CardContent>
+        </Grid>
+      </Grid>
 
 
           {/* Agregar aquí el bloque para mostrar el mensaje de error */}
