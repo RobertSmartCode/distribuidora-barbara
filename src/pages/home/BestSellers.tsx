@@ -8,7 +8,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import {Product} from "../../type/type"
 import SelectionCard from "../../components/pageComponents/SelectionCard/SelectionCard";
 import useMediaQuery from '@mui/material/useMediaQuery';
-
+import {customColors} from "../../styles/styles"
 
 
 
@@ -68,17 +68,7 @@ useEffect(() => {
 }, []);
 
 
-  // Colores personalizados
-  const customColors = {
-    primary: {
-      main: '#000',
-      contrastText: '#000',
-    },
-    secondary: {
-      main: '#fff',
-      contrastText: '#fff',
-    },
-  };
+
 
   // Estilos con enfoque sx
   const containerStyles = {
@@ -175,7 +165,7 @@ useEffect(() => {
                                 display: "flex",
                                 alignItems: "center",
                                 justifyContent: "center",
-                                zIndex: 1, // Asegura que la etiqueta esté sobre la imagen
+                                zIndex: 2, // Asegura que la etiqueta esté sobre la imagen
                               }}
                             >
                               <Typography variant="body2" sx={{ fontSize: isMobile ? "10px" : "inherit" }}>
