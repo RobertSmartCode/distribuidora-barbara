@@ -142,16 +142,16 @@ const ItemDetail: React.FC = () => {
     
     // Verifica si el descuento es distinto de cero
     if (parsedDiscount !== 0) {
-      // Calcula el precio final restando el descuento al precio original
-      const discountedPrice = parsedPrice - (parsedPrice * parsedDiscount) / 100;
-      // Redondea el precio final a dos decimales
-      return Math.round(discountedPrice * 100) / 100;
+        // Calcula el precio final restando el descuento al precio original
+        const discountedPrice = parsedPrice - (parsedPrice * parsedDiscount) / 100;
+        // Redondea el precio final al entero más cercano
+        return Math.round(discountedPrice);
     } else {
-      // Si el descuento es cero, devuelve el precio original
-      return parsedPrice;
+        // Si el descuento es cero, devuelve el precio original
+        return parsedPrice;
     }
-  };
-  
+};
+
 
   return (
     <Box

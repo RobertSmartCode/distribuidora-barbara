@@ -175,7 +175,7 @@ const MobileCart: React.FC = () => {
               <Box style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Typography style={{ fontSize: '1.2rem', fontWeight: 'bold', paddingLeft: '30px' }}>Total:</Typography>
                 <Typography style={{ fontSize: '1.2rem', fontWeight: 'bold', paddingRight: '50px' }}>
-                  ${getTotalPrice ? getTotalPrice().toFixed(2) : '0.00'}
+                  ${getTotalPrice ? getTotalPrice().toFixed(0) : '0.00'}
                 </Typography>
               </Box>
 

@@ -115,7 +115,7 @@ const Shop: React.FC = () => {
                                 display: "flex",
                                 alignItems: "center",
                                 justifyContent: "center",
-                                zIndex: 1, // Asegura que la etiqueta esté sobre la imagen
+                                zIndex: 2, // Asegura que la etiqueta esté sobre la imagen
                               }}
                             >
                               <Typography variant="body2" sx={{ fontSize: isMobile ? "10px" : "inherit" }}>

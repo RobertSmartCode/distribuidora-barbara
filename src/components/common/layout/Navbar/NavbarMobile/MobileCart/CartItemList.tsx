@@ -28,10 +28,30 @@ const CartItemList = () => {
   const calculateSubtotal = () => {
     let subtotal = 0;
     cart.forEach((product) => {
-      subtotal += product.price * productCounters[product.barcode];
+      const price = product.price;
+      const discount = product.discount;
+      const discountedPrice = discount !== 0 ? price - (price * discount) / 100 : price;
+      subtotal += discountedPrice * productCounters[product.barcode];
     });
     return subtotal;
   };
+  
+  const calculateFinalPrice = (price: string, discount: string): number => {
+    // Parsear el precio y el descuento a números
+    const parsedPrice = parseFloat(price);
+    const parsedDiscount = parseInt(discount);
+    
+    // Verifica si el descuento es distinto de cero
+    if (parsedDiscount !== 0) {
+        // Calcula el precio final restando el descuento al precio original
+        const discountedPrice = parsedPrice - (parsedPrice * parsedDiscount) / 100;
+        // Redondea el precio final a dos decimales
+        return Math.round(discountedPrice * 100) / 100;
+    } else {
+        // Si el descuento es cero, devuelve el precio original
+        return parsedPrice;
+    }
+};
 
 
   useEffect(() => {
@@ -151,9 +171,14 @@ const CartItemList = () => {
                           </Stack>
                         </Grid>
                         <Grid item xs={4} style={{ textAlign: 'right', }}>
-                          <Typography variant="body1" style={{ marginBottom: '30px', paddingRight: '15px' }}>
-                            ${product.price * productCounters[product.barcode]}
-                          </Typography>
+
+
+                        <Typography variant="body1" style={{ marginBottom: '30px', paddingRight: '15px' }}>
+                            ${(calculateFinalPrice(product.price.toString(), product.discount.toString()) * productCounters[product.barcode]).toFixed(0) }
+                        </Typography>
+
+
+
                           <CardActions>
                             <IconButton
                               color="primary"
@@ -188,7 +213,7 @@ const CartItemList = () => {
                   Sub Total 
                 </Typography>
                 <Typography variant="body1" style={{ paddingRight: '30px' }}>
-                  ${calculateSubtotal()}
+                  ${calculateSubtotal().toFixed(0) }
                 </Typography>
               </Grid>
             </>
