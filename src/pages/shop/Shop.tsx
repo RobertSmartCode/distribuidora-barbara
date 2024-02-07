@@ -106,7 +106,7 @@ const Shop: React.FC = () => {
                               sx={{
                                 position: "absolute",
                                 top: 0,
-                                left: isMobile ? -32 : -72, 
+                                left: isMobile ? -16 : -72, 
                                 backgroundColor: customColors.primary.main,
                                 color: customColors.secondary.contrastText,
                                 width: isMobile ? "32px" : "48px", 

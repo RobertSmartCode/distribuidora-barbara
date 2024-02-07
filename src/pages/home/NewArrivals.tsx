@@ -160,48 +160,49 @@ useEffect(() => {
       {products.map((product) => (
         <Grid item xs={6} sm={4} md={4} lg={3} key={product.id}>
           <Card sx={productStyles}>
-              <Box sx={{ position: "relative" }}>
-                {/* Etiqueta de % Descuento */}
-                {parseInt(String(product?.discount)) !== 0 && (
-                  <Paper
-                    elevation={0}
-                    sx={{
-                      position: "absolute",
-                      top: 0,
-                      left: -72, // Ajusta la posición a la izquierda
-                      backgroundColor: customColors.primary.main,
-                      color: customColors.secondary.contrastText,
-                      width: "48px",
-                      height: "48px",
-                      borderRadius: "50%",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      zIndex: 1, // Asegura que la etiqueta esté sobre la imagen
-                    }}
-                  >
-                    <Typography variant="body2">
-                      {`${product?.discount}% `}
-                      <span style={{ fontSize: "14px" }}>OFF</span>
-                    </Typography>
-                  </Paper>
-                )}
-                {/* Imagen del producto */}
-                <CardMedia
-                  component="img"
-                  height="140"
-                  image={product.images[0]}
-                  alt={product.title}
-                  style={{
-                    objectFit: "contain",
-                    width: "100%",
-                    marginBottom: "8px",
-                    zIndex: 0, // Asegura que la imagen esté detrás de la etiqueta
-                  }}
-                  onLoad={handleImageLoad}
-                />
-              </Box>
+          <Box sx={{ position: "relative" }}>
+                          {/* Etiqueta de % Descuento */}
+                          { parseInt(String(product?.discount)) !== 0 && (
+                            <Paper
+                              elevation={0}
+                              sx={{
+                                position: "absolute",
+                                top: 0,
+                                left: isMobile ? -16 : -72, 
+                                backgroundColor: customColors.primary.main,
+                                color: customColors.secondary.contrastText,
+                                width: isMobile ? "32px" : "48px", 
+                                height: isMobile ? "32px" : "48px", 
+                                borderRadius: "50%",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                zIndex: 1, // Asegura que la etiqueta esté sobre la imagen
+                              }}
+                            >
+                              <Typography variant="body2" sx={{ fontSize: isMobile ? "10px" : "inherit" }}>
+                                {`${product?.discount}% `}
+                                <span style={{ fontSize: isMobile ? "8px" : "14px" }}>OFF</span>
+                              </Typography>
 
+                            </Paper>
+                          )}
+
+                             {/* Imagen del producto */}
+                          <CardMedia
+                            component="img"
+                            height="140"
+                            image={product.images[0]}
+                            alt={product.title}
+                            style={{
+                              objectFit: "contain",
+                              width: "100%",
+                              marginBottom: "8px",
+                              zIndex: 0, 
+                            }}
+                            onLoad={handleImageLoad}
+                          />
+                        </Box>
 
 
 
