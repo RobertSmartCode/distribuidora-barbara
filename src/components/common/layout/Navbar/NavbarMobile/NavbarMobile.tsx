@@ -1,32 +1,17 @@
 import { useRef, useEffect, useState } from "react";
+import MobileMenuList from "./MobileMenuList/MobileMenuList";
+import MobileLogo from "./MobileLogo/MobileLogo";
+import SearchBar from "./SearchBar/SearchBar";
+import MobileCart from './MobileCart/MobileCart';
+import {customColors} from "../../../../../styles/styles"
+import { Outlet } from "react-router-dom";
+
 import {
- 
   Toolbar,
   CssBaseline,
   AppBar,
   Box,
 } from "@mui/material";
-
-
-import { Outlet } from "react-router-dom";
-
-import MobileMenuList from "./MobileMenuList/MobileMenuList";
-import MobileLogo from "./MobileLogo/MobileLogo";
-import SearchBar from "./SearchBar/SearchBar";
-import MobileCart from './MobileCart/MobileCart';
-
-// Define colores personalizados
-const customColors = {
-  primary: {
-    main: '#000',
-    contrastText: '#000',
-  },
-  secondary: {
-    main: '#fff',
-    contrastText: '#FFFFFF',
-  },
-};
-
 
 
 const NavbarMobile = (props:any) => {
@@ -54,7 +39,7 @@ const NavbarMobile = (props:any) => {
         ref={appBarRef}
         sx={{
           width: "100%",
-          zIndex: 1,
+          zIndex: 3,
           backgroundColor: customColors.secondary.main,
         }}
       >
