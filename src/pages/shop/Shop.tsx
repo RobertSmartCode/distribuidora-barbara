@@ -123,6 +123,8 @@ const Shop: React.FC = () => {
                               </Typography>
                             </Paper>
                           )}
+
+                             {/* Imagen del producto */}
                           <CardMedia
                             component="img"
                             height="140"
@@ -132,13 +134,11 @@ const Shop: React.FC = () => {
                               objectFit: "contain",
                               width: "100%",
                               marginBottom: "8px",
-                              zIndex: 0, // Asegura que la imagen esté detrás de la etiqueta
+                              zIndex: 0, 
                             }}
                             onLoad={handleImageLoad}
                           />
                         </Box>
-
-
 
 
 
