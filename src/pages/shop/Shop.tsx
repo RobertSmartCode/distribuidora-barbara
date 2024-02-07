@@ -9,6 +9,7 @@ import SelectionCard from "../../components/pageComponents/SelectionCard/Selecti
 import useMediaQuery from '@mui/material/useMediaQuery';
 import {customColors} from "../../styles/styles"
 
+
 const Shop: React.FC = () => {
 
   const [allProducts, setAllProducts] = useState<Product[]>([]);
@@ -105,11 +106,11 @@ const Shop: React.FC = () => {
                               sx={{
                                 position: "absolute",
                                 top: 0,
-                                left: -72, // Ajusta la posición a la izquierda
+                                left: isMobile ? -32 : -72, 
                                 backgroundColor: customColors.primary.main,
                                 color: customColors.secondary.contrastText,
-                                width: "48px",
-                                height: "48px",
+                                width: isMobile ? "32px" : "48px", 
+                                height: isMobile ? "32px" : "48px", 
                                 borderRadius: "50%",
                                 display: "flex",
                                 alignItems: "center",
@@ -117,10 +118,11 @@ const Shop: React.FC = () => {
                                 zIndex: 1, // Asegura que la etiqueta esté sobre la imagen
                               }}
                             >
-                              <Typography variant="body2">
+                              <Typography variant="body2" sx={{ fontSize: isMobile ? "10px" : "inherit" }}>
                                 {`${product?.discount}% `}
-                                <span style={{ fontSize: "14px" }}>OFF</span>
+                                <span style={{ fontSize: isMobile ? "8px" : "14px" }}>OFF</span>
                               </Typography>
+
                             </Paper>
                           )}
 
