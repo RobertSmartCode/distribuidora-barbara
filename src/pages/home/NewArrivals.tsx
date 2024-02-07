@@ -168,7 +168,7 @@ useEffect(() => {
                               sx={{
                                 position: "absolute",
                                 top: 0,
-                                left: isMobile ? -8 : -72, 
+                                left: isMobile ? 0 : -72, 
                                 backgroundColor: customColors.primary.main,
                                 color: customColors.secondary.contrastText,
                                 width: isMobile ? "32px" : "48px", 
