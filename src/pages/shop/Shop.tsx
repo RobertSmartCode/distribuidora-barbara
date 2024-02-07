@@ -100,7 +100,7 @@ const Shop: React.FC = () => {
                   
                      <Box sx={{ position: "relative" }}>
                           {/* Etiqueta de % Descuento */}
-                          {product?.discount && parseInt(String(product?.discount)) !== 0 && (
+                          { parseInt(String(product?.discount)) !== 0 && (
                             <Paper
                               elevation={0}
                               sx={{
