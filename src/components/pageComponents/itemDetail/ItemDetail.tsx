@@ -303,82 +303,87 @@ const ItemDetail: React.FC = () => {
       </Grid>
 
 
-          {/* Agregar aquí el bloque para mostrar el mensaje de error */}
-          <Grid item xs={12}>
-          {showError && (
-            <Typography variant="body1" color="error" align="center">
-              {errorMessage}
-            </Typography>
-          )}
-        </Grid>
-        {/* Fin del bloque para mostrar el mensaje de error */}
-  
-              <CardActions>
-
-
-              <Stack
-                direction="row"
-                justifyContent="center"
-                alignItems="center"
-                spacing={1}
-              >
-                {product && (
-                  <IconButton
-                    color="primary"
-                    onClick={() => {
-                      const newValue = productCounters[product.barcode] - 1;
-                      handleCounterChange(product, newValue);
-                    }}
-                    sx={{ color: customColors.primary.main }}
+         
+            <CardActions>
+              <Grid container spacing={2} justifyContent="center">
+                {/* Primer bloque */}
+                <Grid item xs={12} sm={6} md={6}>
+                  <Stack
+                    direction="row"
+                    justifyContent="center"
+                    alignItems="center"
+                    spacing={1}
                   >
-                    <RemoveIcon />
-                  </IconButton>
-                )}
-                <Typography variant="body2" sx={{ color: customColors.primary.main }}>
-                  {productCounters[product?.barcode || ""] || 1}
-                </Typography>
-                {product && (
-                  <IconButton
-                    color="primary"
-                    onClick={() => {
-                      const newValue = productCounters[product.barcode] + 1;
-                      handleCounterChange(product, newValue);
-                    }}
-                    sx={{ color: customColors.primary.main }}
-                  >
-                    <AddIcon />
-                  </IconButton>
-                )}
-              </Stack>
+                    {product && (
+                      <IconButton
+                        color="primary"
+                        onClick={() => {
+                          const newValue = productCounters[product.barcode] - 1;
+                          handleCounterChange(product, newValue);
+                        }}
+                        sx={{ color: customColors.primary.main }}
+                      >
+                        <RemoveIcon />
+                      </IconButton>
+                    )}
+                    <Typography variant="body2" sx={{ color: customColors.primary.main }}>
+                      {productCounters[product?.barcode || ""] || 1}
+                    </Typography>
+                    {product && (
+                      <IconButton
+                        color="primary"
+                        onClick={() => {
+                          const newValue = productCounters[product.barcode] + 1;
+                          handleCounterChange(product, newValue);
+                        }}
+                        sx={{ color: customColors.primary.main }}
+                      >
+                        <AddIcon />
+                      </IconButton>
+                    )}
+                  </Stack>
+                </Grid>
+                {/* Segundo bloque */}
+                <Grid item xs={12} sm={6} md={6}>
+                  {product && (
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={handleAddToCart}
+                      fullWidth
+                      size="small"
+                      disableRipple
+                      sx={{
+                        backgroundColor: customColors.primary.main,
+                        color: customColors.secondary.contrastText,
+                        '&:hover, &:focus': {
+                          backgroundColor: customColors.secondary.main,
+                          color: customColors.primary.contrastText,
+                        },
+                      }}
+                    >
+                      Agregar al carrito
+                    </Button>
+                  )}
+                </Grid>
+              </Grid>
+          </CardActions>
 
-              {product && (
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={handleAddToCart}
-                  fullWidth
-                  size="small"
-                  disableRipple
-                  sx={{
-                    backgroundColor: customColors.primary.main,
-                    color: customColors.secondary.contrastText,
-                    '&:hover, &:focus': {
-                      backgroundColor: customColors.secondary.main,
-                      color: customColors.primary.contrastText,
-                    },
-                  }}
-                >
-                  Agregar al carrito
-                </Button>
-              )}
-            </CardActions>
+              {/* Agregar aquí el bloque para mostrar el mensaje de error */}
+              <Grid item xs={12}>
+                {showError && (
+                  <Typography variant="body1" color="error" align="center">
+                    {errorMessage}
+                  </Typography>
+                )}
+              </Grid>
+            {/* Fin del bloque para mostrar el mensaje de error */}
 
             {product && exceededMaxInCart[product.barcode] && (
               <CardContent style={{ color: 'red', marginTop: '10px', textAlign: 'center' }}>
                 <Typography variant="body1">Tienes el máximo disponible.</Typography>
               </CardContent>
             )}
-
 
       </Card>
     </Box>
