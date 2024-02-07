@@ -179,7 +179,7 @@ const ItemDetail: React.FC = () => {
             </Box>
            </Grid>
 
-              {/* Contenido de texto */}
+          {/* Contenido de texto: Título, Precio, Decuento */}
 
            <Grid item xs={12} sm={6}>
 
@@ -207,31 +207,31 @@ const ItemDetail: React.FC = () => {
                 color="textSecondary"
                 sx={{ display: 'flex', justifyContent: 'center' }}
               >
-                      {parseInt(product?.discount) !== 0 && (
-                          <Typography
-                            variant="body2"
-                            style={{
-                              textDecoration: "line-through",
-                              display: "block",
-                              textAlign: "center",
-                              marginRight: "16px",
-                              color: customColors.primary.main
-                            }}
-                          >
-                            ${product?.price}
-                          </Typography>
-                        )}
+                  {parseInt(product?.discount) !== 0 && (
+                      <Typography
+                        variant="body2"
+                        style={{
+                          textDecoration: "line-through",
+                          display: "block",
+                          textAlign: "center",
+                          marginRight: "16px",
+                          color: customColors.primary.main
+                        }}
+                      >
+                        ${product?.price}
+                      </Typography>
+                    )}
 
-                          <Typography
-                              variant="body1"
-                              align="center"
-                              style={{
-                                color: customColors.primary.main,
-                                fontSize: "24px"
-                              }}
-                              >
-                             ${calculateFinalPrice(product?.price || "0", product?.discount || "0")}
-                          </Typography> 
+                      <Typography
+                          variant="body1"
+                          align="center"
+                          style={{
+                            color: customColors.primary.main,
+                            fontSize: "24px"
+                          }}
+                          >
+                          ${calculateFinalPrice(product?.price || "0", product?.discount || "0")}
+                      </Typography> 
               </Typography>
 
             <Box
