@@ -156,7 +156,8 @@ const Shop: React.FC = () => {
                           )}
 
                              {/* Imagen del producto */}
-                             <div
+                             <Link to={`/itemDetail/${product.id}`}>
+                              <Box
                                 onMouseEnter={() => handleMouseEnter(product.barcode)}
                                 onMouseLeave={handleMouseLeave}
                               >
@@ -175,7 +176,8 @@ const Shop: React.FC = () => {
                                     transform: hoveredProduct === product ? "scale(1.1)" : "scale(1)",
                                   }}
                                 />
-                              </div>
+                              </Box>
+                            </Link>
                                                     
                         </Box>
 
