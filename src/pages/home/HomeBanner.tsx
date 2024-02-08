@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Grid } from "@mui/material";
-
+import Notification from '../../notification/Notification';
 
 
 const HomeBanner: React.FC = () => {
@@ -20,6 +20,7 @@ const HomeBanner: React.FC = () => {
             }}
           />
         </Link>
+        <Notification />
       </Grid>
     </Grid>
   );

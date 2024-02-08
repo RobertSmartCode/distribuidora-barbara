@@ -8,7 +8,7 @@ import { Product } from '../../type/type';
 import SelectionCard from "../../components/pageComponents/SelectionCard/SelectionCard";
 import useMediaQuery from '@mui/material/useMediaQuery';
 import {customColors} from "../../styles/styles"
-
+import Notification from '../../notification/Notification';
 
 const Shop: React.FC = () => {
 
@@ -96,6 +96,7 @@ const Shop: React.FC = () => {
               {/* Productos más vendidos */}
               {products.map((product) => (
                 <Grid item xs={6} sm={4} md={4} lg={3} key={product.id}>
+                   <Notification />
                   <Card sx={productStyles}>
                   
                      <Box sx={{ position: "relative" }}>

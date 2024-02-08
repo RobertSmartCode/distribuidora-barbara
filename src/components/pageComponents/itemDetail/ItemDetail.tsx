@@ -386,7 +386,7 @@ const ItemDetail: React.FC = () => {
             )}
 
       </Card>
-      <Notification/>
+      <Notification />
     </Box>
   );
   
