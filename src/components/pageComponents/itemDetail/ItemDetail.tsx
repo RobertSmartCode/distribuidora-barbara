@@ -241,6 +241,8 @@ const ItemDetail: React.FC = () => {
                 margin: "0 auto",
               }}
             >
+
+              {/* Título */}
               <Typography
                 variant="h5"
                 component="div"
@@ -253,6 +255,7 @@ const ItemDetail: React.FC = () => {
                 {product?.title}
               </Typography>
 
+                {/* Precio Original precio con descuento */}
               <Typography
                 variant="subtitle1"
                 color="textSecondary"

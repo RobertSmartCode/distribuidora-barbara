@@ -66,7 +66,6 @@ const Shop: React.FC = () => {
   const containerStyles = { padding: '8px' };
   const productStyles = { border: "1px solid gray", padding: '8px', marginBottom: '8px', display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", backgroundColor: '#fff', color: '#000' };
   const productTitleStyles = { fontSize: "1rem", fontWeight: "bold" };
-  const productPriceStyles = { fontSize: "1.2rem", color: '#000', marginBottom: '24px' };
   const productDetailStyles = { backgroundColor: '#fff', color: '#000', border: '2px solid #000', borderRadius: '50%', padding: '8px' };
   const iconStyles = { fontSize: '1rem' };
   const productCartStyles = { backgroundColor: '#000', color: '#fff' };
@@ -84,6 +83,24 @@ const Shop: React.FC = () => {
   const handleBuyClick = (product: Product) => {
     setSelectedProduct(product);
   };
+
+  const calculateFinalPrice = (price: string, discount: string): number => {
+    // Parsear el precio y el descuento a números
+    const parsedPrice = parseFloat(price);
+    const parsedDiscount = parseInt(discount);
+    
+    // Verifica si el descuento es distinto de cero
+    if (parsedDiscount !== 0) {
+        // Calcula el precio final restando el descuento al precio original
+        const discountedPrice = parsedPrice - (parsedPrice * parsedDiscount) / 100;
+        // Redondea el precio final al entero más cercano
+        return Math.round(discountedPrice);
+    } else {
+        // Si el descuento es cero, devuelve el precio original
+        return parsedPrice;
+    }
+};
+
 
  
   return (
@@ -158,6 +175,7 @@ const Shop: React.FC = () => {
                         ) : null}
                     <CardContent>
 
+                      {/* Descripción del Producto */}
 
                     <Typography
                       variant="subtitle1"
@@ -185,16 +203,43 @@ const Shop: React.FC = () => {
                         : product.description}
                       </Typography>
 
+                        {/* Precio del producto */}
 
 
+                        <Typography
+                          variant="subtitle1"
+                          color="textSecondary"
+                          sx={{ display: 'flex', justifyContent: 'center' }}
+                        >
+                          {product?.discount !== 0 && (
+                              <Typography
+                                variant="body2"
+                                style={{
+                                  textDecoration: "line-through",
+                                  display: "block",
+                                  textAlign: "center",
+                                  marginRight: "16px",
+                                  color: customColors.primary.main
+                                }}
+                              >
+                                ${product?.price}
+                              </Typography>
+                            )}
+
+                              <Typography
+                                  variant="body1"
+                                  align="center"
+                                  style={{
+                                    color: customColors.primary.main,
+                                    fontSize: "24px"
+                                  }}
+                                  >
+                                  ${calculateFinalPrice(product?.price.toString() || "0", product?.discount.toString()  || "0")}
+
+                              </Typography> 
+                          </Typography>
 
 
-
-
-
-                      <Typography variant="subtitle2" color="textSecondary" sx={productPriceStyles}>
-                        Precio: ${product.price}
-                      </Typography>
                       <Box sx={buttonContainerStyles}>
                         <Button
                           onClick={() => handleBuyClick(product)} 
