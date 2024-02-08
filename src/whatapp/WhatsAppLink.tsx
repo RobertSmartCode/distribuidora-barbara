@@ -8,6 +8,13 @@ const WhatsAppLink: React.FC = () => {
   const encodedMessage = encodeURIComponent(message);
   const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
 
+  const handleClick = (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+    // Evita el comportamiento predeterminado de redireccionamiento
+    event.preventDefault();
+    // Abre la URL de WhatsApp en una nueva ventana o pestaña
+    window.open(whatsappURL, '_blank', 'noopener noreferrer');
+  };
+
   return (
     <Tooltip title="Enviar mensaje por WhatsApp">
       <IconButton
@@ -15,18 +22,19 @@ const WhatsAppLink: React.FC = () => {
         href={whatsappURL}
         target="_blank"
         rel="noopener noreferrer"
+        onClick={handleClick} // Maneja el clic de forma personalizada
         sx={{
           backgroundColor: '#25d366',
           color: 'white',
           borderRadius: '50%',
-          marginRight: { xs: '8px', md: '16px' }, // Ajusta el margen derecho según sea necesario para mobile y desktop
+          marginRight: { xs: '8px', md: '16px' },
           position: 'fixed',
-          bottom: '20px', // Ajusta la distancia desde la parte inferior
-          right: '20px', // Ajusta la distancia desde la derecha
-          zIndex: 99, // Asegura que esté por encima de todo
+          bottom: '20px',
+          right: '20px',
+          zIndex: 99,
         }}
       >
-        <FaWhatsapp size={40} /> {/* Tamaño del icono aumentado */}
+        <FaWhatsapp size={40} />
       </IconButton>
     </Tooltip>
   );
