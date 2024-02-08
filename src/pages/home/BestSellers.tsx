@@ -169,7 +169,7 @@ useEffect(() => {
       {products.map((product) => (
         <Grid item xs={6} sm={4} md={4} lg={3} key={product.id}>
           <Card sx={productStyles}>
-          <Box sx={{ position: "relative" }}>
+                      <Box sx={{ position: "relative" }}>
                           {/* Etiqueta de % Descuento */}
                           { parseInt(String(product?.discount)) !== 0 && (
                             <Paper
@@ -197,29 +197,31 @@ useEffect(() => {
                             </Paper>
                           )}
 
-              
-                             {/* Imagen del producto */}
-                             <div
-                                onMouseEnter={() => handleMouseEnter(product.barcode)}
-                                onMouseLeave={handleMouseLeave}
-                              >
-                                <CardMedia
-                                  component="img"
-                                  height="140"
-                                  image={product.images[0]}
-                                  alt={product.title}
-                                  onLoad={handleImageLoad}
-                                  style={{
-                                    objectFit: "contain",
-                                    width: "100%",
-                                    marginBottom: "8px",
-                                    zIndex: 0,
-                                    transition: "transform 0.3s ease-in-out",
-                                    transform: hoveredProduct === product ? "scale(1.1)" : "scale(1)",
-                                  }}
-                                />
-                              </div>
-                        </Box>
+                          {/* Imagen del producto */}
+                          <Link to={`/itemDetail/${product.id}`}>
+                            <Box
+                              onMouseEnter={() => handleMouseEnter(product.barcode)}
+                              onMouseLeave={handleMouseLeave}
+                            >
+                              <CardMedia
+                                component="img"
+                                height="140"
+                                image={product.images[0]}
+                                alt={product.title}
+                                onLoad={handleImageLoad}
+                                style={{
+                                  objectFit: "contain",
+                                  width: "100%",
+                                  marginBottom: "8px",
+                                  zIndex: 0,
+                                  transition: "transform 0.3s ease-in-out",
+                                  transform: hoveredProduct === product ? "scale(1.1)" : "scale(1)",
+                                }}
+                              />
+                            </Box>
+                          </Link>
+                                            
+                      </Box>
 
 
 
