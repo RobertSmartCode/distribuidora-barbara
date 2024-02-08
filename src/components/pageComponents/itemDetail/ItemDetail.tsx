@@ -386,7 +386,7 @@ const ItemDetail: React.FC = () => {
             )}
 
       </Card>
-      <Notification message="¡Tu carrito tiene nuevos artículos!" />
+      <Notification/>
     </Box>
   );
   
