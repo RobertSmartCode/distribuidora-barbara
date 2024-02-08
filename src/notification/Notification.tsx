@@ -24,7 +24,7 @@ const Notification: React.FC<NotificationProps> = () => {
   }, [getTotalQuantity]); // Ejecutar el efecto cuando cambie el valor de getTotalQuantity
 
   return (
-    <Box sx={{ position: 'fixed', bottom: 20, left: 20 }}>
+    <Box sx={{ position: 'fixed', bottom: 20, left: 20, zIndex: 9999 }}>
     <Snackbar
       open={showNotification}
       autoHideDuration={3000}
@@ -33,6 +33,7 @@ const Notification: React.FC<NotificationProps> = () => {
       sx={{ bottom: 20, left: 20, width: 'fit-content', maxWidth: 'calc(100% - 40px)', textAlign: 'center' }} // Ajusta el fondo al texto
     />
   </Box>
+  
   );
 };
 

@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Grid } from "@mui/material";
 import Notification from '../../notification/Notification';
+import WhatsAppLink from "../../whatapp/WhatsAppLink";
 
 
 const HomeBanner: React.FC = () => {
@@ -21,6 +22,7 @@ const HomeBanner: React.FC = () => {
           />
         </Link>
         <Notification />
+        <WhatsAppLink/>
       </Grid>
     </Grid>
   );
