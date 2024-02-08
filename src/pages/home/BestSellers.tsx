@@ -215,7 +215,7 @@ useEffect(() => {
                                     marginBottom: "8px",
                                     zIndex: 0,
                                     transition: "transform 0.3s ease-in-out",
-                                    transform: hoveredProduct === product ? "scale(1.01)" : "scale(1)",
+                                    transform: hoveredProduct === product ? "scale(1.1)" : "scale(1)",
                                   }}
                                 />
                               </div>
