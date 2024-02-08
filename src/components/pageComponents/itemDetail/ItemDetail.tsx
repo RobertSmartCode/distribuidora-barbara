@@ -378,7 +378,7 @@ const ItemDetail: React.FC = () => {
               {/* Agregar aquí el bloque para mostrar el mensaje de error */}
               <Grid item xs={12}>
                   {showError && (
-                    <Typography variant="body1" style={{ marginTop: '5px', marginBottom: '10px', color: 'red', textAlign: 'center' }}>
+                    <Typography variant="body1" style={{ marginTop: '5px', marginBottom: '15px', color: 'red', textAlign: 'center' }}>
                       {errorMessage}
                     </Typography>
                   )}
@@ -386,7 +386,7 @@ const ItemDetail: React.FC = () => {
                 {/* Fin del bloque para mostrar el mensaje de error */}
 
                 {product && exceededMaxInCart[product.barcode] && (
-                  <CardContent style={{ color: 'red', marginTop: '10px', textAlign: 'center', marginBottom: '10px' }}>
+                  <CardContent style={{ color: 'red', marginTop: '10px', textAlign: 'center', marginBottom: '15px' }}>
                     <Typography variant="body1">Tienes el máximo disponible.</Typography>
                   </CardContent>
                 )}
