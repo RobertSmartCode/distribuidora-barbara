@@ -28,7 +28,16 @@ const handleTitleClick = (title: string) => {
     prevClickedProduct === title ? null : title
   );
 };
-
+const [hoveredProduct, setHoveredProduct] = useState<Product | null>(null);
+const handleMouseEnter = (barcode: number) => {
+  const product = products.find((p) => p.barcode === barcode);
+  if (product) {
+    setHoveredProduct(product);
+  }
+};
+const handleMouseLeave = () => {
+  setHoveredProduct(null);
+};
 
 
 
@@ -188,20 +197,28 @@ useEffect(() => {
                             </Paper>
                           )}
 
+              
                              {/* Imagen del producto */}
-                          <CardMedia
-                            component="img"
-                            height="140"
-                            image={product.images[0]}
-                            alt={product.title}
-                            style={{
-                              objectFit: "contain",
-                              width: "100%",
-                              marginBottom: "8px",
-                              zIndex: 0, 
-                            }}
-                            onLoad={handleImageLoad}
-                          />
+                             <div
+                                onMouseEnter={() => handleMouseEnter(product.barcode)}
+                                onMouseLeave={handleMouseLeave}
+                              >
+                                <CardMedia
+                                  component="img"
+                                  height="140"
+                                  image={product.images[0]}
+                                  alt={product.title}
+                                  onLoad={handleImageLoad}
+                                  style={{
+                                    objectFit: "contain",
+                                    width: "100%",
+                                    marginBottom: "8px",
+                                    zIndex: 0,
+                                    transition: "transform 0.3s ease-in-out",
+                                    transform: hoveredProduct === product ? "scale(1.01)" : "scale(1)",
+                                  }}
+                                />
+                              </div>
                         </Box>
 
 
