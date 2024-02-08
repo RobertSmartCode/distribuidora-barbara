@@ -23,7 +23,7 @@ const WhatsAppLink: React.FC = () => {
           position: 'fixed',
           bottom: '20px', // Ajusta la distancia desde la parte inferior
           right: '20px', // Ajusta la distancia desde la derecha
-          zIndex: 9999, // Asegura que esté por encima de todo
+          zIndex: 99, // Asegura que esté por encima de todo
         }}
       >
         <FaWhatsapp size={40} /> {/* Tamaño del icono aumentado */}

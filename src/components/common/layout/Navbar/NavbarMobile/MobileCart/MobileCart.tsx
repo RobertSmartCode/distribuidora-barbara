@@ -60,6 +60,7 @@ const MobileCart: React.FC = () => {
     width: "100%",
     margin: "0 auto",
     backgroundColor: customColors.secondary.main,
+    zIndex: 999,
   };
 
   const cartIconStyles = {
