@@ -25,7 +25,7 @@ import ProductDetailsInfo from "./ProductDetailsInfo";
 import {CartItem } from "../../../type/type"
 import {customColors} from "../../../styles/styles"
 import { Product } from '../../../type/type';
-
+import Notification from '../../../notification/Notification';
 const ItemDetail: React.FC = () => {
 
   const { id } = useParams<{ id: string | undefined }>();
@@ -386,6 +386,7 @@ const ItemDetail: React.FC = () => {
             )}
 
       </Card>
+      <Notification message="¡Tu carrito tiene nuevos artículos!" />
     </Box>
   );
   

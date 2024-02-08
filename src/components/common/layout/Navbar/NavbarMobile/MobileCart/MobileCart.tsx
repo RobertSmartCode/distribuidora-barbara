@@ -14,7 +14,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { Link } from 'react-router-dom';
 import { Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom'; 
-
+import Notification from '../../../../../../notification/Notification';
 
 
 const MobileCart: React.FC = () => {
@@ -167,7 +167,9 @@ const MobileCart: React.FC = () => {
           ENVÍOS GRATIS A CABA Y AMBA
         </Typography>
 
+        <Notification/>
 
+        
           {cart?.length ?? 0 > 0 ? (
             <>
               <CartItemList />
@@ -216,6 +218,7 @@ const MobileCart: React.FC = () => {
           )}
         </Box>
       </Drawer>
+
     </Box>
   );
 };
