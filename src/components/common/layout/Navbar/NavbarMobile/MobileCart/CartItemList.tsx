@@ -139,7 +139,7 @@ const CartItemList = () => {
                             variant="body2"
                             style={{ textAlign: 'center', marginBottom: '30px' }}
                           >
-                            {product.title}
+                            {product.title} ({product.type})
                           </Typography>
                           <Stack
                             direction="row"
