@@ -373,8 +373,10 @@ const ItemDetail: React.FC = () => {
                   )}
                 </Grid>
               </Grid>
-                           {/* Agregar aquí el bloque para mostrar el mensaje de error */}
-                           <Grid item xs={12}>
+             
+          </CardActions>
+              {/* Agregar aquí el bloque para mostrar el mensaje de error */}
+              <Grid item xs={12}>
                   {showError && (
                     <Typography variant="body1" color="error" align="center" style={{ marginBottom: '10px' }}>
                       {errorMessage}
@@ -388,8 +390,6 @@ const ItemDetail: React.FC = () => {
                     <Typography variant="body1">Tienes el máximo disponible.</Typography>
                   </CardContent>
                 )}
-          </CardActions>
-
 
 
 
