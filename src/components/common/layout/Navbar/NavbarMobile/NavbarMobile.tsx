@@ -5,6 +5,8 @@ import SearchBar from "./SearchBar/SearchBar";
 import MobileCart from './MobileCart/MobileCart';
 import {customColors} from "../../../../../styles/styles"
 import { Outlet } from "react-router-dom";
+import Notification from "../../../../../notification/Notification";
+import WhatsAppLink from "../../../../../whatapp/WhatsAppLink";
 
 import {
   Toolbar,
@@ -91,6 +93,8 @@ const NavbarMobile = (props:any) => {
       >
         <Toolbar />
         <Outlet />
+        <Notification />
+        <WhatsAppLink/>
       </Box>
     </Box>
   );

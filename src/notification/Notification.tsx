@@ -1,13 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
-import PropTypes from 'prop-types';
 import { Box, Snackbar } from '@mui/material';
 import { CartContext } from '../context/CartContext';
 
-interface NotificationProps {
-  
-}
-
-const Notification: React.FC<NotificationProps> = () => {
+const Notification: React.FC = () => {
   const [showNotification, setShowNotification] = useState(false);
   const { getTotalQuantity } = useContext(CartContext)! ?? {};
 
@@ -25,20 +20,15 @@ const Notification: React.FC<NotificationProps> = () => {
 
   return (
     <Box sx={{ position: 'fixed', bottom: 20, left: 20, zIndex: 9999 }}>
-    <Snackbar
-      open={showNotification}
-      autoHideDuration={3000}
-      onClose={() => setShowNotification(false)}
-      message={`¡Tu carrito tiene ${getTotalQuantity ? getTotalQuantity() : 0} artículos!`} 
-      sx={{ bottom: 20, left: 20, width: 'fit-content', maxWidth: 'calc(100% - 40px)', textAlign: 'center' }} // Ajusta el fondo al texto
-    />
-  </Box>
-  
+      <Snackbar
+        open={showNotification}
+        autoHideDuration={3000}
+        onClose={() => setShowNotification(false)}
+        message={`¡Tu carrito tiene ${getTotalQuantity ? getTotalQuantity() : 0} artículos!`} 
+        sx={{ bottom: 20, left: 20, width: 'fit-content', maxWidth: 'calc(100% - 40px)', textAlign: 'center' }} // Ajusta el fondo al texto
+      />
+    </Box>
   );
-};
-
-Notification.propTypes = {
-  message: PropTypes.string.isRequired,
 };
 
 export default Notification;

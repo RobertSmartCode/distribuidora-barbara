@@ -256,6 +256,7 @@ const ItemDetail: React.FC = () => {
               </Typography>
 
                 {/* Precio Original precio con descuento */}
+
               <Typography
                 variant="subtitle1"
                 color="textSecondary"
@@ -288,6 +289,8 @@ const ItemDetail: React.FC = () => {
                       </Typography> 
               </Typography>
 
+                          {/* Detalles del Producto */}
+                          
             <Box
               sx={{
                 display: 'flex',
