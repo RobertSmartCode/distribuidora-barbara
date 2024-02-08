@@ -25,6 +25,9 @@ const WhatsAppLink: React.FC = () => {
         onClick={handleClick} // Maneja el clic de forma personalizada
         sx={{
           backgroundColor: '#25d366',
+          '&:hover': {
+            backgroundColor: '#25d366', // Mantén el mismo color de fondo al hacer hover
+          },
           color: 'white',
           borderRadius: '50%',
           marginRight: { xs: '8px', md: '16px' },
@@ -41,3 +44,4 @@ const WhatsAppLink: React.FC = () => {
 };
 
 export default WhatsAppLink;
+
