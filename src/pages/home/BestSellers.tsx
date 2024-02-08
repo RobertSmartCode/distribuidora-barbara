@@ -96,11 +96,7 @@ useEffect(() => {
     fontWeight: "bold",
   };
 
-  const productPriceStyles = {
-    fontSize: "1.2rem",
-    color: customColors.primary.main,
-    marginBottom: '16px',
-  };
+
 
   const productDetailStyles = {
     backgroundColor: customColors.secondary.main,
@@ -132,6 +128,22 @@ useEffect(() => {
   const handleBuyClick = (product: Product) => {
     setSelectedProduct(product);
   };
+  const calculateFinalPrice = (price: string, discount: string): number => {
+    // Parsear el precio y el descuento a números
+    const parsedPrice = parseFloat(price);
+    const parsedDiscount = parseInt(discount);
+    
+    // Verifica si el descuento es distinto de cero
+    if (parsedDiscount !== 0) {
+        // Calcula el precio final restando el descuento al precio original
+        const discountedPrice = parsedPrice - (parsedPrice * parsedDiscount) / 100;
+        // Redondea el precio final al entero más cercano
+        return Math.round(discountedPrice);
+    } else {
+        // Si el descuento es cero, devuelve el precio original
+        return parsedPrice;
+    }
+};
 
   return (
 
@@ -233,9 +245,46 @@ useEffect(() => {
 
 
 
-              <Typography variant="subtitle2" color="textSecondary" sx={productPriceStyles}>
-                Precio: ${product.price}
-              </Typography>
+                        {/* Precio del producto */}
+
+
+                        <Typography
+                          variant="subtitle1"
+                          color="textSecondary"
+                          sx={{ display: 'flex', justifyContent: 'center' }}
+                        >
+                          {product?.discount !== 0 && (
+                              <Typography
+                                variant="body2"
+                                style={{
+                                  textDecoration: "line-through",
+                                  display: "block",
+                                  textAlign: "center",
+                                  marginRight: "16px",
+                                  color: customColors.primary.main
+                                }}
+                              >
+                                ${product?.price}
+                              </Typography>
+                            )}
+
+                              <Typography
+                                  variant="body1"
+                                  align="center"
+                                  style={{
+                                    color: customColors.primary.main,
+                                    fontSize: "24px"
+                                  }}
+                                  >
+                                  ${calculateFinalPrice(product?.price.toString() || "0", product?.discount.toString()  || "0")}
+
+                              </Typography> 
+                          </Typography>
+
+                          {/* Fin del precio */}
+
+
+
               <Box sx={buttonContainerStyles}>
                 <Button
                   onClick={() => handleBuyClick(product)} 
