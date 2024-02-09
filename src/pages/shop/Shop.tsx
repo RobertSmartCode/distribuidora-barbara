@@ -229,7 +229,7 @@ const Shop: React.FC = () => {
                           color="textSecondary"
                           sx={{ display: 'flex', justifyContent: 'center' }}
                         >
-                          {product?.discount !== 0 && (
+                          {parseInt(String(product?.discount))!== 0 && (
                               <Typography
                                 variant="body2"
                                 style={{
