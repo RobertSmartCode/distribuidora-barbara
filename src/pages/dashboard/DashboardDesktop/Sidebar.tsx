@@ -8,7 +8,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import PaymentIcon from '@mui/icons-material/Payment';
-
+import ListIcon from '@mui/icons-material/List';
 import StorefrontIcon from '@mui/icons-material/Storefront';
 
 // import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
@@ -70,12 +70,21 @@ const Sidebar = () => {
           </ListItemIcon>
           <ListItemText primary="Reportes de Ventas" />
         </ListItem> */}
-        <ListItem button  onClick={() => handleItemClick('Configuración')}>
+        <ListItem button  onClick={() => handleItemClick('Categorías')}>
           <ListItemIcon>
-            <SettingsIcon />
+          <ListIcon />
+            
           </ListItemIcon>
-          <ListItemText primary="Configuración" />
+          <ListItemText primary="Categorías" />
         </ListItem>
+
+         <ListItem button onClick={() => handleItemClick('Configuración')}>
+        <ListItemIcon>
+        <SettingsIcon />
+        </ListItemIcon>
+        <ListItemText primary="Configuración" />
+        </ListItem>
+        
       </List>
     </Drawer>
   );

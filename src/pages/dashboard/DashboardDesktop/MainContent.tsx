@@ -6,6 +6,8 @@ import StoreDataDesktop from '../StoreData/StoreDataDesktop';
 import ProductsFormDesktop from '../Products/ProductDesktop/ProductsFormDesktop';
 import CompletedOrderList from '../MyOrders/CompletedOrderList';
 import {ProductsFormDesktopProps}from "../../../type/type";
+// import Category from '../Setting/Setting';
+import CategoryDesktop from '../Category/CategoryDesktop';
 
 
 const MainContent = () => {
@@ -36,6 +38,7 @@ const MainContent = () => {
         {selectedItem === 'Mis Productos' && <ProductsListDesktop/>}
         {selectedItem === 'Métodos de Pago' && <PaymentMethodsDesktop />}
         {selectedItem === 'Datos de la Tienda' && <StoreDataDesktop />}
+        {selectedItem === 'Categorías' && <CategoryDesktop />}
         
     </>
   );

@@ -18,3 +18,10 @@ export const productSchema = Yup.object().shape({
 
 
 
+export const categorySchema = Yup.object().shape({
+  category: Yup.string().required("El nombre de la categoría es obligatorio"),
+});
+
+export const subcategorySchema = Yup.object().shape({
+  subCategory: Yup.string().required("El nombre de la subcategoría es obligatorio"),
+});

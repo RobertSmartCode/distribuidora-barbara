@@ -9,6 +9,7 @@ import CashRegisterContextComponent from "./CashRegisterContext";
 import SelectedItemsContextComponent from "./SelectedItems";
 import ShippingContextComponent from "./ShippingMethodsContext";
 import PaymentMethodsContextComponent from './PaymentMethodsContext'
+import CategoriesContextComponent from './CategoriesContext';
 import { CustomerContextComponent } from './CustomerContext';
 
 
@@ -19,6 +20,7 @@ interface AllContextsProps {
 const AllContexts: React.FC<AllContextsProps> = ({ children }) => {
  
   return (
+    <CategoriesContextComponent>
     <StoreDataContextComponent>
       <PaymentMethodsContextComponent>
         <ShippingContextComponent>
@@ -40,6 +42,7 @@ const AllContexts: React.FC<AllContextsProps> = ({ children }) => {
           </ShippingContextComponent>
           </PaymentMethodsContextComponent>
       </StoreDataContextComponent>
+      </CategoriesContextComponent>
   );
 };
 
