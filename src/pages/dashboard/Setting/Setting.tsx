@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import {useState } from 'react';
 import { TextField, Button, List, ListItem, ListItemText, Grid, Box } from '@mui/material';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
@@ -17,10 +17,7 @@ const Category = () => {
     const [newCategory, setNewCategory] = useState('');
     const [newSubcategory, setNewSubcategory] = useState('');
 
-    useEffect(() => {
-      console.log("Estado de categories actualizado:", categories);
-  }, [categories]);
-  
+
 
     const handleNewCategoryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setNewCategory(e.target.value);
