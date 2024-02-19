@@ -23,7 +23,7 @@ import { productSchema } from '../../../../schema/productSchema';
 import { useSelectedItemsContext } from '../../../../context/SelectedItems';
 import ImageManager from '../ImageManager';
 import { useImagesContext } from "../../../../context/ImagesContext";
-
+import { useCategories } from '../../../../context/CategoriesContext';
 
 
 const ProductsFormDesktop: React.FC<ProductsFormDesktopProps> = (props) => {
@@ -32,6 +32,10 @@ const ProductsFormDesktop: React.FC<ProductsFormDesktopProps> = (props) => {
   
   
   const { productSelected, setProductSelected  } = props;
+  const { categories } = useCategories();
+
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedSubcategory, setSelectedSubcategory] = useState('');
 
   const [isLoading] = useState<boolean>(false);
 
@@ -42,8 +46,8 @@ const ProductsFormDesktop: React.FC<ProductsFormDesktopProps> = (props) => {
     title: "",
     brand: "",
     description: "",
-    sector: "",
     category: "",
+    subCategory: "",
     discount: 0,
     unitperpack: 0,
     type: "",
@@ -150,6 +154,42 @@ const handleBooleanChange = (name: string, value: boolean) => {
   } else {
     setNewProduct(updatedProduct);
   }
+};
+
+const handleCategoryChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const { value } = event.target;
+
+  // Actualizar el producto seleccionado
+  if (productSelected) {
+    const updatedProductSelected = { ...productSelected, category: value };
+    setProductSelected(updatedProductSelected);
+  }
+
+  // Actualizar el nuevo producto
+  const updatedNewProduct = { ...newProduct, category: value };
+  setNewProduct(updatedNewProduct);
+
+  // Resetear la subcategoría seleccionada al cambiar la categoría
+  setSelectedCategory(value);
+  setSelectedSubcategory('');
+};
+
+
+const handleSubcategoryChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const { value } = event.target;
+
+  // Actualizar el producto seleccionado
+  if (productSelected) {
+    const updatedProductSelected = { ...productSelected, subCategory: value };
+    setProductSelected(updatedProductSelected);
+  }
+
+  // Actualizar el nuevo producto
+  const updatedNewProduct = { ...newProduct, subCategory: value };
+  setNewProduct(updatedNewProduct);
+
+  // Actualizar la subcategoría seleccionada
+  setSelectedSubcategory(value);
 };
 
 
@@ -392,50 +432,71 @@ return (
                />
           
              </Grid>
-             <Grid item xs={12} sm={6}>
-               <TextField
-                 variant="outlined"
-                 value={productSelected ? productSelected.sector : newProduct.sector}
-                 label="Rubro"
-                 name="sector"
-                 onChange={handleChange}
-                 fullWidth
-                 sx={{ width: '75%', margin: 'auto' }}
-               />
-                <ErrorMessage
-                 messages={
-                   errors.sector
-                     ? Array.isArray(errors.sector)
-                       ? errors.sector
-                       : [errors.sector]
-                     : []
-                 }
-               />
- 
-             </Grid>
-             <Grid item xs={12} sm={6}>
-               <TextField
-                 variant="outlined"
-                 value={productSelected ? productSelected.category : newProduct.category}
-                 label="Categoría"
-                 name="category"
-                 onChange={handleChange}
-                 fullWidth
-                 sx={{ width: '75%', margin: 'auto' }}
-               />
-                <ErrorMessage
-                 messages={
-                   errors.category
-                     ? Array.isArray(errors.category)
-                       ? errors.category
-                       : [errors.category]
-                     : []
-                 }
-               />
- 
-             </Grid>
-           
 
+                            {/* Categoria y Subcategoría */}
+                                <Grid item xs={12} sm={6}>
+                                      <TextField
+                                        select
+                                        variant="outlined"
+                                        value={selectedCategory}
+                                        label="Rubro"
+                                        name="category"
+                                        onChange={handleCategoryChange}
+                                        fullWidth
+                                        sx={{ width: '75%', margin: 'auto' }}
+                                      >
+                                        {categories && categories.map((category) => (
+                                          <MenuItem key={category.id} value={category.name}>
+                                            {category.name}
+                                          </MenuItem>
+                                        ))}
+                                      </TextField>
+                                      <ErrorMessage
+                                        messages={
+                                          errors.category
+                                            ? Array.isArray(errors.category)
+                                              ? errors.category
+                                              : [errors.category]
+                                            : []
+                                        }
+                                      />
+                                    </Grid>
+                                    {selectedCategory && (
+                                      <Grid item xs={12} sm={6}>
+                                        <TextField
+                                          select
+                                          variant="outlined"
+                                          value={selectedSubcategory}
+                                          label="Categoría"
+                                          name="subCategory"
+                                          onChange={handleSubcategoryChange}
+                                          fullWidth
+                                          sx={{ width: '75%', margin: 'auto' }}
+                                        >
+                                          {categories &&
+                                            categories
+                                              .find((category) => category.name === selectedCategory)
+                                              ?.subCategories.map((subCategory: string) => (
+                                                <MenuItem key={subCategory} value={subCategory}>
+                                                  {subCategory}
+                                                </MenuItem>
+                                              ))}
+
+                                        </TextField>
+                                        <ErrorMessage
+                                        messages={
+                                          errors.subCategory
+                                            ? Array.isArray(errors.subCategory)
+                                              ? errors.subCategory
+                                              : [errors.subCategory]
+                                            : []
+                                        }
+                                      />
+                                      </Grid>
+                                    )}
+
+                                
+                           {/* Categoria y Subcategoría */}
 
              <Grid item xs={12} sm={6}>
                <TextField

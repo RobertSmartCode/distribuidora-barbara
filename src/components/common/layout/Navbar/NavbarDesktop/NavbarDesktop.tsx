@@ -5,7 +5,7 @@ import {
   CssBaseline,
   Grid,
   Box,
-  Divider,
+ 
 } from "@mui/material";
 import Logo from "./Logo/Logo";
 import SearchBar from "./SearchBar/SearchBar";
@@ -17,10 +17,10 @@ import Notification from "../../../../../notification/Notification";
 import WhatsAppLink from "../../../../../whatapp/WhatsAppLink";
 
 const NavbarDesktop = () => {
+
   return (
     <>
-      <CssBaseline />
-      <AppBar position="fixed" color="secondary">
+      <AppBar position="static" color="secondary"  sx={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 999 }}>
         <Toolbar>
           <Grid container spacing={2} alignItems="center">
             <Grid container item lg={12} alignItems="center">
@@ -41,21 +41,22 @@ const NavbarDesktop = () => {
             </Grid>
           </Grid>
         </Toolbar>
+        
+        {/* Estilos en el contenedor de MenuButton */}
+        <Box sx={{ height: '30px',
+         backgroundColor: '#f0f0f0',
+          display: 'flex', 
+          alignItems: 'center',
+          justifyContent: 'center',
+          elevation: 0
+          }}>
+          <MenuButton />
+        </Box>    
       </AppBar>
 
-      {/* Espacio para el Divider y el MenuButton */}
-      <Box sx={{ marginTop: '80px' }}> {/* Ajustar el marginTop según sea necesario */}
-        <Grid container item lg={12} justifyContent="center">
-          <Grid item lg={12}>
-            <Divider sx={{ backgroundColor: 'black', height: '0.1px' }} />
-          </Grid>
-          <Grid item lg={12} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '12px' }}>
-            <MenuButton />
-          </Grid>
-        </Grid>
-      </Box>
 
       {/* Contenido principal */}
+      <CssBaseline />
       <Box
         component="main"
         sx={{
@@ -64,7 +65,7 @@ const NavbarDesktop = () => {
           width: "100%",
           minHeight: "100vh",
           px: 2,
-          marginTop: '0px', 
+          marginTop: '8%',
         }}
       >
         <Outlet />
@@ -76,3 +77,6 @@ const NavbarDesktop = () => {
 };
 
 export default NavbarDesktop;
+
+
+

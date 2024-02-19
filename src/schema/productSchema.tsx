@@ -5,7 +5,8 @@ export const productSchema = Yup.object().shape({
   title: Yup.string().required("El nombre es obligatorio"),
   brand: Yup.string().required("La marca es obligatoria"),
   description: Yup.string().required("La descripción es obligatoria"),
-  category: Yup.string().required("La categoría es obligatoria"),
+  category: Yup.string().required("El rubro es obligatorio"),
+  subCategory: Yup.string().required("La categoría es obligatoria"),
   discount: Yup.number()
     .typeError("El descuento debe ser un número incluyendo 0")
     .min(0, "El descuento no puede ser negativo"),

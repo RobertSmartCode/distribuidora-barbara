@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import { collection, onSnapshot, doc, updateDoc, deleteDoc } from "firebase/firestore";
+import { collection, onSnapshot, doc, deleteDoc } from "firebase/firestore";
 import { db } from '../firebase/firebaseConfig';
 
 // Definición de la interfaz de categoría
@@ -18,10 +18,9 @@ interface CategoriesProviderProps {
 interface CategoriesContextValue {
   categories: Category[] | null;
   updateCategories: (newCategories: Category[]) => void;
-  editCategory: (categoryId: string, newName: string) => void;
   deleteCategory: (categoryId: string) => void;
-  editSubCategory: (categoryId: string, subCategoryId: string, newName: string) => void;
-  deleteSubCategory: (categoryId: string, subCategoryId: string) => void;
+ 
+ 
 }
 
 // Crear el contexto de categorías
@@ -63,23 +62,11 @@ const CategoriesContextComponent: React.FC<CategoriesProviderProps> = ({ childre
   
   
 
-
   // Función para actualizar las categorías
   const updateCategories = (newCategories: Category[]) => {
     setCategories(newCategories);
   };
 
-  // Función para editar una categoría
-  const editCategory = async (categoryId: string, newName: string) => {
-    const categoryRef = doc(db, "categories", categoryId);
-    await updateDoc(categoryRef, { name: newName });
-    const updatedCategories = categories?.map((category) =>
-      category.id === categoryId ? { ...category, name: newName } : category
-    );
-    if (updatedCategories) {
-      updateCategories(updatedCategories);
-    }
-  };
 
   // Función para eliminar una categoría
   const deleteCategory = async (categoryId: string) => {
@@ -91,49 +78,12 @@ const CategoriesContextComponent: React.FC<CategoriesProviderProps> = ({ childre
     }
   };
 
-  // Función para editar una subcategoría
-  const editSubCategory = async (categoryId: string, subCategoryId: string, newName: string) => {
-    const categoryRef = doc(db, "categories", categoryId);
-    const category = categories?.find((cat) => cat.id === categoryId);
-    if (category) {
-      const updatedSubCategories = category.subCategories.map((subCategory) =>
-        subCategory === subCategoryId ? newName : subCategory
-      );
-      await updateDoc(categoryRef, { subCategories: updatedSubCategories });
-      const updatedCategories = categories?.map((cat) =>
-        cat.id === categoryId ? { ...cat, subCategories: updatedSubCategories } : cat
-      );
-      if (updatedCategories) {
-        updateCategories(updatedCategories);
-      }
-    }
-  };
-
-  // Función para eliminar una subcategoría
-  const deleteSubCategory = async (categoryId: string, subCategoryId: string) => {
-    const categoryRef = doc(db, "categories", categoryId);
-    const category = categories?.find((cat) => cat.id === categoryId);
-    if (category) {
-      const updatedSubCategories = category.subCategories.filter((subCategory) => subCategory !== subCategoryId);
-      await updateDoc(categoryRef, { subCategories: updatedSubCategories });
-      const updatedCategories = categories?.map((cat) =>
-        cat.id === categoryId ? { ...cat, subCategories: updatedSubCategories } : cat
-      );
-      if (updatedCategories) {
-        updateCategories(updatedCategories);
-      }
-    }
-  };
-
   return (
     <CategoriesContext.Provider
       value={{
         categories,
         updateCategories,
-        editCategory,
         deleteCategory,
-        editSubCategory,
-        deleteSubCategory,
       }}
     >
       {children}

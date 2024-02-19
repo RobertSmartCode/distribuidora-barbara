@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { db } from "../../firebase/firebaseConfig";
-import { collection, query, getDocs } from "firebase/firestore";
+import { collection, query, getDocs, where } from "firebase/firestore";
 import { Link } from "react-router-dom";
 import { Grid, Card, CardContent, Typography, Button, IconButton, Box, CardMedia, Paper } from "@mui/material";
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -8,10 +8,10 @@ import { Product } from '../../type/type';
 import SelectionCard from "../../components/pageComponents/SelectionCard/SelectionCard";
 import useMediaQuery from '@mui/material/useMediaQuery';
 import {customColors} from "../../styles/styles"
+import { useParams } from 'react-router-dom';
 
-
-const Shop: React.FC = () => {
-
+const Category: React.FC = () => {
+  const { category, subcategory } = useParams();
   const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
@@ -54,13 +54,26 @@ const Shop: React.FC = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       const productsCollection = collection(db, "products");
-      const productsQuery = query(productsCollection);
+      let productsQuery = query(productsCollection);
+  
+      // Obtenemos las categoría y subcategoría de los parámetros de la URL
+  
+  
+      // Si hay una categoría proporcionada en los parámetros de la URL, filtramos por esa categoría
+      if (category) {
+        productsQuery = query(productsCollection, where("category", "==", category));
+      }
+  
+      // Si hay una subcategoría proporcionada en los parámetros de la URL, filtramos por esa subcategoría
+      if (subcategory) {
+        productsQuery = query(productsCollection, where("subCategory", "==", subcategory));
+      }
   
       try {
         const querySnapshot = await getDocs(productsQuery);
         const productsData = querySnapshot.docs
           .map((doc) => ({ ...doc.data(), id: doc.id } as Product))
-          .filter((product) => product.online === true); 
+          .filter((product) => product.online === true);
   
         setAllProducts(productsData);
         setProducts(productsData);
@@ -70,7 +83,7 @@ const Shop: React.FC = () => {
     };
   
     fetchProducts();
-  }, []);
+}, [category, subcategory]);
   
 
   const containerStyles = { padding: '8px' };
@@ -287,7 +300,7 @@ const Shop: React.FC = () => {
   );
 };
 
-export default Shop;
+export default Category;
 
 
 
