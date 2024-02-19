@@ -20,6 +20,7 @@ const NewArrivals: React.FC = () => {
   const maxTitleLength = isMobile ? 15 : 29;
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [clickedProduct, setClickedProduct] = useState<string | null>(null);
+  
   const handleTitleClick = (title: string) => {
     setClickedProduct((prevClickedProduct) =>
       prevClickedProduct === title ? null : title
@@ -28,6 +29,7 @@ const NewArrivals: React.FC = () => {
 
   
   const [hoveredProduct, setHoveredProduct] = useState<Product | null>(null);
+
   const handleMouseEnter = (barcode: number) => {
     const product = products.find((p) => p.barcode === barcode);
     if (product) {
@@ -47,6 +49,15 @@ const handleImageLoad = () => {
     return newCount;
   });
 };
+
+const generateSlug = (title:string) => {
+  return title
+    .toLowerCase() // Convertir a minúsculas
+    .replace(/[^\w\s]/gi, '') // Eliminar caracteres especiales
+    .replace(/\s+/g, '-') // Reemplazar espacios con guiones
+    .trim(); // Eliminar espacios en blanco al inicio y al final
+};
+
 
 
 useEffect(() => {
@@ -203,7 +214,7 @@ useEffect(() => {
 
                           
                           {/* Imagen del producto */}
-                          <Link to={`/${product.title}/${product.id}`}>
+                          <Link to={`/itemDetail/${generateSlug(product.title)}/${product.id}`}>
                             <Box
                               onMouseEnter={() => handleMouseEnter(product.barcode)}
                               onMouseLeave={handleMouseLeave}

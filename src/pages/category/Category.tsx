@@ -43,6 +43,15 @@ const Category: React.FC = () => {
     setLoadedImageCount((prevCount) => prevCount + 1);
   };
 
+  const generateSlug = (title:string) => {
+    return title
+      .toLowerCase() // Convertir a minúsculas
+      .replace(/[^\w\s]/gi, '') // Eliminar caracteres especiales
+      .replace(/\s+/g, '-') // Reemplazar espacios con guiones
+      .trim(); // Eliminar espacios en blanco al inicio y al final
+  };
+  
+
   useEffect(() => {
     if (loadedImageCount >= allProducts.length) {
       setIsComponentReady(true);
@@ -169,7 +178,7 @@ const Category: React.FC = () => {
                           )}
 
                              {/* Imagen del producto */}
-                             <Link to={`/${product.title}/${product.id}`}>
+                             <Link to={`/itemDetail/${generateSlug(product.title)}/${product.id}`}>
                               <Box
                                 onMouseEnter={() => handleMouseEnter(product.barcode)}
                                 onMouseLeave={handleMouseLeave}

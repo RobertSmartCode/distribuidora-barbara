@@ -35,6 +35,14 @@ const Shop: React.FC = () => {
     setHoveredProduct(null);
   };
 
+  const generateSlug = (title:string) => {
+    return title
+      .toLowerCase() 
+      .replace(/[^\w\s]/gi, '') 
+      .replace(/\s+/g, '-') 
+      .trim(); 
+  };
+  
  
   const [isComponentReady, setIsComponentReady] = useState(false);
   const [loadedImageCount, setLoadedImageCount] = useState(0);
@@ -156,7 +164,7 @@ const Shop: React.FC = () => {
                           )}
 
                              {/* Imagen del producto */}
-                             <Link to={`/${product.title}/${product.id}`}>
+                             <Link to={`/itemDetail/${generateSlug(product.title)}/${product.id}`}>
                               <Box
                                 onMouseEnter={() => handleMouseEnter(product.barcode)}
                                 onMouseLeave={handleMouseLeave}

@@ -50,6 +50,15 @@ const handleImageLoad = () => {
   });
 };
 
+const generateSlug = (title:string) => {
+  return title
+    .toLowerCase() // Convertir a minúsculas
+    .replace(/[^\w\s]/gi, '') // Eliminar caracteres especiales
+    .replace(/\s+/g, '-') // Reemplazar espacios con guiones
+    .trim(); // Eliminar espacios en blanco al inicio y al final
+};
+
+
 
 useEffect(() => {
 
@@ -316,7 +325,7 @@ useEffect(() => {
                 </Button>
                 <IconButton
                   component={Link}
-                  to={`/itemDetail/${product.id}`}
+                  to={`/itemDetail/${generateSlug(product.title)}/${product.id}`}
                   aria-label="Ver"
                   color="secondary"
                   size="small"
