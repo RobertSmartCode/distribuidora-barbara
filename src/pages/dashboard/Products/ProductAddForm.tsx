@@ -25,14 +25,12 @@ const ProductAddForm = () => {
           title: productData.title || "",
           brand: productData.brand || "",
           description: productData.description || "",
+          subCategory: productData.subCategory || "",
           category: productData.category || "",
           discount: productData.discount || 0,
           unitperpack: productData.unitperpack || 0,
-          type: productData.type || "", // Asegúrate de ajustar esto según tus datos reales
-          cost: productData.cost || 0,
-          taxes: productData.taxes || 0,
-          profitMargin: productData.profitMargin || 0,
-          price: productData.price || 0, // Asegúrate de ajustar esto según tus datos reales
+          type: productData.type || "", 
+          price: productData.price || 0, 
           quantities: productData.quantities || 0,
           barcode: productData.barcode || 0,
           contentPerUnit: productData.contentPerUnit || 0,

@@ -34,6 +34,7 @@ const ProductsFormDesktop: React.FC<ProductsFormDesktopProps> = (props) => {
     brand: "",
     description: "",
     category: "",
+    subCategory: "",
     discount: 0,
     unitperpack: 10,
     type: "",
