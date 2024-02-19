@@ -156,7 +156,7 @@ const Shop: React.FC = () => {
                           )}
 
                              {/* Imagen del producto */}
-                             <Link to={`/itemDetail/${product.id}`}>
+                             <Link to={`/${product.title}/${product.id}`}>
                               <Box
                                 onMouseEnter={() => handleMouseEnter(product.barcode)}
                                 onMouseLeave={handleMouseLeave}

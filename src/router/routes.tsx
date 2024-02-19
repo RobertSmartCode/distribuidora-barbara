@@ -26,7 +26,7 @@ export const routes: Route[] = [
   },
   {
     id: "detalle",
-    path: "/itemDetail/:id",
+    path: "/:title/:id",
     Element: ItemDetail,
   },
   {
