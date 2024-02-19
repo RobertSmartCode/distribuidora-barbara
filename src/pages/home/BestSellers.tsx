@@ -207,7 +207,7 @@ useEffect(() => {
                           )}
 
                           {/* Imagen del producto */}
-                          <Link to={`/${product.title}/${product.id}`}>
+                          <Link to={`/itemDetail/${generateSlug(product.title)}/${product.id}`}>
                             <Box
                               onMouseEnter={() => handleMouseEnter(product.barcode)}
                               onMouseLeave={handleMouseLeave}
