@@ -7,7 +7,7 @@ const FrequentlyAskedQuestions = () => {
     <div style={{ cursor: 'pointer' }}>
       {/* Contenido de preguntas frecuentes */}
       <Link to="/preguntas-frecuentes" style={{ textDecoration: 'none', color: 'inherit', fontWeight: 'bold' }}>
-        <h3>Preguntas Frecuentes</h3>
+        <h3>Preguntas</h3>
       </Link>
       
       {/* Aquí irían las preguntas frecuentes */}
