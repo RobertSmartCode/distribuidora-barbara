@@ -12,6 +12,8 @@ import { useParams } from 'react-router-dom';
 
 const Category: React.FC = () => {
   const { category, subcategory } = useParams();
+  console.log("C",category)
+  console.log("S",subcategory )
   const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
