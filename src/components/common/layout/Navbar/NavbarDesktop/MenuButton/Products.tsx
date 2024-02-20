@@ -1,33 +1,53 @@
-import React, { useState } from 'react';
+import React, { useLayoutEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useCategories } from '../../../../../../context/CategoriesContext';
 import Menu from '@mui/material/Menu';
 import { Grid, Typography } from '@mui/material';
 
 const Products = () => {
-
   const { categories } = useCategories() || {};
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const menuTopPositionRef = useRef<number>(0);
+  const h3Ref = useRef<HTMLHeadingElement>(null);
+
+  useLayoutEffect(() => {
+    const h3Element = h3Ref.current;
+    if (h3Element) {
+      const rect = h3Element.getBoundingClientRect();
+      menuTopPositionRef.current = rect.top;
+ 
+    }
+  
+    const handleMouseMove = (event: MouseEvent) => {
+     
+      if (event.clientY < menuTopPositionRef.current) {
+        handleMenuClose();
+      }
+    };
+  
+    document.addEventListener('mousemove', handleMouseMove);
+  
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+    };
+  }, []);
+  
+  
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLHeadingElement>) => {
     setAnchorEl(event.currentTarget);
-    event.stopPropagation(); 
+    event.stopPropagation();
   };
 
-  const handleMenuMouseLeave = () => {
-    if (event) {
-      event.stopPropagation(); 
+  const handleMenuMouseLeave = (event: React.MouseEvent<HTMLDivElement>) => {
+    if (event.clientY < menuTopPositionRef.current) {
+      handleMenuClose();
     }
-    handleMenuClose(); 
+    handleMenuClose();
   };
-  
 
   const handleMenuClose = () => {
-    if (event) {
-      event.stopPropagation(); 
-    }
-
     setAnchorEl(null);
   };
 
@@ -36,15 +56,14 @@ const Products = () => {
   }
 
   return (
-    <div  onMouseEnter={handleMenuOpen} >
-      <h3 style={{ cursor: 'pointer' }}>Productos</h3>
-
+    <div onMouseEnter={handleMenuOpen}>
+      <h3 style={{ cursor: 'pointer' }} ref={h3Ref}>Productos</h3>
       <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
         onClose={handleMenuClose}
         PaperProps={{
-          onMouseLeave: handleMenuMouseLeave, 
+          onMouseLeave: handleMenuMouseLeave,
           sx: {
             width: '100%',
             maxWidth: '100%',
@@ -72,7 +91,7 @@ const Products = () => {
                     <Link
                       to={`/${category.name}/${subcategory}`}
                       style={{ textDecoration: 'none', color: 'inherit' }}
-                      onClick={handleMenuClose} 
+                      onClick={handleMenuClose}
                     >
                       {subcategory}
                     </Link>
