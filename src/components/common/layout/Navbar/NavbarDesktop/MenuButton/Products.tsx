@@ -40,10 +40,8 @@ const Products = () => {
     event.stopPropagation();
   };
 
-  const handleMenuMouseLeave = (event: React.MouseEvent<HTMLDivElement>) => {
-    if (event.clientY < menuTopPositionRef.current) {
-      handleMenuClose();
-    }
+  const handleMenuMouseLeave = (event: React.MouseEvent<HTMLHeadingElement>) => {
+    event.stopPropagation();
     handleMenuClose();
   };
 
