@@ -14,18 +14,19 @@ const Products = () => {
     setAnchorEl(event.currentTarget);
     event.stopPropagation(); 
   };
+
+  const handleMenuMouseLeave = () => {
+    handleMenuClose(); 
+  };
   
 
   const handleMenuClose = () => {
- 
     if (event) {
       event.stopPropagation(); 
     }
-   
+
     setAnchorEl(null);
   };
-
- 
 
   if (!categories) {
     return null;
@@ -40,7 +41,7 @@ const Products = () => {
         open={Boolean(anchorEl)}
         onClose={handleMenuClose}
         PaperProps={{
-          onMouseLeave: handleMenuClose, 
+          onMouseLeave: handleMenuMouseLeave, 
           sx: {
             width: '100%',
             maxWidth: '100%',
