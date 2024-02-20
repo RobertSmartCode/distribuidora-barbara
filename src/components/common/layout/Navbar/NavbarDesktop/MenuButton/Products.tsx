@@ -16,6 +16,9 @@ const Products = () => {
   };
 
   const handleMenuMouseLeave = () => {
+    if (event) {
+      event.stopPropagation(); 
+    }
     handleMenuClose(); 
   };
   
