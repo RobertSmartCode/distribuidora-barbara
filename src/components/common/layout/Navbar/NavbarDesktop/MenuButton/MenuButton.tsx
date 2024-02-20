@@ -1,16 +1,8 @@
-
-import { useCategories } from '../../../../../../context/CategoriesContext';
-
 import Products from './Products';
 import FrequentlyAskedQuestions from './FrequentlyAskedQuestions';
 import { Grid } from '@mui/material';
 
 const MenuButton = () => {
-  const { categories } = useCategories();
-
-  if (!categories) {
-    return null;
-  }
 
  return (
     <Grid container spacing={2} justifyContent="center">

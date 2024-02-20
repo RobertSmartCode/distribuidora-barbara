@@ -1,24 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useCategories } from '../../../../../../context/CategoriesContext';
 import Menu from '@mui/material/Menu';
 import { Box, Grid, Typography } from '@mui/material';
 
 const Products = () => {
-  const { categories } = useCategories();
+  const { categories } = useCategories() || {};
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLHeadingElement>) => {
     setAnchorEl(event.currentTarget);
-    event.stopPropagation();
   };
 
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
 
-  const handleMenuLeave = () => {
-    setAnchorEl(null);
+  const handleMouseLeave = (event: React.MouseEvent<HTMLDivElement>) => {
+    if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+      handleMenuClose();
+    }
   };
 
   if (!categories) {
@@ -27,14 +29,15 @@ const Products = () => {
 
   return (
     <>
-      <Box onMouseLeave={handleMenuLeave}>
-        <h3 style={{ cursor: 'pointer' }} onMouseEnter={handleMenuOpen}>Productos</h3>
-        
+      <h3 style={{ cursor: 'pointer' }} onMouseEnter={handleMenuOpen}>Productos</h3>
+
+      <Box onMouseLeave={handleMouseLeave}>
         <Menu
           anchorEl={anchorEl}
           open={Boolean(anchorEl)}
           onClose={handleMenuClose}
           PaperProps={{
+            ref: menuRef,
             sx: {
               width: '100%',
               maxWidth: '100%',
@@ -44,7 +47,6 @@ const Products = () => {
               elevation: 0
             }
           }}
-          autoFocus={false}
         >
           <Grid container spacing={2} justifyContent="center">
             {categories.map(category => (
