@@ -142,17 +142,18 @@ return (
          
         
          <Typography
-          variant="h4"
-          align="center"
-          sx={{
-            fontWeight: 'bold',
-            color: '#f44336',
-            marginTop: '20px',
-            margin: 'auto'
-          }}
-        >
-          No hay Stock de estos productos en la tienda online.
-        </Typography>
+            variant="h5"
+            align="center"
+            sx={{
+              fontWeight: 'bold',
+              color: '#f44336',
+              marginTop: '20px',
+              margin: 'auto'
+            }}
+          >
+            ¡Ups! Parece que este producto no está disponible por el momento.
+          </Typography>
+          
 
         ) : (
           products.map((product) => (
