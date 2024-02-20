@@ -1,84 +1,85 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useCategories } from '../../../../../../context/CategoriesContext';
 import Menu from '@mui/material/Menu';
-import { Box, Grid, Typography } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 
 const Products = () => {
+
   const { categories } = useCategories() || {};
+
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const menuRef = useRef<HTMLDivElement>(null);
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLHeadingElement>) => {
     setAnchorEl(event.currentTarget);
+    event.stopPropagation(); 
   };
+  
 
   const handleMenuClose = () => {
+ 
+    if (event) {
+      event.stopPropagation(); 
+    }
+   
     setAnchorEl(null);
   };
 
-  const handleMouseLeave = (event: React.MouseEvent<HTMLDivElement>) => {
-    if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-      handleMenuClose();
-    }
-  };
+ 
 
   if (!categories) {
     return null;
   }
 
   return (
-    <>
-      <h3 style={{ cursor: 'pointer' }} onMouseEnter={handleMenuOpen}>Productos</h3>
+    <div  onMouseEnter={handleMenuOpen} >
+      <h3 style={{ cursor: 'pointer' }}>Productos</h3>
 
-      <Box onMouseLeave={handleMouseLeave}>
-        <Menu
-          anchorEl={anchorEl}
-          open={Boolean(anchorEl)}
-          onClose={handleMenuClose}
-          PaperProps={{
-            ref: menuRef,
-            sx: {
-              width: '100%',
-              maxWidth: '100%',
-              maxHeight: '100%',
-              backgroundColor: '#f0f0f0',
-              marginLeft: '1%',
-              elevation: 0
-            }
-          }}
-        >
-          <Grid container spacing={2} justifyContent="center">
-            {categories.map(category => (
-              <Grid item xs={1} key={category.id}>
-                <Typography variant="h6" gutterBottom align="center">
-                  <Link
-                    to={`/${category.name}`}
-                    style={{ textDecoration: 'none', color: 'inherit', fontWeight: 'bold' }}
-                    onClick={handleMenuClose}
-                  >
-                    {category.name}
-                  </Link>
-                </Typography>
-                <Grid container spacing={1} justifyContent="center">
-                  {category.subCategories && category.subCategories.map(subcategory => (
-                    <Grid item xs={12} key={subcategory} style={{ textAlign: 'center' }}>
-                      <Link
-                        to={`/${category.name}/${subcategory}`}
-                        style={{ textDecoration: 'none', color: 'inherit' }}
-                        onClick={handleMenuClose} 
-                      >
-                        {subcategory}
-                      </Link>
-                    </Grid>
-                  ))}
-                </Grid>
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleMenuClose}
+        PaperProps={{
+          onMouseLeave: handleMenuClose, 
+          sx: {
+            width: '100%',
+            maxWidth: '100%',
+            backgroundColor: '#f0f0f0',
+            marginLeft: '1%',
+            elevation: 0
+          }
+        }}
+      >
+        <Grid container spacing={2} justifyContent="center">
+          {categories.map(category => (
+            <Grid item xs={1} key={category.id}>
+              <Typography variant="h6" gutterBottom align="center">
+                <Link
+                  to={`/${category.name}`}
+                  style={{ textDecoration: 'none', color: 'inherit', fontWeight: 'bold' }}
+                  onClick={handleMenuClose}
+                >
+                  {category.name}
+                </Link>
+              </Typography>
+              <Grid container spacing={1} justifyContent="center">
+                {category.subCategories && category.subCategories.map(subcategory => (
+                  <Grid item xs={12} key={subcategory} style={{ textAlign: 'center' }}>
+                    <Link
+                      to={`/${category.name}/${subcategory}`}
+                      style={{ textDecoration: 'none', color: 'inherit' }}
+                      onClick={handleMenuClose} 
+                    >
+                      {subcategory}
+                    </Link>
+                  </Grid>
+                ))}
               </Grid>
-            ))}
-          </Grid>
-        </Menu>
-      </Box>
-    </>
+            </Grid>
+          ))}
+        </Grid>
+      </Menu>
+    </div>
   );
 }
 
