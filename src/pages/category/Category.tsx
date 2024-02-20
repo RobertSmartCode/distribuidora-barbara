@@ -133,180 +133,185 @@ const Category: React.FC = () => {
     }
 };
 
-
- 
-  return (
-
-    <>
-      {isComponentReady && (
-   
-        <Grid container spacing={2} sx={containerStyles}>
+return (
+  <>
+    {isComponentReady && (
+      <Grid container spacing={2} sx={containerStyles}>
+        {/* Productos más vendidos */}
+        {products.length === 0 ? (
+         
         
-      
-              {/* Productos más vendidos */}
-              {products.map((product) => (
-                <Grid item xs={6} sm={4} md={4} lg={3} key={product.id}>
-                   
-                  <Card sx={productStyles}>
-                  
-                     <Box sx={{ position: "relative" }}>
-                          {/* Etiqueta de % Descuento */}
-                          { parseInt(String(product?.discount)) !== 0 && (
-                            <Paper
-                              elevation={0}
-                              sx={{
-                                position: "absolute",
-                                top: 0,
-                                left: isMobile ? 0 : "calc(-15%)",
-                                backgroundColor: customColors.primary.main,
-                                color: customColors.secondary.contrastText,
-                                width: isMobile ? "32px" : "48px", 
-                                height: isMobile ? "32px" : "48px", 
-                                borderRadius: "50%",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                zIndex: 2, 
-                              }}
-                            >
-                              <Typography variant="body2" sx={{ fontSize: isMobile ? "10px" : "inherit" }}>
-                                {`${product?.discount}% `}
-                                <span style={{ fontSize: isMobile ? "8px" : "14px" }}>OFF</span>
-                              </Typography>
+         <Typography
+          variant="h4"
+          align="center"
+          sx={{
+            fontWeight: 'bold',
+            color: '#f44336',
+            marginTop: '20px',
+            margin: 'auto'
+          }}
+        >
+          No hay Stock de estos productos en la tienda online.
+        </Typography>
 
-                            </Paper>
-                          )}
+        ) : (
+          products.map((product) => (
+            <Grid item xs={6} sm={4} md={4} lg={3} key={product.id}>
+              <Card sx={productStyles}>
+                <Box sx={{ position: "relative" }}>
+                  {/* Etiqueta de % Descuento */}
+                  { parseInt(String(product?.discount)) !== 0 && (
+                    <Paper
+                      elevation={0}
+                      sx={{
+                        position: "absolute",
+                        top: 0,
+                        left: isMobile ? 0 : "calc(-15%)",
+                        backgroundColor: customColors.primary.main,
+                        color: customColors.secondary.contrastText,
+                        width: isMobile ? "32px" : "48px", 
+                        height: isMobile ? "32px" : "48px", 
+                        borderRadius: "50%",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        zIndex: 2, 
+                      }}
+                    >
+                      <Typography variant="body2" sx={{ fontSize: isMobile ? "10px" : "inherit" }}>
+                        {`${product?.discount}% `}
+                        <span style={{ fontSize: isMobile ? "8px" : "14px" }}>OFF</span>
+                      </Typography>
+                    </Paper>
+                  )}
 
-                             {/* Imagen del producto */}
-                             <Link to={`/itemDetail/${generateSlug(product.title)}/${product.id}`}>
-                              <Box
-                                onMouseEnter={() => handleMouseEnter(product.barcode)}
-                                onMouseLeave={handleMouseLeave}
-                              >
-                                <CardMedia
-                                  component="img"
-                                  height="140"
-                                  image={product.images[0]}
-                                  alt={product.title}
-                                  onLoad={handleImageLoad}
-                                  style={{
-                                    objectFit: "contain",
-                                    width: "100%",
-                                    marginBottom: "8px",
-                                    zIndex: 0,
-                                    transition: "transform 0.3s ease-in-out",
-                                    transform: hoveredProduct === product ? "scale(1.1)" : "scale(1)",
-                                  }}
-                                />
-                              </Box>
-                            </Link>                                                  
-                        </Box>
+                  {/* Imagen del producto */}
+                  <Link to={`/itemDetail/${generateSlug(product.title)}/${product.id}`}>
+                    <Box
+                      onMouseEnter={() => handleMouseEnter(product.barcode)}
+                      onMouseLeave={handleMouseLeave}
+                    >
+                      <CardMedia
+                        component="img"
+                        height="140"
+                        image={product.images[0]}
+                        alt={product.title}
+                        onLoad={handleImageLoad}
+                        style={{
+                          objectFit: "contain",
+                          width: "100%",
+                          marginBottom: "8px",
+                          zIndex: 0,
+                          transition: "transform 0.3s ease-in-out",
+                          transform: hoveredProduct === product ? "scale(1.1)" : "scale(1)",
+                        }}
+                      />
+                    </Box>
+                  </Link>                                                  
+                </Box>
 
-                    {selectedProduct === product ?  (
-                          <SelectionCard
-                            isOpen={true}
-                            onClose={() => setSelectedProduct(null)}
-                            handleBuyClick={handleBuyClick}
-                            product={product}
-                          
-                          />
-                        ) : null}
-                    <CardContent>
+                {selectedProduct === product ?  (
+                  <SelectionCard
+                    isOpen={true}
+                    onClose={() => setSelectedProduct(null)}
+                    handleBuyClick={handleBuyClick}
+                    product={product}
+                  />
+                ) : null}
 
-                      {/* Descripción del Producto */}
+                <CardContent>
+                  {/* Descripción del Producto */}
+                  <Typography
+                    variant="subtitle1"
+                    gutterBottom
+                    sx={{
+                      ...productTitleStyles,
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      cursor: 'pointer',
+                      ...(clickedProduct === product.description
+                        ? {
+                            whiteSpace: 'normal',
+                            maxWidth: '70%',
+                            margin: '0 auto',
+                          }
+                        : null),
+                    }}
+                    onClick={() => handleTitleClick(product.description)}
+                  >
+                    {clickedProduct === product.description
+                      ? product.description
+                      : product.description.length > maxTitleLength
+                      ? `${product.description.substring(0, maxTitleLength)}...`
+                      : product.description}
+                  </Typography>
+
+                  {/* Precio del producto */}
+                  <Typography
+                    variant="subtitle1"
+                    color="textSecondary"
+                    sx={{ display: 'flex', justifyContent: 'center' }}
+                  >
+                    {parseInt(String(product?.discount))!== 0 && (
+                      <Typography
+                        variant="body2"
+                        style={{
+                          textDecoration: "line-through",
+                          display: "block",
+                          textAlign: "center",
+                          marginRight: "16px",
+                          color: customColors.primary.main
+                        }}
+                      >
+                        ${product?.price}
+                      </Typography>
+                    )}
 
                     <Typography
-                      variant="subtitle1"
-                      gutterBottom
-                      sx={{
-                        ...productTitleStyles,
-                        whiteSpace: 'nowrap',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        cursor: 'pointer',
-                        ...(clickedProduct === product.description
-                          ? {
-                              whiteSpace: 'normal',
-                              maxWidth: '70%',
-                              margin: '0 auto',
-                            }
-                          : null),
+                      variant="body1"
+                      align="center"
+                      style={{
+                        color: customColors.primary.main,
+                        fontSize: "24px"
                       }}
-                      onClick={() => handleTitleClick(product.description)}
                     >
-                      {clickedProduct === product.description
-                        ? product.description
-                        : product.description.length > maxTitleLength
-                        ? `${product.description.substring(0, maxTitleLength)}...`
-                        : product.description}
-                      </Typography>
+                      ${calculateFinalPrice(product?.price.toString() || "0", product?.discount.toString()  || "0")}
+                    </Typography> 
+                  </Typography>
+                  {/* Fin del precio */}
 
-                        {/* Precio del producto */}
-
-                        <Typography
-                          variant="subtitle1"
-                          color="textSecondary"
-                          sx={{ display: 'flex', justifyContent: 'center' }}
-                        >
-                          {parseInt(String(product?.discount))!== 0 && (
-                              <Typography
-                                variant="body2"
-                                style={{
-                                  textDecoration: "line-through",
-                                  display: "block",
-                                  textAlign: "center",
-                                  marginRight: "16px",
-                                  color: customColors.primary.main
-                                }}
-                              >
-                                ${product?.price}
-                              </Typography>
-                            )}
-
-                              <Typography
-                                  variant="body1"
-                                  align="center"
-                                  style={{
-                                    color: customColors.primary.main,
-                                    fontSize: "24px"
-                                  }}
-                                  >
-                                  ${calculateFinalPrice(product?.price.toString() || "0", product?.discount.toString()  || "0")}
-
-                              </Typography> 
-                          </Typography>
-
-                          {/* Fin del precio */}
-
-                      <Box sx={buttonContainerStyles}>
-                        <Button
-                          onClick={() => handleBuyClick(product)} 
-                          variant="contained"
-                          color="primary"
-                          size="small"
-                          sx={productCartStyles}
-                        >
-                          Comprar
-                        </Button>
-                        <IconButton
-                          component={Link}
-                          to={`/itemDetail/${product.id}`}
-                          aria-label="Ver"
-                          color="secondary"
-                          size="small"
-                          sx={productDetailStyles}
-                        >
-                          <VisibilityIcon sx={iconStyles} />
-                        </IconButton>
-                      </Box>
-                    </CardContent>
-                  </Card>
-                </Grid>
-              ))}
+                  <Box sx={buttonContainerStyles}>
+                    <Button
+                      onClick={() => handleBuyClick(product)} 
+                      variant="contained"
+                      color="primary"
+                      size="small"
+                      sx={productCartStyles}
+                    >
+                      Comprar
+                    </Button>
+                    <IconButton
+                      component={Link}
+                      to={`/itemDetail/${product.id}`}
+                      aria-label="Ver"
+                      color="secondary"
+                      size="small"
+                      sx={productDetailStyles}
+                    >
+                      <VisibilityIcon sx={iconStyles} />
+                    </IconButton>
+                  </Box>
+                </CardContent>
+              </Card>
             </Grid>
-          )}
-    </>
-  );
+          ))
+        )}
+      </Grid>
+    )}
+  </>
+);
+
 };
 
 export default Category;
