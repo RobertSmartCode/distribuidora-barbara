@@ -23,19 +23,4 @@ const MenuButton = () => {
 export default MenuButton;
 
 
-// const menuRef = useRef<HTMLDivElement>(null);
-// const menuTopPositionRef = useRef<number>(0);
 
-// useEffect(() => {
-//   const handleMenuMouseLeave = (event: MouseEvent) => {
-//     if (event.clientY < menuTopPositionRef.current) {
-//       handleMenuClose();
-//     }
-//   };
-
-//   document.addEventListener('mousemove', handleMenuMouseLeave);
-
-//   return () => {
-//     document.removeEventListener('mousemove', handleMenuMouseLeave);
-//   };
-// }, []);

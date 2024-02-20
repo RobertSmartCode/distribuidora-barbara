@@ -16,13 +16,17 @@ const Products = () => {
     if (h3Element) {
       const rect = h3Element.getBoundingClientRect();
       menuTopPositionRef.current = rect.top;
- 
+      console.log('menuTopPositionRef.current:', menuTopPositionRef.current);
     }
   
     const handleMouseMove = (event: MouseEvent) => {
-     
       if (event.clientY < menuTopPositionRef.current) {
+        console.log(event.clientY)
+        console.log(menuTopPositionRef.current)
         handleMenuClose();
+      }
+      if (event.clientY === menuTopPositionRef.current) {
+        console.log('Mouse Y position is equal to the top position of the menu');
       }
     };
   
@@ -32,6 +36,8 @@ const Products = () => {
       document.removeEventListener('mousemove', handleMouseMove);
     };
   }, []);
+  
+  
   
   
 
