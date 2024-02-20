@@ -22,12 +22,9 @@ const Products = () => {
     const handleMouseMove = (event: MouseEvent) => {
      
       if ( menuTopPositionRef.current > event.clientY ) {
-        console.log("Cerrar Menu")
         handleMenuClose();
       }
-      if (event.clientY === menuTopPositionRef.current) {
-        console.log('Mouse Y position is equal to the top position of the menu');
-      }
+    
     };
   
     document.addEventListener('mousemove', handleMouseMove);
@@ -36,8 +33,6 @@ const Products = () => {
       document.removeEventListener('mousemove', handleMouseMove);
     };
   }, []);
-  
-  
   
   
 
