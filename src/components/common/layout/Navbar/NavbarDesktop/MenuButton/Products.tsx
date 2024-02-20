@@ -20,7 +20,9 @@ const Products = () => {
     }
   
     const handleMouseMove = (event: MouseEvent) => {
-     
+
+        console.log("Y",event.clientY )
+        console.log("H",menuTopPositionRef.current)
       if ( menuTopPositionRef.current > event.clientY ) {
         console.log("Cerrar Menú")
         handleMenuClose();
