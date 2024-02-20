@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useCategories } from '../../../../../../context/CategoriesContext';
 import Menu from '@mui/material/Menu';
@@ -11,7 +11,7 @@ const Products = () => {
   const menuTopPositionRef = useRef<number>(0);
   const h3Ref = useRef<HTMLHeadingElement>(null);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const h3Element = h3Ref.current;
     if (h3Element) {
       const rect = h3Element.getBoundingClientRect();
