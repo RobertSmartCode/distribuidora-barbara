@@ -16,27 +16,25 @@ const Products = () => {
     if (h3Element) {
       const rect = h3Element.getBoundingClientRect();
       menuTopPositionRef.current = rect.top;
-
     }
+  }, [h3Ref.current]); 
   
+  useLayoutEffect(() => {
     const handleMouseMove = (event: MouseEvent) => {
-
-        console.log("Y",event.clientY )
-        console.log("H",menuTopPositionRef.current)
-      if ( menuTopPositionRef.current > event.clientY ) {
+      if (menuTopPositionRef.current > event.clientY) {
         console.log("Cerrar Menú")
         handleMenuClose();
-      }else{
+      } else {
         console.log("No Cerrar Menú")
       }
-    
     };
     document.addEventListener('mousemove', handleMouseMove);
   
     return () => {
       document.removeEventListener('mousemove', handleMouseMove);
     };
-  }, []);
+  }, [menuTopPositionRef.current]);
+  
   
   
 
