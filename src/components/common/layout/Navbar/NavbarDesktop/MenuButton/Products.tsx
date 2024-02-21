@@ -22,10 +22,10 @@ const Products = () => {
   useLayoutEffect(() => {
     const handleMouseMove = (event: MouseEvent) => {
       if (menuTopPositionRef.current > event.clientY) {
-        console.log("Cerrar Menú")
+     
         handleMenuClose();
       } else {
-        console.log("No Cerrar Menú")
+       
       }
     };
     document.addEventListener('mousemove', handleMouseMove);
