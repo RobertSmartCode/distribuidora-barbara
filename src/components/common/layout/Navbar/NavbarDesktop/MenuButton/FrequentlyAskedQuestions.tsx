@@ -64,28 +64,43 @@ const FrequentlyAskedQuestions = () => {
         <Grid container spacing={2} justifyContent="center">
           <Grid item>
             <Typography variant="body1">
-              <Link to="/como-comprar-por-la-web" style={{ textDecoration: 'none', color: 'inherit', fontWeight: 'bold' }}>
+              <Link
+              to="/como-comprar-por-la-web"
+               style={{ textDecoration: 'none', color: 'inherit', fontWeight: 'bold' }}
+               onClick={handleMenuClose}
+               >
                 CÓMO COMPRAR EN LA WEB
               </Link>
             </Typography>
           </Grid>
           <Grid item>
             <Typography variant="body1">
-              <Link to="/compras-de-forma-presencia" style={{ textDecoration: 'none', color: 'inherit', fontWeight: 'bold' }}>
+              <Link
+               to="/compras-de-forma-presencia"
+                style={{ textDecoration: 'none', color: 'inherit', fontWeight: 'bold' }}
+                onClick={handleMenuClose}
+                >
                 COMPRAS PRESENCIALES EN EL LOCAL
               </Link>
             </Typography>
           </Grid>
           <Grid item>
             <Typography variant="body1">
-              <Link to="/envio-y-seguimiento" style={{ textDecoration: 'none', color: 'inherit', fontWeight: 'bold' }}>
+              <Link to="/envio-y-seguimiento"
+              style={{ textDecoration: 'none', color: 'inherit', fontWeight: 'bold' }}
+              onClick={handleMenuClose}
+              >
                 ENVIOS Y SEGUIMIENTO
               </Link>
             </Typography>
           </Grid>
           <Grid item>
             <Typography variant="body1">
-              <Link to="/terminos-y-condiciones" style={{ textDecoration: 'none', color: 'inherit', fontWeight: 'bold' }}>
+              <Link
+              to="/terminos-y-condiciones"
+              style={{ textDecoration: 'none', color: 'inherit', fontWeight: 'bold' }}
+              onClick={handleMenuClose}
+              >
                 TERMINOS Y CONDICIONES
               </Link>
             </Typography>

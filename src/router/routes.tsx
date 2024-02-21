@@ -4,7 +4,11 @@ import ItemDetail from "../components/pageComponents/itemDetail/ItemDetail";
 import Shop from "../pages/shop/Shop";
 import UserOrders from "../pages/UserAccount/UserAccount";
 import SearchPage from "../pages/search/SearchPage";
-import FrequentlyAskedQuestions from "../pages/frequentlyQuestions/FrequentlyAskedQuestions";
+import OnlineShoppingGuide from "../pages/frequentlyQuestions/OnlineShoppingGuide";
+import LocalShopping from "../pages/frequentlyQuestions/LocalShopping";
+import ShipmentTracking from "../pages/frequentlyQuestions/ShipmentTracking";
+import LegalTerms from "../pages/frequentlyQuestions/LegalTerms";
+
 import Category from "../pages/category/Category";
 
 interface Route {
@@ -40,10 +44,27 @@ export const routes: Route[] = [
     Element: SearchPage,
   },
   {
-    id: "frequentlyAskedQuestions",
-    path: "/preguntas-frecuentes",
-    Element: FrequentlyAskedQuestions,
+    id: "OnlineShoppingGuide",
+    path: "/como-comprar-por-la-web",
+    Element: OnlineShoppingGuide,
   }, 
+  {
+    id: "LocalShopping",
+    path: "/compras-de-forma-presencia",
+    Element: LocalShopping,
+  },
+  {
+    id: "ShipmentTracking",
+    path: "/envio-y-seguimiento",
+    Element: ShipmentTracking,
+  }, 
+  {
+    id: "LegalTerms",
+    path: "/terminos-y-condiciones",
+    Element: LegalTerms,
+  }, 
+
+
   {
     id: "category",
     path: "/:category",
