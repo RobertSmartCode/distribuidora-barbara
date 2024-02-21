@@ -4,47 +4,30 @@ import Menu from '@mui/material/Menu';
 import { Grid, Typography } from '@mui/material';
 
 const FrequentlyAskedQuestions = () => {
- 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [menuPositionX, setMenuPositionX] = useState<{ left: number | null, right: number | null, top: number | null }>({
-    left: null,
-    right: null,
-    top: null
-  });
+  const menuTopPositionRef = useRef<number>(0);
   const h3Ref = useRef<HTMLHeadingElement>(null);
 
   useLayoutEffect(() => {
     const h3Element = h3Ref.current;
     if (h3Element) {
       const rect = h3Element.getBoundingClientRect();
-      setMenuPositionX({
-        left: rect.left,
-        right: rect.right,
-        top: rect.top
-      });
+      menuTopPositionRef.current = rect.top;
     }
-  }, [h3Ref.current]); 
-  
+  }, [h3Ref.current]);
+
   useLayoutEffect(() => {
     const handleMouseMove = (event: MouseEvent) => {
-      if (
-        menuPositionX.left !== null &&
-        menuPositionX.right !== null &&
-        menuPositionX.top !== null &&
-        (
-          event.clientY < menuPositionX.top || // Se verifica si Y está por encima de rect.bottom
-          (event.clientX < menuPositionX.left || event.clientX > menuPositionX.right)
-        )
-      ) {
+      if (menuTopPositionRef.current > event.clientY) {
         handleMenuClose();
       }
     };
     document.addEventListener('mousemove', handleMouseMove);
-  
+
     return () => {
       document.removeEventListener('mousemove', handleMouseMove);
     };
-  }, [menuPositionX]);
+  }, [menuTopPositionRef.current]);
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLHeadingElement>) => {
     setAnchorEl(event.currentTarget);
@@ -59,7 +42,6 @@ const FrequentlyAskedQuestions = () => {
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
-
 
   return (
     <div onMouseEnter={handleMenuOpen}>
