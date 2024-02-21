@@ -1,7 +1,9 @@
 import { Grid, Typography } from '@mui/material';
+import Footer from '../../components/common/layout/Navbar/Footer/Footer';
 
 const OnlineShoppingGuide = () => {
   return (
+    <>
     <Grid container justifyContent="center">
       <Grid item xs={12} md={10} lg={8}>
         <Typography variant="h4" align="center" gutterBottom>
@@ -86,7 +88,10 @@ const OnlineShoppingGuide = () => {
           </li>
         </Typography>
       </Grid>
+     
     </Grid>
+     <Footer /> 
+     </>
   );
 }
 

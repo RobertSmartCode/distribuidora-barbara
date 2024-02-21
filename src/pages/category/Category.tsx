@@ -9,6 +9,7 @@ import SelectionCard from "../../components/pageComponents/SelectionCard/Selecti
 import useMediaQuery from '@mui/material/useMediaQuery';
 import {customColors} from "../../styles/styles"
 import { useParams } from 'react-router-dom';
+import Footer from "../../components/common/layout/Navbar/Footer/Footer";
 
 const Category: React.FC = () => {
   const { category, subcategory } = useParams();
@@ -310,6 +311,7 @@ return (
         )}
       </Grid>
     )}
+    <Footer /> 
   </>
 );
 

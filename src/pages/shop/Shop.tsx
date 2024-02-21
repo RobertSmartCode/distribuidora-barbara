@@ -8,6 +8,7 @@ import { Product } from '../../type/type';
 import SelectionCard from "../../components/pageComponents/SelectionCard/SelectionCard";
 import useMediaQuery from '@mui/material/useMediaQuery';
 import {customColors} from "../../styles/styles"
+import Footer from "../../components/common/layout/Navbar/Footer/Footer";
 
 
 const Shop: React.FC = () => {
@@ -289,8 +290,10 @@ const Shop: React.FC = () => {
                   </Card>
                 </Grid>
               ))}
+              
             </Grid>
           )}
+       <Footer /> 
     </>
   );
 };

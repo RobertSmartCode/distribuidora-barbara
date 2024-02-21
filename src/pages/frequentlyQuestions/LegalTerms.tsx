@@ -1,8 +1,10 @@
 
 import { Grid, Typography, Box } from '@mui/material';
+import Footer from '../../components/common/layout/Navbar/Footer/Footer';
 
 const LegalTermsfrom = () => {
   return (
+    <>
     <Box sx={{ display: 'flex', justifyContent: 'center', textAlign: 'justify' }}>
       <Grid container spacing={2} sx={{ maxWidth: 800 }}>
         <Grid item xs={12}>
@@ -67,7 +69,10 @@ const LegalTermsfrom = () => {
           </Typography>
         </Grid>
       </Grid>
+    
     </Box>
+      <Footer /> 
+   </>
   );
 }
 
