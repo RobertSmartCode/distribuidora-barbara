@@ -74,7 +74,7 @@ const Footer = () => {
           {/* Agrega información sobre la suscripción a la newsletter aquí */}
           <Typography variant="body2" gutterBottom color="inherit">
             © Copyright {storeData.length > 0 && storeData[0].storeName} - 2024. Todos los derechos reservados.
-            Defensa de las y los consumidores. Para reclamos ingresá <Link to="https://autogestion.produccion.gob.ar/consumidores" color="inherit">acá</Link>.
+           
           </Typography>
         </Box>
       </Box>
