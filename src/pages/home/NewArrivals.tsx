@@ -177,7 +177,7 @@ useEffect(() => {
     <Grid container spacing={2} sx={containerStyles}>
       {/* Título responsivo */}
       <Grid item xs={12} sx={{ textAlign: "center" }}>
-        <Typography variant="h4">Nuevos Ingresos</Typography>
+        <Typography variant="h4">Nuevos Productos</Typography>
       </Grid>
   
       {/* Productos más vendidos */}
