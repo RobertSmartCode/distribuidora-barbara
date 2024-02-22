@@ -4,10 +4,7 @@ import { Link } from 'react-router-dom';
 
 
 const Footer = () => {
-  const { storeData } = useStoreData(); 
-
-
-
+  const { storeData } = useStoreData()!; 
   return (
     <Box sx={{ backgroundColor: '#f0f0f0'}}>
       <Box sx={{ maxWidth: '800px', mx: 'auto', textAlign: 'center' }}>
