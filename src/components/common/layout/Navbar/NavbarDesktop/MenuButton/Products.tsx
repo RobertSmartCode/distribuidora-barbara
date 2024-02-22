@@ -9,35 +9,93 @@ const Products = () => {
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const menuTopPositionRef = useRef<number>(0);
+  const menuBottomPositionRef = useRef<number>(0);
+  const menuLeftPositionRef = useRef<number>(0);
+  const menuRightPositionRef = useRef<number>(0);
   const h3Ref = useRef<HTMLHeadingElement>(null);
+  const h3TopPositionRef = useRef<number>(0);
+  const h3BottomPositionRef = useRef<number>(0);
+  const h3LeftPositionRef = useRef<number>(0);
+  const h3RightPositionRef = useRef<number>(0);
 
   useLayoutEffect(() => {
     const h3Element = h3Ref.current;
     if (h3Element) {
       const rect = h3Element.getBoundingClientRect();
-      menuTopPositionRef.current = rect.top;
+      const { top, bottom, left, right } = rect;
+      
+      // Calcular las posiciones del h3
+      h3TopPositionRef.current = top;
+      h3BottomPositionRef.current = bottom;
+      h3LeftPositionRef.current = left;
+      h3RightPositionRef.current = right;
     }
-  }, [h3Ref.current]); 
+  }, [h3Ref.current]);
+
+  useLayoutEffect(() => {
+    const menuElement = h3Ref.current;
+    if (menuElement) {
+      const rect = menuElement.getBoundingClientRect();
+      const { top, bottom, left, right } = rect;
+      
+      // Calcular las posiciones del menú
+      menuTopPositionRef.current = top;
+      menuBottomPositionRef.current = bottom;
+      menuLeftPositionRef.current = left;
+      menuRightPositionRef.current = right;
+    }
+  }, [h3Ref.current]);
   
+
   useLayoutEffect(() => {
     const handleMouseMove = (event: MouseEvent) => {
-      if (menuTopPositionRef.current > event.clientY) {
-     
+      const mouseY = event.clientY;
+      const mouseX = event.clientX;
+  
+      // Condición 1: Si X está entre h3RightPositionRef.current y menuRightPositionRef.current
+      // y Y está por encima de h3BottomPositionRef.current, cerrar el menú
+      if (
+        mouseX >= h3RightPositionRef.current &&
+        mouseX <= menuRightPositionRef.current &&
+        mouseY < h3BottomPositionRef.current
+      ) {
         handleMenuClose();
-      } else {
-       
+      }
+  
+      // Condición 2: Si X está entre menuLeftPositionRef.current y h3LeftPositionRef.current
+      // y Y está por encima de h3BottomPositionRef.current, cerrar el menú
+      if (
+        mouseX >= menuLeftPositionRef.current &&
+        mouseX <= h3LeftPositionRef.current &&
+        mouseY < h3BottomPositionRef.current
+      ) {
+        handleMenuClose();
+      }
+  
+      // Condición 3: Si Y está por encima de menuTopPositionRef.current, cerrar el menú
+      if (menuTopPositionRef.current > mouseY) {
+        handleMenuClose();
       }
     };
+  
     document.addEventListener('mousemove', handleMouseMove);
   
     return () => {
       document.removeEventListener('mousemove', handleMouseMove);
     };
-  }, [menuTopPositionRef.current]);
+  }, [
+    menuTopPositionRef.current,
+    menuBottomPositionRef.current,
+    menuLeftPositionRef.current,
+    menuRightPositionRef.current,
+    h3TopPositionRef.current,
+    h3BottomPositionRef.current,
+    h3LeftPositionRef.current,
+    h3RightPositionRef.current
+  ]);
   
   
   
-
   const handleMenuOpen = (event: React.MouseEvent<HTMLHeadingElement>) => {
     setAnchorEl(event.currentTarget);
     event.stopPropagation();
@@ -58,7 +116,8 @@ const Products = () => {
 
   return (
     <div onMouseEnter={handleMenuOpen}>
-      <h3 style={{ cursor: 'pointer' }} ref={h3Ref}>Productos</h3>
+      <h3 style={{ cursor: 'pointer' }} ref={h3Ref} >Productos</h3>
+
       <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}

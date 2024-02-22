@@ -253,9 +253,10 @@ const MobileMenuList: React.FC<MobileMenuListProps> = ({ container, Top }) => {
                                 <ListItemText
                                   primary="¿Cómo comprar en la web?"
                                   primaryTypographyProps={{
-                                    sx: { color: customColors.secondary.contrastText, fontWeight: 'bold' },
+                                    sx: { color: customColors.secondary.contrastText, fontWeight: 'bold',  paddingLeft: '10%'},
                                   }}
                                 />
+                             
                               </ListItemButton>
                             </Link>
 
@@ -268,7 +269,7 @@ const MobileMenuList: React.FC<MobileMenuListProps> = ({ container, Top }) => {
                                 <ListItemText
                                   primary="Compras presenciales en el local"
                                   primaryTypographyProps={{
-                                    sx: { color: customColors.secondary.contrastText, fontWeight: 'bold' },
+                                    sx: { color: customColors.secondary.contrastText, fontWeight: 'bold', paddingLeft: '10%' },
                                   }}
                                 />
                               </ListItemButton>
@@ -283,7 +284,7 @@ const MobileMenuList: React.FC<MobileMenuListProps> = ({ container, Top }) => {
                                 <ListItemText
                                   primary="Envíos y seguimiento"
                                   primaryTypographyProps={{
-                                    sx: { color: customColors.secondary.contrastText, fontWeight: 'bold' },
+                                    sx: { color: customColors.secondary.contrastText, fontWeight: 'bold', paddingLeft: '10%'},
                                   }}
                                 />
                               </ListItemButton>
@@ -298,7 +299,7 @@ const MobileMenuList: React.FC<MobileMenuListProps> = ({ container, Top }) => {
                                 <ListItemText
                                   primary="Términos y condiciones"
                                   primaryTypographyProps={{
-                                    sx: { color: customColors.secondary.contrastText, fontWeight: 'bold' },
+                                    sx: { color: customColors.secondary.contrastText, fontWeight: 'bold', paddingLeft: '10%' },
                                   }}
                                 />
                               </ListItemButton>
