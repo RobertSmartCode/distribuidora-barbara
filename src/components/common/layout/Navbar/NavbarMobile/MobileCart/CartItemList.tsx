@@ -24,6 +24,7 @@ const CartItemList = () => {
   const [productCounters, setProductCounters] = useState<{ [key: string]: number }>({});
   const [exceededMaxInCart, setExceededMaxInCart] = useState<{ [key: string]: boolean }>({});
 
+  
   // Función para calcular el subtotal sin envío
   const calculateSubtotal = () => {
     let subtotal = 0;
