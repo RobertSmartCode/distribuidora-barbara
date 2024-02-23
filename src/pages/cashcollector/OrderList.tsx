@@ -22,6 +22,11 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemAvatar,
+  Avatar,
 } from '@mui/material';
 import { useReactToPrint } from 'react-to-print';
 
@@ -30,6 +35,7 @@ export interface Productbox {
   title: string;
   quantity: number;
   price: number;
+  images: string[];
 }
 
 export interface Orderbox {
@@ -40,6 +46,7 @@ export interface Orderbox {
   completedTimestamp: Date;
   products: Productbox[];
 }
+
 export interface CompletedOrderbox {
   id: string;
   customerName: string;
@@ -50,32 +57,41 @@ export interface CompletedOrderbox {
   paymentMethod: string;
 }
 
-
 interface OrderPrintComponentProps {
   order: Orderbox | null;
 }
+
 
 const OrderPrintComponent: React.FC<OrderPrintComponentProps & { ref: ForwardedRef<HTMLDivElement> }> = forwardRef(({ order }, ref) => {
   if (!order) return null;
 
   return (
-    <div ref={ref}>
-      <Typography variant="h6">Orden a Imprimir</Typography>
-      <Typography variant="body1">DNI: {order.customerName}</Typography>
-      <Typography variant="body1">Total: {order.totalAmount}</Typography>
-      <Typography variant="body1">
-        Productos:
-        <ul>
-          {order.products.map((product) => (
-            <li key={product.id}>
-              {product.title} - Cantidad: {product.quantity} - Precio: {product.price}
-            </li>
-          ))}
-        </ul>
-      </Typography>
-    </div>
+    <Card ref={ref}>
+      <CardContent>
+        <Typography variant="h6" align="center" style={{ marginBottom: '1rem' }}>Orden a Imprimir</Typography>
+        <Typography variant="body1">DNI: {order.customerName}</Typography>
+        <Typography variant="body1">Total: {order.totalAmount}</Typography>
+        <Typography variant="body1">
+          Productos:
+          <List>
+            {order.products.map((product) => (
+              <ListItem key={product.id}>
+                <ListItemAvatar>
+                  <Avatar alt={product.title} src={product.images[0]} />
+                </ListItemAvatar>
+                <ListItemText
+                  primary={product.title}
+                  secondary={`Cantidad: ${product.quantity} - Precio: ${product.price}`}
+                />
+              </ListItem>
+            ))}
+          </List>
+        </Typography>
+      </CardContent>
+    </Card>
   );
 });
+
 
 const OrderList: React.FC = () => {
   const [orders, setOrders] = useState<Orderbox[]>([]);
@@ -115,19 +131,16 @@ const OrderList: React.FC = () => {
           completedTimestamp: Timestamp.now(),
         });
   
-        // Corrección aquí: Cambié "setSelectedcompletedOrders" a "setSelectedCompletedOrders"
         setSelectedcompletedOrders({
-        ...selectedOrder,
-        paymentMethod,
-        completedTimestamp: new Date(Timestamp.now().toMillis()), // Convertir a Date
+          ...selectedOrder,
+          paymentMethod,
+          completedTimestamp: new Date(Timestamp.now().toMillis()), // Convertir a Date
         });
-
   
         await deleteDoc(doc(ordersCollection, selectedOrder.id));
   
         console.log(`Order ${selectedOrder.id} moved to completedOrders with payment method: ${paymentMethod}`);
   
-        // Corrección aquí: Cambié "setOpenDialogPrinte" a "setOpenDialogPrint"
         setOpenDialogPrinte(true);
         setOpenDialog(false);
       } catch (error) {
@@ -135,7 +148,6 @@ const OrderList: React.FC = () => {
       }
     }
   };
-  
 
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
@@ -159,13 +171,20 @@ const OrderList: React.FC = () => {
               <Typography variant="body1">Total: {order.totalAmount}</Typography>
               <Typography variant="body1">
                 Productos:
-                <ul>
+                <List>
                   {order.products.map((product) => (
-                    <li key={product.id}>
-                      {product.title} - Cantidad: {product.quantity} - Precio: {product.price}
-                    </li>
+                    <ListItem key={product.id}>
+                      <ListItemAvatar>
+                        <Avatar alt={product.title} src={product.images[0]} />
+                      </ListItemAvatar>
+                      <ListItemText
+                        primary={`${product.title}`}
+                        secondary={`Cantidad: ${product.quantity} | Precio: $${product.price * product.quantity}`}
+                      />
+                    </ListItem>
                   ))}
-                </ul>
+                </List>
+
               </Typography>
               <Button
                 variant="contained"
@@ -187,7 +206,7 @@ const OrderList: React.FC = () => {
         <DialogTitle>Selecciona método de Pago</DialogTitle>
         <DialogContent>
           <FormControl fullWidth>
-            <InputLabel id="payment-method-label">Payment Method</InputLabel>
+            <InputLabel id="payment-method-label">Métodos de Pago</InputLabel>
             <Select
               labelId="payment-method-label"
               id="payment-method-select"
@@ -208,10 +227,8 @@ const OrderList: React.FC = () => {
       </Dialog>
 
       <Dialog open={openDialogPrinte} onClose={handleClosePrint}>
-        
-        {/* Componente oculto para imprimir */}
         <OrderPrintComponent order={selectedCompletedOrders} ref={componentRef} />
-        <Button onClick={handlePrint}>Imprimir Orden </Button>
+        <Button variant="contained" onClick={handlePrint}>Imprimir Orden</Button>
         <Button onClick={handleClosePrint}>Cancelar</Button>
       </Dialog>
     </Grid>

@@ -102,7 +102,7 @@ const OrderForm: React.FC = () => {
   };
 
   return (
-    <Card sx={{ width: '80%', margin: 'auto', mt: 1 }}>
+    <Card sx={{ width: '80%', margin: 'auto', mt: 1,  marginBottom: '30px' }}>
       <CardContent>
         <form onSubmit={handleFormSubmit} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <TextField
