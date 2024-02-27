@@ -26,45 +26,50 @@ const CashPayment = () => {
       status: 'pending',
       paymentType: 'efectivo',
     };
-
+  
     const ordersCollection = collection(db, 'orders');
-
+  
     try {
       const orderDocRef = await addDoc(ordersCollection, {
         ...order,
       });
-
+  
       navigate('/checkout/pendingverification');
       setSnackbarMessage('Orden generada con éxito.');
       setSnackbarOpen(true);
       clearCart();
-
-      // Abrir WhatsApp con el mensaje de la orden
-      const phoneNumber = '+59898724545'; // Número de teléfono de WhatsApp
-      const message = `¡Nueva orden!\n\nID de orden: ${orderDocRef.id}\nCliente: ${
-        userData.firstName
-      }\nDirección de entrega: ${ userData.postalCode}, ${userData.city}, ${userData.department}, ${userData.streetAndNumber}\n\nProductos:\n${cart
-        .map(
-          (product) =>
-            `${product.title} - Tipo: ${product.type}, Barcode: ${
-              product.barcode
-            }, Precio: ${product.price}, Cantidad: ${
-              product.quantity
-            }, Total: ${product.price * product.quantity}\n`
-        )
-        .join('')}`;
-      const encodedMessage = encodeURIComponent(message);
-      const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
-      window.open(whatsappURL, '_blank', 'noopener noreferrer');
+  
+      // Llamar a la función para abrir WhatsApp después de completar las acciones anteriores
+      sendWhatsAppMessage(orderDocRef.id);
     } catch (error) {
       console.error('Error al generar la orden:', error);
       setUploadMessage('Error al generar la orden.');
     }
   };
-
+  
+  const sendWhatsAppMessage = (orderId: string) => {
+    const phoneNumber = '+59898724545'; // Número de teléfono de WhatsApp
+    const message = `¡Nueva orden!\n\nID de orden: ${orderId}\nCliente: ${
+      userData.firstName
+    }\nDirección de entrega: ${ userData.postalCode}, ${userData.city}, ${userData.department}, ${userData.streetAndNumber}\n\nProductos:\n${cart
+      .map(
+        (product) =>
+          `${product.title} - Tipo: ${product.type}, Barcode: ${
+            product.barcode
+          }, Precio: ${product.price}, Cantidad: ${
+            product.quantity
+          }, Total: ${product.price * product.quantity}\n`
+      )
+      .join('')}`;
+    const encodedMessage = encodeURIComponent(message);
+    const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+    window.open(whatsappURL, '_blank', 'noopener noreferrer');
+  };
+  
   const handleGenerateOrder = () => {
     handleOrder();
   };
+  
 
   return (
     <div style={{ textAlign: 'center', marginTop: '20px', marginBottom: '40px' }}>
