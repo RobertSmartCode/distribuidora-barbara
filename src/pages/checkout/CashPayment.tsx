@@ -19,7 +19,6 @@ const CashPayment = () => {
 
   useEffect(() => {
     const generateWhatsAppURL = () => {
-      const phoneNumber = '+59898724545';
       const message = `¡Nueva orden!\n\nID de orden: {orderId}\nCliente: ${
         userData.firstName
       }\nDirección de entrega: ${userData.postalCode}, ${userData.city}, ${userData.department}, ${userData.streetAndNumber}\n\nProductos:\n${cart
@@ -42,37 +41,41 @@ const CashPayment = () => {
   const total = getTotalPrice ? getTotalPrice() : 0;
   const userData = customerInfo!;
 
-  const handleOrder = async () => {
-    const order = {
-      userData,
-      items: cart,
-      total,
-      date: serverTimestamp(),
-      status: 'pending',
-      paymentType: 'efectivo',
+  useEffect(() => {
+    const handleOrder = async () => {
+      const order = {
+        userData,
+        items: cart,
+        total,
+        date: serverTimestamp(),
+        status: 'pending',
+        paymentType: 'efectivo',
+      };
+
+      const ordersCollection = collection(db, 'orders');
+
+      try {
+        const orderDocRef = await addDoc(ordersCollection, {
+          ...order,
+        });
+
+        sendWhatsAppMessage(orderDocRef.id);
+
+        // Retrasa la ejecución de las siguientes líneas por 2 segundos (2000 milisegundos)
+        setTimeout(() => {
+          navigate('/checkout/pendingverification');
+          setSnackbarMessage('Orden generada con éxito.');
+          setSnackbarOpen(true);
+          clearCart();
+        }, 2000);
+      } catch (error) {
+        console.error('Error al generar la orden:', error);
+        setUploadMessage('Error al generar la orden.');
+      }
     };
 
-    const ordersCollection = collection(db, 'orders');
-
-    try {
-      const orderDocRef = await addDoc(ordersCollection, {
-        ...order,
-      });
-
-      sendWhatsAppMessage(orderDocRef.id);
-
-      // Retrasa la ejecución de las siguientes líneas por 2 segundos (2000 milisegundos)
-      setTimeout(() => {
-        navigate('/checkout/pendingverification');
-        setSnackbarMessage('Orden generada con éxito.');
-        setSnackbarOpen(true);
-        clearCart();
-      }, 2000);
-    } catch (error) {
-      console.error('Error al generar la orden:', error);
-      setUploadMessage('Error al generar la orden.');
-    }
-  };
+    handleOrder();
+  }, [cart, clearCart, navigate, total, userData]);
 
   const sendWhatsAppMessage = (orderId: string) => {
     const message = `¡Nueva orden!\n\nID de orden: ${orderId}\nCliente: ${
@@ -111,7 +114,6 @@ const CashPayment = () => {
               maxWidth: '20%', // Establece el ancho máximo al 90% del contenedor
               zIndex: 99,
             }}
-            onClick={handleOrder}
           >
             <FaWhatsapp size={40} />
           </a>
