@@ -96,28 +96,27 @@ const CashPayment = () => {
     <div style={{ textAlign: 'center', marginTop: '20px', marginBottom: '40px' }}>
       <h2 style={{ color: 'black' }}>Mandar el Pedido a WhatsApp</h2>
       <Tooltip title="Enviar mensaje por WhatsApp">
-        <a
-          href={whatsappURL}
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{
-            backgroundColor: '#25d366',
-            color: 'white',
-            borderRadius: '50%',
-            padding: '10px',
-            position: 'fixed',
-            bottom: '20px',
-            right: '20px',
-            textDecoration: 'none',
-            zIndex: 99,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center', // Centra horizontalmente
-          }}
-        >
-          <FaWhatsapp size={40} onClick={handleOrder} />
-        </a>
-      </Tooltip>
+          <a
+            href={whatsappURL}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              backgroundColor: '#25d366',
+              color: 'white',
+              borderRadius: '8px', // Ajusta el radio de los bordes según sea necesario
+              padding: '10px 20px', // Ajusta el padding horizontal y vertical según sea necesario
+              textDecoration: 'none',
+              display: 'block', // Cambia a bloque para permitir el centrado horizontal
+              margin: '0 auto', // Centra horizontalmente
+              maxWidth: '20%', // Establece el ancho máximo al 90% del contenedor
+              zIndex: 99,
+            }}
+            onClick={handleOrder}
+          >
+            <FaWhatsapp size={40} />
+          </a>
+        </Tooltip>
+
 
       <p>{uploadMessage}</p>
       <Snackbar
