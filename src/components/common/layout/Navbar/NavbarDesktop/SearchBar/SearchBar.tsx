@@ -18,6 +18,7 @@ function SearchBar() {
       type="text"
       label="¿Qué está buscando?"
       value={searchKeyword}
+      autoComplete="off"
       onChange={(e) => updateSearchKeyword(e.target.value)}
       InputProps={{
         endAdornment: (
