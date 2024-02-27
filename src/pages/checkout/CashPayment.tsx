@@ -1,5 +1,5 @@
-import React, { useState, useContext } from 'react';
-import { Button, Snackbar, Tooltip } from '@mui/material';
+import { useState, useEffect, useContext } from 'react';
+import { Snackbar, Tooltip } from '@mui/material';
 import { FaWhatsapp } from 'react-icons/fa';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
@@ -13,7 +13,31 @@ const CashPayment = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [uploadMessage, setUploadMessage] = useState<string>('');
+  const [whatsappURL, setWhatsappURL] = useState('');
   const navigate = useNavigate();
+  const phoneNumber = '+59898724545';
+
+  useEffect(() => {
+    const generateWhatsAppURL = () => {
+      const phoneNumber = '+59898724545';
+      const message = `¡Nueva orden!\n\nID de orden: {orderId}\nCliente: ${
+        userData.firstName
+      }\nDirección de entrega: ${userData.postalCode}, ${userData.city}, ${userData.department}, ${userData.streetAndNumber}\n\nProductos:\n${cart
+        .map(
+          (product) =>
+            `${product.title} - Tipo: ${product.type}, Barcode: ${
+              product.barcode
+            }, Precio: ${product.price}, Cantidad: ${
+              product.quantity
+            }, Total: ${product.price * product.quantity}\n`
+        )
+        .join('')}`;
+      const encodedMessage = encodeURIComponent(message);
+      return `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+    };
+
+    setWhatsappURL(generateWhatsAppURL());
+  }, []);
 
   const total = getTotalPrice ? getTotalPrice() : 0;
   const userData = customerInfo!;
@@ -51,7 +75,6 @@ const CashPayment = () => {
   };
 
   const sendWhatsAppMessage = (orderId: string) => {
-    const phoneNumber = '+59898724545';
     const message = `¡Nueva orden!\n\nID de orden: ${orderId}\nCliente: ${
       userData.firstName
     }\nDirección de entrega: ${userData.postalCode}, ${userData.city}, ${userData.department}, ${userData.streetAndNumber}\n\nProductos:\n${cart
@@ -69,16 +92,14 @@ const CashPayment = () => {
     window.open(whatsappURL, '_blank', 'noopener noreferrer');
   };
 
-  const handleGenerateOrder = () => {
-    handleOrder();
-  };
-
   return (
     <div style={{ textAlign: 'center', marginTop: '20px', marginBottom: '40px' }}>
-      <h2 style={{ color: 'black' }}>Mandan el Pedido a What App</h2>
+      <h2 style={{ color: 'black' }}>Mandar el Pedido a WhatsApp</h2>
       <Tooltip title="Enviar mensaje por WhatsApp">
-        <Button
-          variant="contained"
+        <a
+          href={whatsappURL}
+          target="_blank"
+          rel="noopener noreferrer"
           style={{
             backgroundColor: '#25d366',
             color: 'white',
@@ -91,11 +112,11 @@ const CashPayment = () => {
             zIndex: 99,
             display: 'flex',
             alignItems: 'center',
+            justifyContent: 'center', // Centra horizontalmente
           }}
-          onClick={handleGenerateOrder}
         >
-          <FaWhatsapp size={40} />
-        </Button>
+          <FaWhatsapp size={40} onClick={handleOrder} />
+        </a>
       </Tooltip>
 
       <p>{uploadMessage}</p>
