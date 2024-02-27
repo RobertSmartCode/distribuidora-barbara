@@ -3,8 +3,8 @@ import BannerSecure from "./BannerSecure"
 import Banner from "./Banner"
 import CartCheckout from './CartCheckout '; 
 import UserInfo from './UserInfo'; 
-import { MercadoPagoPayment } from "./MercadoPagoPayment";
-import { TransferPayment } from "./TransferPayment";
+// import { MercadoPagoPayment } from "./MercadoPagoPayment";
+// import { TransferPayment } from "./TransferPayment";
 import { CashPayment } from "./CashPayment";
 
 
@@ -26,8 +26,8 @@ const CheckoutNext: React.FC = () => {
               <CartCheckout />
             
               <UserInfo/>
-              <MercadoPagoPayment/>
-              <TransferPayment/>
+              {/* <MercadoPagoPayment/> */}
+              {/* <TransferPayment/> */}
               <CashPayment />
             
     </Box>

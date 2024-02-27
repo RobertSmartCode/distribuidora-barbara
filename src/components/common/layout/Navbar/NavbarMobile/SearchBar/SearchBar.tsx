@@ -178,7 +178,8 @@ const SearchBar: React.FC = () => {
           </IconButton>
 
         </Box>
-        <Search/>
+        <Search toggleSearch={toggleSearch} />
+
       </Drawer>
       </Toolbar>
 )}

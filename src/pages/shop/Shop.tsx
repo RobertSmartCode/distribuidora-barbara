@@ -293,7 +293,8 @@ const Shop: React.FC = () => {
               
             </Grid>
           )}
-       <Footer /> 
+            {isComponentReady && (
+       <Footer /> )}
     </>
   );
 };
