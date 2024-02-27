@@ -16,7 +16,6 @@ const CashPayment = () => {
 
   const total = getTotalPrice ? getTotalPrice() : 0;
   const userData = customerInfo!;
-
   const handleOrder = async () => {
     const order = {
       userData,
@@ -34,13 +33,15 @@ const CashPayment = () => {
         ...order,
       });
   
-      navigate('/checkout/pendingverification');
-      setSnackbarMessage('Orden generada con éxito.');
-      setSnackbarOpen(true);
-      clearCart();
-  
-      // Llamar a la función para abrir WhatsApp después de completar las acciones anteriores
       sendWhatsAppMessage(orderDocRef.id);
+  
+      // Retrasa la ejecución de las siguientes líneas por 2 segundos (2000 milisegundos)
+      setTimeout(() => {
+        navigate('/checkout/pendingverification');
+        setSnackbarMessage('Orden generada con éxito.');
+        setSnackbarOpen(true);
+        clearCart();
+      }, 2000);
     } catch (error) {
       console.error('Error al generar la orden:', error);
       setUploadMessage('Error al generar la orden.');
@@ -69,6 +70,7 @@ const CashPayment = () => {
   const handleGenerateOrder = () => {
     handleOrder();
   };
+  
   
 
   return (
