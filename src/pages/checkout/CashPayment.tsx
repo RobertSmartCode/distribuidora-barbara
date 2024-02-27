@@ -74,9 +74,20 @@ const CashPayment = () => {
   return (
     <div style={{ textAlign: 'center', marginTop: '20px', marginBottom: '40px' }}>
       <h2 style={{ color: 'black' }}>Pago en Efectivo</h2>
-      <Button variant="contained" color="primary" onClick={handleGenerateOrder}>
-        Generar Orden
+      <Button 
+        variant="contained" 
+        style={{
+          backgroundColor: '#25D366', // Color de WhatsApp
+          color: 'white', // Texto en color blanco
+          borderRadius: '20px', // Bordes redondos
+          padding: '10px 30px', // Padding horizontal y vertical
+          marginBottom: '20px', // Margen inferior
+        }}
+        onClick={handleGenerateOrder}
+      >
+        Enviar Orden al WhatsApp
       </Button>
+
       <p>{uploadMessage}</p>
       <Snackbar
         open={snackbarOpen}
