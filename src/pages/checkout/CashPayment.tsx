@@ -1,7 +1,7 @@
 import { useState, useContext } from 'react';
 import { Button, Snackbar } from '@mui/material';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 import { CartContext } from '../../context/CartContext';
 import { useCustomer } from '../../context/CustomerContext';
 import { db } from '../../firebase/firebaseConfig';
