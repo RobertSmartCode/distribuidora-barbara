@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { Snackbar, Tooltip } from '@mui/material';
 import { FaWhatsapp } from 'react-icons/fa';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { CartContext } from '../../context/CartContext';
 import { useCustomer } from '../../context/CustomerContext';
 import { db } from '../../firebase/firebaseConfig';
+import { v4 as uuidv4 } from 'uuid'; // Importa la función v4 de uuid
 
 const CashPayment = () => {
   const { customerInfo } = useCustomer()!;
@@ -17,12 +18,14 @@ const CashPayment = () => {
   const navigate = useNavigate();
   const phoneNumber = '+59898724545';
 
-  const total = getTotalPrice ? getTotalPrice() : 0;
-  const userData = customerInfo!;
+  useEffect(() => {
+    const generateOrderId = () => {
+      return uuidv4(); // Genera un ID único utilizando uuid
+    };
 
-  const handleOrder = async () => {
+    const orderId = generateOrderId(); // Genera un ID único para la orden
     const generateWhatsAppURL = () => {
-      const message = `¡Nueva orden!\n\nID de orden: {orderId}\nCliente: ${
+      const message = `¡Nueva orden!\n\nID de orden: ${orderId}\nCliente: ${
         userData.firstName
       }\nDirección de entrega: ${userData.postalCode}, ${userData.city}, ${userData.department}, ${userData.streetAndNumber}\n\nProductos:\n${cart
         .map(
@@ -38,9 +41,14 @@ const CashPayment = () => {
       return `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
     };
 
-    const whatsappURL = generateWhatsAppURL();
-    setWhatsappURL(whatsappURL);
+    setWhatsappURL(generateWhatsAppURL()); // Establece la URL de WhatsApp con el ID generado
 
+  }, []); // Este efecto se ejecutará una vez al montar el componente
+
+  const total = getTotalPrice ? getTotalPrice() : 0;
+  const userData = customerInfo!;
+
+  const handleOrder = async () => {
     const order = {
       userData,
       items: cart,
@@ -53,49 +61,29 @@ const CashPayment = () => {
     const ordersCollection = collection(db, 'orders');
 
     try {
-      const orderDocRef = await addDoc(ordersCollection, {
+      await addDoc(ordersCollection, {
         ...order,
       });
 
-      sendWhatsAppMessage(orderDocRef.id);
-
-      // Retrasa la ejecución de las siguientes líneas por 2 segundos (2000 milisegundos)
-      setTimeout(() => {
         navigate('/checkout/pendingverification');
         setSnackbarMessage('Orden generada con éxito.');
         setSnackbarOpen(true);
         clearCart();
-      }, 2000);
+    
     } catch (error) {
       console.error('Error al generar la orden:', error);
       setUploadMessage('Error al generar la orden.');
     }
   };
 
-  const sendWhatsAppMessage = (orderId: string) => {
-    const message = `¡Nueva orden!\n\nID de orden: ${orderId}\nCliente: ${
-      userData.firstName
-    }\nDirección de entrega: ${userData.postalCode}, ${userData.city}, ${userData.department}, ${userData.streetAndNumber}\n\nProductos:\n${cart
-      .map(
-        (product) =>
-          `${product.title} - Tipo: ${product.type}, Barcode: ${
-            product.barcode
-          }, Precio: ${product.price}, Cantidad: ${
-            product.quantity
-          }, Total: ${product.price * product.quantity}\n`
-      )
-      .join('')}`;
-    const encodedMessage = encodeURIComponent(message);
-    const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
-    window.open(whatsappURL, '_blank', 'noopener noreferrer');
-  };
+  
 
   return (
     <div style={{ textAlign: 'center', marginTop: '20px', marginBottom: '40px' }}>
       <h2 style={{ color: 'black' }}>Mandar el Pedido a WhatsApp</h2>
       <Tooltip title="Enviar mensaje por WhatsApp">
         <a
-          href={whatsappURL}
+          href={whatsappURL} // Establece la URL generada para WhatsApp
           target="_blank"
           rel="noopener noreferrer"
           style={{
