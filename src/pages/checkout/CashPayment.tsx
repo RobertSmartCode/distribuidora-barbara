@@ -74,19 +74,15 @@ const CashPayment = () => {
   };
 
   return (
-    <div style={{ textAlign: 'center', marginTop: '20px', marginBottom: '40px' }}>
-      <h2 style={{ color: 'black' }}>Pago en Efectivo</h2>
+    <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '40px' }}>
       <Tooltip title="Enviar mensaje por WhatsApp">
         <Button
           variant="contained"
           style={{
             backgroundColor: '#25d366',
             color: 'white',
-            borderRadius: '50%',
-            padding: '10px',
-            position: 'fixed',
-            bottom: '20px',
-            right: '20px',
+            borderRadius: '10px',
+            padding: '10px 20px',
             textDecoration: 'none',
             zIndex: 99,
             display: 'flex',
@@ -94,7 +90,8 @@ const CashPayment = () => {
           }}
           onClick={handleGenerateOrder}
         >
-          <FaWhatsapp size={40} />
+          Enviar Orden al WhatsApp
+          <FaWhatsapp size={24} style={{ marginLeft: '10px' }} />
         </Button>
       </Tooltip>
 
