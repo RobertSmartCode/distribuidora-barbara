@@ -6,19 +6,11 @@ import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import PhoneIcon from '@mui/icons-material/Phone';
 import EditIcon from '@mui/icons-material/Edit'; 
 
-
-import { useShippingMethods } from '../../context/ShippingMethodsContext';
 import { useCustomer} from '../../context/CustomerContext';
 
 const UserInfo = () => {
-  const { getSelectedShippingMethod } = useShippingMethods()!;
+ 
   const { customerInfo } = useCustomer()!;
- 
- 
-  const selectedShippingMethod = getSelectedShippingMethod();
-
-
-
   const navigate = useNavigate();
 
   const handleEditClick = () => {
@@ -31,6 +23,7 @@ const UserInfo = () => {
         sx={{
           margin: 'auto',
           maxWidth: '280px',
+          marginTop:"5%",
           padding: '24px',
           '@media (min-width:600px)': {
             maxWidth: '450px',
@@ -41,18 +34,20 @@ const UserInfo = () => {
       <Button
           variant="contained"
           style={{
-            color: "black",
-            backgroundColor: "white",
-            position: "absolute",
-            top: "1px",
-            right: "1px",
-            borderRadius: "50%", // Bordes redondos
+            color: 'black',
+            backgroundColor: 'white',
+            position: 'absolute',
+            top: '1%', // Ajusta la distancia desde la parte superior
+            right: '1%', // Ajusta la distancia desde el borde derecho
+            borderRadius: '50%', // Bordes redondos
           }}
           onClick={handleEditClick}
         >
           <EditIcon fontSize="medium" /> {/* Icono de edición más pequeño */}
         </Button>
-        <Typography variant="h6" gutterBottom>
+
+        
+        <Typography variant="h6" gutterBottom style={{ marginTop: '12%' }}>
           Información de Envío
         </Typography>
         <Box display="flex" flexDirection="column">
@@ -93,9 +88,7 @@ const UserInfo = () => {
           >
             <LocalShippingIcon  style={{ marginRight: "8px" }} />
             <Typography>
-              {selectedShippingMethod
-                ? selectedShippingMethod.name
-                : "No seleccionado"}
+              Envío gratis A CABA Y AMBA
             </Typography>
           </Box>
         </Box>
