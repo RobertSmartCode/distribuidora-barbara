@@ -1,7 +1,8 @@
 import { useState, useContext } from 'react';
-import { Button, Snackbar } from '@mui/material';
+import { Button, Snackbar, Tooltip } from '@mui/material';
+import { FaWhatsapp } from 'react-icons/fa';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-// import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { CartContext } from '../../context/CartContext';
 import { useCustomer } from '../../context/CustomerContext';
 import { db } from '../../firebase/firebaseConfig';
@@ -12,7 +13,7 @@ const CashPayment = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [uploadMessage, setUploadMessage] = useState<string>('');
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const total = getTotalPrice ? getTotalPrice() : 0;
   const userData = customerInfo!;
@@ -34,12 +35,11 @@ const CashPayment = () => {
         ...order,
       });
 
-      // Llama a la función sendWhatsAppMessage
       sendWhatsAppMessage(orderDocRef.id);
 
       // Retrasa la ejecución de las siguientes líneas por 2 segundos (2000 milisegundos)
       setTimeout(() => {
-        // navigate('/checkout/pendingverification');
+        navigate('/checkout/pendingverification');
         setSnackbarMessage('Orden generada con éxito.');
         setSnackbarOpen(true);
         clearCart();
@@ -51,7 +51,7 @@ const CashPayment = () => {
   };
 
   const sendWhatsAppMessage = (orderId: string) => {
-    const phoneNumber = '+59898724545'; // Número de teléfono de WhatsApp
+    const phoneNumber = '+59898724545';
     const message = `¡Nueva orden!\n\nID de orden: ${orderId}\nCliente: ${
       userData.firstName
     }\nDirección de entrega: ${userData.postalCode}, ${userData.city}, ${userData.department}, ${userData.streetAndNumber}\n\nProductos:\n${cart
@@ -76,19 +76,27 @@ const CashPayment = () => {
   return (
     <div style={{ textAlign: 'center', marginTop: '20px', marginBottom: '40px' }}>
       <h2 style={{ color: 'black' }}>Pago en Efectivo</h2>
-      <Button
-        variant="contained"
-        style={{
-          backgroundColor: '#25D366', // Color de WhatsApp
-          color: 'white', // Texto en color blanco
-          borderRadius: '20px', // Bordes redondos
-          padding: '10px 30px', // Padding horizontal y vertical
-          marginBottom: '20px', // Margen inferior
-        }}
-        onClick={handleGenerateOrder}
-      >
-        Enviar Orden al WhatsApp
-      </Button>
+      <Tooltip title="Enviar mensaje por WhatsApp">
+        <Button
+          variant="contained"
+          style={{
+            backgroundColor: '#25d366',
+            color: 'white',
+            borderRadius: '50%',
+            padding: '10px',
+            position: 'fixed',
+            bottom: '20px',
+            right: '20px',
+            textDecoration: 'none',
+            zIndex: 99,
+            display: 'flex',
+            alignItems: 'center',
+          }}
+          onClick={handleGenerateOrder}
+        >
+          <FaWhatsapp size={40} />
+        </Button>
+      </Tooltip>
 
       <p>{uploadMessage}</p>
       <Snackbar
