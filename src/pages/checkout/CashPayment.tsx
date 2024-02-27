@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { CartContext } from '../../context/CartContext';
 import { useCustomer } from '../../context/CustomerContext';
 import { db } from '../../firebase/firebaseConfig';
-import { v4 as uuidv4 } from 'uuid'; // Importa la función v4 de uuid
+
 
 const CashPayment = () => {
   const { customerInfo } = useCustomer()!;
@@ -19,13 +19,9 @@ const CashPayment = () => {
   const phoneNumber = '+59898724545';
 
   useEffect(() => {
-    const generateOrderId = () => {
-      return uuidv4(); // Genera un ID único utilizando uuid
-    };
 
-    const orderId = generateOrderId(); // Genera un ID único para la orden
     const generateWhatsAppURL = () => {
-      const message = `¡Nueva orden!\n\nID de orden: ${orderId}\nCliente: ${
+      const message = `¡Nueva orden!\n\nTeléfono: ${userData.phone}\nCliente: ${
         userData.firstName
       }\nDirección de entrega: ${userData.postalCode}, ${userData.city}, ${userData.department}, ${userData.streetAndNumber}\n\nProductos:\n${cart
         .map(
@@ -41,9 +37,9 @@ const CashPayment = () => {
       return `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
     };
 
-    setWhatsappURL(generateWhatsAppURL()); // Establece la URL de WhatsApp con el ID generado
+    setWhatsappURL(generateWhatsAppURL()); 
 
-  }, []); // Este efecto se ejecutará una vez al montar el componente
+  }, []); 
 
   const total = getTotalPrice ? getTotalPrice() : 0;
   const userData = customerInfo!;
@@ -57,26 +53,25 @@ const CashPayment = () => {
       status: 'pending',
       paymentType: 'efectivo',
     };
-
+   
     const ordersCollection = collection(db, 'orders');
 
     try {
-      await addDoc(ordersCollection, {
+     await addDoc(ordersCollection, {
         ...order,
       });
-
+       
         navigate('/checkout/pendingverification');
         setSnackbarMessage('Orden generada con éxito.');
         setSnackbarOpen(true);
         clearCart();
-    
+     
     } catch (error) {
       console.error('Error al generar la orden:', error);
       setUploadMessage('Error al generar la orden.');
     }
   };
 
-  
 
   return (
     <div style={{ textAlign: 'center', marginTop: '20px', marginBottom: '40px' }}>
