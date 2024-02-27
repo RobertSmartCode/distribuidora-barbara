@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useContext } from 'react';
 import { Snackbar, Tooltip } from '@mui/material';
 import { FaWhatsapp } from 'react-icons/fa';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
@@ -17,7 +17,10 @@ const CashPayment = () => {
   const navigate = useNavigate();
   const phoneNumber = '+59898724545';
 
-  useEffect(() => {
+  const total = getTotalPrice ? getTotalPrice() : 0;
+  const userData = customerInfo!;
+
+  const handleOrder = async () => {
     const generateWhatsAppURL = () => {
       const message = `¡Nueva orden!\n\nID de orden: {orderId}\nCliente: ${
         userData.firstName
@@ -35,47 +38,39 @@ const CashPayment = () => {
       return `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
     };
 
-    setWhatsappURL(generateWhatsAppURL());
-  }, []);
+    const whatsappURL = generateWhatsAppURL();
+    setWhatsappURL(whatsappURL);
 
-  const total = getTotalPrice ? getTotalPrice() : 0;
-  const userData = customerInfo!;
-
-  useEffect(() => {
-    const handleOrder = async () => {
-      const order = {
-        userData,
-        items: cart,
-        total,
-        date: serverTimestamp(),
-        status: 'pending',
-        paymentType: 'efectivo',
-      };
-
-      const ordersCollection = collection(db, 'orders');
-
-      try {
-        const orderDocRef = await addDoc(ordersCollection, {
-          ...order,
-        });
-
-        sendWhatsAppMessage(orderDocRef.id);
-
-        // Retrasa la ejecución de las siguientes líneas por 2 segundos (2000 milisegundos)
-        setTimeout(() => {
-          navigate('/checkout/pendingverification');
-          setSnackbarMessage('Orden generada con éxito.');
-          setSnackbarOpen(true);
-          clearCart();
-        }, 2000);
-      } catch (error) {
-        console.error('Error al generar la orden:', error);
-        setUploadMessage('Error al generar la orden.');
-      }
+    const order = {
+      userData,
+      items: cart,
+      total,
+      date: serverTimestamp(),
+      status: 'pending',
+      paymentType: 'efectivo',
     };
 
-    handleOrder();
-  }, [cart, clearCart, navigate, total, userData]);
+    const ordersCollection = collection(db, 'orders');
+
+    try {
+      const orderDocRef = await addDoc(ordersCollection, {
+        ...order,
+      });
+
+      sendWhatsAppMessage(orderDocRef.id);
+
+      // Retrasa la ejecución de las siguientes líneas por 2 segundos (2000 milisegundos)
+      setTimeout(() => {
+        navigate('/checkout/pendingverification');
+        setSnackbarMessage('Orden generada con éxito.');
+        setSnackbarOpen(true);
+        clearCart();
+      }, 2000);
+    } catch (error) {
+      console.error('Error al generar la orden:', error);
+      setUploadMessage('Error al generar la orden.');
+    }
+  };
 
   const sendWhatsAppMessage = (orderId: string) => {
     const message = `¡Nueva orden!\n\nID de orden: ${orderId}\nCliente: ${
@@ -99,26 +94,26 @@ const CashPayment = () => {
     <div style={{ textAlign: 'center', marginTop: '20px', marginBottom: '40px' }}>
       <h2 style={{ color: 'black' }}>Mandar el Pedido a WhatsApp</h2>
       <Tooltip title="Enviar mensaje por WhatsApp">
-          <a
-            href={whatsappURL}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              backgroundColor: '#25d366',
-              color: 'white',
-              borderRadius: '8px', // Ajusta el radio de los bordes según sea necesario
-              padding: '10px 20px', // Ajusta el padding horizontal y vertical según sea necesario
-              textDecoration: 'none',
-              display: 'block', // Cambia a bloque para permitir el centrado horizontal
-              margin: '0 auto', // Centra horizontalmente
-              maxWidth: '20%', // Establece el ancho máximo al 90% del contenedor
-              zIndex: 99,
-            }}
-          >
-            <FaWhatsapp size={40} />
-          </a>
-        </Tooltip>
-
+        <a
+          href={whatsappURL}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            backgroundColor: '#25d366',
+            color: 'white',
+            borderRadius: '8px', // Ajusta el radio de los bordes según sea necesario
+            padding: '10px 20px', // Ajusta el padding horizontal y vertical según sea necesario
+            textDecoration: 'none',
+            display: 'block', // Cambia a bloque para permitir el centrado horizontal
+            margin: '0 auto', // Centra horizontalmente
+            maxWidth: '20%', // Establece el ancho máximo al 20% del contenedor
+            zIndex: 99,
+          }}
+          onClick={handleOrder}
+        >
+          <FaWhatsapp size={40} />
+        </a>
+      </Tooltip>
 
       <p>{uploadMessage}</p>
       <Snackbar
