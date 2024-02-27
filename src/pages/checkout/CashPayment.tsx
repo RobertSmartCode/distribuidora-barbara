@@ -34,6 +34,11 @@ const CashPayment = () => {
         ...order,
       });
 
+      navigate('/checkout/pendingverification');
+      setSnackbarMessage('Orden generada con éxito.');
+      setSnackbarOpen(true);
+      clearCart();
+
       // Abrir WhatsApp con el mensaje de la orden
       const phoneNumber = '+59898724545'; // Número de teléfono de WhatsApp
       const message = `¡Nueva orden!\n\nID de orden: ${orderDocRef.id}\nCliente: ${
@@ -51,11 +56,6 @@ const CashPayment = () => {
       const encodedMessage = encodeURIComponent(message);
       const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
       window.open(whatsappURL, '_blank', 'noopener noreferrer');
-
-      navigate('/checkout/pendingverification');
-      setSnackbarMessage('Orden generada con éxito.');
-      setSnackbarOpen(true);
-      clearCart();
     } catch (error) {
       console.error('Error al generar la orden:', error);
       setUploadMessage('Error al generar la orden.');
