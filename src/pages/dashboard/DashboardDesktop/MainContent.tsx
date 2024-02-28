@@ -8,6 +8,7 @@ import CompletedOrderList from '../MyOrders/CompletedOrderList';
 import {ProductsFormDesktopProps}from "../../../type/type";
 // import Category from '../Setting/Setting';
 import CategoryDesktop from '../Category/CategoryDesktop';
+import OrdersOnline from '../MyOrdersOnline/MyOrdersOnline';
 
 
 const MainContent = () => {
@@ -33,7 +34,8 @@ const MainContent = () => {
 
 
         {/* Renderizar el componente correspondiente según la selección */}
-        {selectedItem === 'Ordenes' && <CompletedOrderList/>}
+        {selectedItem === 'Ordenes Caja' && <CompletedOrderList/>}
+        {selectedItem === 'Ordenes Online' && <OrdersOnline/>}
         {selectedItem === 'Agregar Producto' && <ProductsFormDesktop {...productsFormDesktopProps} />}
         {selectedItem === 'Mis Productos' && <ProductsListDesktop/>}
         {selectedItem === 'Métodos de Pago' && <PaymentMethodsDesktop />}

@@ -86,7 +86,7 @@ const UserOrders : React.FC = () => {
                       </Grid>
                       <Grid item xs={4} style={{ textAlign: 'right' }}>
                         <Typography variant="body1">
-                          ${product.unit_price * product.quantity}
+                          ${product.price * product.quantity}
                         </Typography>
                       </Grid>
                     

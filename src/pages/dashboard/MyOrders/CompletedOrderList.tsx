@@ -7,9 +7,11 @@ import {
  
 } from 'firebase/firestore';
 import { Grid, Card, CardContent, Typography } from '@mui/material';
-import { Order } from '../../../type/type'; // Asegúrate de importar el tipo adecuado
+
+import { Order } from '../../../type/type'; 
 
 const CompletedOrderList: React.FC = () => {
+
   const [completedOrders, setCompletedOrders] = useState<Order[]>([]);
 
   useEffect(() => {
@@ -23,7 +25,6 @@ const CompletedOrderList: React.FC = () => {
             ...doc.data(),
             completedTimestamp: (doc.data().completedTimestamp as Timestamp).toDate(),
           })) as any[];
-          setCompletedOrders(ordersData);
           
       setCompletedOrders(ordersData);
     });

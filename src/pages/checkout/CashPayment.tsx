@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from 'react';
 import { Snackbar, Tooltip } from '@mui/material';
 import { FaWhatsapp } from 'react-icons/fa';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, Timestamp } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import { CartContext } from '../../context/CartContext';
 import { useCustomer } from '../../context/CustomerContext';
@@ -23,7 +23,7 @@ const CashPayment = () => {
     const generateWhatsAppURL = () => {
       const message = `¡Nueva orden!\n\nTeléfono: ${userData.phone}\nCliente: ${
         userData.firstName
-      }\nDirección de entrega: ${userData.postalCode}, ${userData.city}, ${userData.department}, ${userData.streetAndNumber}\n\nProductos:\n${cart
+      }\nDirección de entrega: CP:${userData.postalCode}, ${userData.city}, ${userData.department}, ${userData.streetAndNumber}\n\nProductos:\n${cart
         .map(
           (product) =>
             `${product.title} - Tipo: ${product.type}, Barcode: ${
@@ -49,7 +49,7 @@ const CashPayment = () => {
       userData,
       items: cart,
       total,
-      date: serverTimestamp(),
+      completedTimestamp: new Date(Timestamp.now().toMillis()), 
       status: 'pending',
       paymentType: 'efectivo',
     };
@@ -75,7 +75,7 @@ const CashPayment = () => {
 
   return (
     <div style={{ textAlign: 'center', marginTop: '20px', marginBottom: '40px' }}>
-      <h2 style={{ color: 'black' }}>Mandar el Pedido a WhatsApp</h2>
+      <h2 style={{ color: 'black' }}>Mandar el Pedido por WhatsApp</h2>
       <Tooltip title="Enviar mensaje por WhatsApp">
         <a
           href={whatsappURL} // Establece la URL generada para WhatsApp

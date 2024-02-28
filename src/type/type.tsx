@@ -103,11 +103,13 @@ export interface CustomerInfo {
 export interface Order {
   id: string;
   date: Date;
+  timestamp: Date;
+  completedTimestamp: Date;
   items: Array<{
     id: string;
     title: string;
     quantity: number;
-    unit_price: number;
+    price: number;
     images: string
     sku:string
   }>;
@@ -192,7 +194,5 @@ export interface Order {
   
   // Agrega más propiedades según la estructura de tu orden
 }
-
-
 
 

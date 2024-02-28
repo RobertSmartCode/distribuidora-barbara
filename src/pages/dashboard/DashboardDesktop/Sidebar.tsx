@@ -32,11 +32,17 @@ const Sidebar = () => {
           </ListItemIcon>
           <ListItemText primary="Inicio" />
         </ListItem>
-        <ListItem button onClick={() => handleItemClick('Ordenes')}>
+        <ListItem button onClick={() => handleItemClick('Ordenes Caja')}>
           <ListItemIcon>
             <ShoppingCartIcon />
           </ListItemIcon>
-          <ListItemText primary="Ordenes" />
+          <ListItemText primary="Ordenes Caja" />
+        </ListItem>
+        <ListItem button onClick={() => handleItemClick('Ordenes Online')}>
+          <ListItemIcon>
+            <ShoppingCartIcon />
+          </ListItemIcon>
+          <ListItemText primary="Ordenes Online" />
         </ListItem>
         <ListItem button  onClick={() => handleItemClick('Agregar Producto')}>
           <ListItemIcon>
