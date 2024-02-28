@@ -1,79 +1,74 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Button, Card, CardActions, CardContent, CardMedia, Grid } from '@mui/material';
+import { Button, Card, CardActions, CardContent, CardMedia, Grid, Modal, Backdrop, CircularProgress } from '@mui/material';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { useImagesContext } from '../../../context/ImagesContext';
+import { ref, deleteObject } from 'firebase/storage'; // Importa las funciones necesarias de Firebase Storage
+import { storage } from '../../../firebase/firebaseConfig';
 import { uploadFile } from '../../../firebase/firebaseConfig';
-import Resizer from 'react-image-file-resizer';
 
 interface ImageManagerProps {
   initialData: Image[];
 }
 
 export interface Image {
-  url: string;
+  url: string; // URL de la imagen en Firebase
 }
-
-export interface ResizeResult {
-  url: string;
-}
-
-
 
 const ImageManager: React.FC<ImageManagerProps> = ({ initialData }) => {
   const { images, updateImages } = useImagesContext()!;
-  const [files, setFiles] = useState<Image[]>(initialData || []);
+
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [uploadMessage, setUploadMessage] = useState<string>("");
   const [selectedImageCount, setSelectedImageCount] = useState<number>(
     initialData?.length || 0
   );
+  const [loading, setLoading] = useState<boolean>(false); // Estado para controlar la visualización del modal de carga
 
   useEffect(() => {
     if (initialData) {
-      setFiles(initialData);
+      updateImages(initialData);
     }
   }, [initialData]);
 
-  const transformBlobToFirebase = async (blobUrl: string): Promise<string | null> => {
-    if (!blobUrl.startsWith('blob:')) {
-      return null; // No es una URL blob
-    }
-
-    try {
-      const blob = await fetch(blobUrl).then(response => response.blob());
-      const file = new File([blob], 'filename', { lastModified: new Date().getTime() });
-      const firebaseUrl = await uploadFile(file);
-      return firebaseUrl;
-    } catch (error) {
-      console.error('Error al transformar la URL blob a Firebase:', error);
-      return null;
-    }
-  };
-
-  const normalizeImages = async (imageFiles: Image[]) => {
-    const normalizedImages: Image[] = await Promise.all(imageFiles.map(async (image) => {
-      const url = image.url;
-
-      if (url.startsWith('blob:')) {
-        const firebaseUrl = await transformBlobToFirebase(url);
-        return { url: firebaseUrl || url };
-      } else {
-        return { url };
-      }
-    }));
-
-    return normalizedImages;
-  };
-
-  const handleRemoveImage = (index: number) => {
+  const handleRemoveImage = async (index: number) => {
     const updatedImages = [...images];
-    const updatedFiles = [...files];
-    updatedImages.splice(index, 1)[0];
-    updatedFiles.splice(index, 1)[0];
+   
+    const removedImage = updatedImages.splice(index, 1)[0];
     setSelectedImageCount(updatedImages.length);
     setUploadMessage("");
     updateImages(updatedImages);
-    setFiles(updatedFiles);
+    
+    try {
+      const storageRef = ref(storage, removedImage.url); // Utiliza la instancia de Firebase Storage
+      await deleteObject(storageRef); // Eliminar el archivo de Firebase Storage
+      console.log('Imagen eliminada correctamente');
+    } catch (error) {
+      console.error('Error al eliminar la imagen de Firebase:', error);
+      // Manejar el error apropiadamente
+    }
+  };
+
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setLoading(true); // Muestra el modal de carga cuando se inicia la carga de imágenes
+      const selectedFiles = Array.from(e.target.files);
+      const uploadPromises = selectedFiles.map(async (file) => {
+        // Subir el archivo a Firebase Storage y obtener la URL
+        const firebaseUrl = await uploadFile(file);
+        return { url: firebaseUrl };
+      });
+
+      try {
+        const uploadedFiles = await Promise.all(uploadPromises);
+        updateImages([...images, ...uploadedFiles]);
+        setUploadMessage("");
+      } catch (error) {
+        console.error('Error al cargar las imágenes:', error);
+        setUploadMessage("Error al cargar las imágenes");
+      } finally {
+        setLoading(false); // Oculta el modal de carga cuando se completan todas las cargas de imágenes
+      }
+    }
   };
 
   const openFileInput = () => {
@@ -82,64 +77,11 @@ const ImageManager: React.FC<ImageManagerProps> = ({ initialData }) => {
     }
   };
 
-  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      const selectedFiles = Array.from(e.target.files);
-  
-      try {
-        const resizedFiles = await Promise.all(
-          selectedFiles.map(
-            async (file) =>
-              new Promise<ResizeResult>((resolve) => {
-                Resizer.imageFileResizer(
-                  file,
-                  500,
-                  500,
-                  'JPEG',
-                  100,
-                  0,
-                  (value: string | Blob | File | ProgressEvent<FileReader>) => {
-                    const urlString = typeof value === 'string' ? value : URL.createObjectURL(value as Blob);
-                    resolve({ url: urlString });
-                  },
-                  'blob'
-                );
-              })
-          )
-        );
-  
-        setFiles([...files, ...resizedFiles]);
-        setUploadMessage("");
-      } catch (error) {
-        console.error('Error al redimensionar las imágenes:', error);
-        setUploadMessage('Error al redimensionar las imágenes');
-      }
-    }
-  };
-  
-  
-  
-  
-  useEffect(() => {
-    const updateImagesAsync = async () => {
-      try {
-        const normalizedImages = await normalizeImages(files);
-        await updateImages(normalizedImages);
-      } catch (error) {
-        console.error("Error al normalizar las imágenes:", error);
-        setUploadMessage("Error al cargar las imágenes");
-      }
-    };
-
-    updateImagesAsync();
-  }, [files]);
-
   return (
     <div>
-      {/* Maneja la carga de las imágenes para Modificar */}
       <Grid item xs={12} lg={12} style={{ width: '100%', margin: 'auto', marginRight: '130px' }}>
         <div style={{ display: 'flex', justifyContent: 'center', width: '100%', height: '100%' }}>
-          {files.map((image, index) => (
+          {images.map((image, index) => (
             <Card key={index} style={{ maxWidth: 600, width: '100%', margin: '10px' }}>
               <CardContent>
                 <p>{`Vista Previa ${index + 1}`}</p>
@@ -167,7 +109,6 @@ const ImageManager: React.FC<ImageManagerProps> = ({ initialData }) => {
         </div>
       </Grid>
 
-      {/* Maneja la carga de las imágenes para Crear */}
       <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         <Button variant="contained" color="primary" onClick={openFileInput}>
           Subir foto
@@ -186,6 +127,20 @@ const ImageManager: React.FC<ImageManagerProps> = ({ initialData }) => {
           style={{ display: 'none' }}
         />
         <p>{uploadMessage}</p>
+      </Grid>
+
+      {/* Modal de carga */}
+      <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+      <Modal
+        open={loading}
+        BackdropComponent={Backdrop}
+        BackdropProps={{
+          timeout: 500,
+        }}
+        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+      >
+        <CircularProgress color="primary" size={80} />
+      </Modal>
       </Grid>
     </div>
   );
