@@ -9,6 +9,7 @@ interface Image {
 interface ImagesContextData {
   images: Image[];
   updateImages: (newImages: Image[]) => void;
+  resetImages: () => void;
 }
 
 // Crear el contexto de imágenes
@@ -37,9 +38,16 @@ const ImagesContextComponent: React.FC<ImagesContextComponentProps> = ({ childre
     localStorage.setItem("images", JSON.stringify(newImages));
   };
 
+  // Restablecer las imágenes al estado inicial (vacío) y limpiar localStorage
+  const resetImages = () => {
+    setImages([]);
+    localStorage.removeItem("images");
+  };
+
   const data: ImagesContextData = {
     images,
     updateImages,
+    resetImages,
   };
 
   return <ImagesContext.Provider value={data}>{children}</ImagesContext.Provider>;
