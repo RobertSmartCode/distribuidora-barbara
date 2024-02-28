@@ -1,9 +1,8 @@
-import React, { createContext, useState, ReactNode, useContext } from "react";
+import React, { createContext, useState, ReactNode, useContext, useEffect } from "react";
 
 // Definir la interfaz para las opciones de imágenes
 interface Image {
   url: string;
- 
 }
 
 // Definir la interfaz para el contexto de imágenes
@@ -24,8 +23,18 @@ interface ImagesContextComponentProps {
 const ImagesContextComponent: React.FC<ImagesContextComponentProps> = ({ children }) => {
   const [images, setImages] = useState<Image[]>([]);
 
+  // Al cargar el componente, intenta cargar las imágenes desde el localStorage
+  useEffect(() => {
+    const storedImages = localStorage.getItem("images");
+    if (storedImages) {
+      setImages(JSON.parse(storedImages));
+    }
+  }, []);
+
+  // Actualiza el estado de las imágenes y guarda en localStorage
   const updateImages = (newImages: Image[]) => {
     setImages(newImages);
+    localStorage.setItem("images", JSON.stringify(newImages));
   };
 
   const data: ImagesContextData = {
