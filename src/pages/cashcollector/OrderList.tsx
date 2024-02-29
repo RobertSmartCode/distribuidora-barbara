@@ -7,6 +7,7 @@ import {
   doc,
   deleteDoc,
   addDoc,
+  runTransaction
 } from 'firebase/firestore';
 import {
   Grid,
@@ -30,32 +31,9 @@ import {
 } from '@mui/material';
 import { useReactToPrint } from 'react-to-print';
 
-export interface Productbox {
-  id: string;
-  title: string;
-  quantity: number;
-  price: number;
-  images: string[];
-}
+import { Orderbox, CompletedOrderbox, } from '../../type/type';
 
-export interface Orderbox {
-  id: string;
-  customerName: string;
-  totalAmount: number;
-  timestamp: Date;
-  completedTimestamp: Date;
-  products: Productbox[];
-}
 
-export interface CompletedOrderbox {
-  id: string;
-  customerName: string;
-  totalAmount: number;
-  timestamp: Date;
-  completedTimestamp: Date;
-  products: Productbox[];
-  paymentMethod: string;
-}
 
 interface OrderPrintComponentProps {
   order: Orderbox | null;
@@ -96,7 +74,7 @@ const OrderPrintComponent: React.FC<OrderPrintComponentProps & { ref: ForwardedR
 const OrderList: React.FC = () => {
   const [orders, setOrders] = useState<Orderbox[]>([]);
   const [selectedOrder, setSelectedOrder] = useState<Orderbox | null>(null);
-  const [selectedCompletedOrders, setSelectedcompletedOrders] = useState<CompletedOrderbox| null>(null);
+  const [selectedCompletedOrders, setSelectedcompletedOrders] = useState<CompletedOrderbox | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<string>('');
   const [openDialog, setOpenDialog] = useState<boolean>(false);
   const [openDialogPrinte, setOpenDialogPrinte] = useState<boolean>(false);
@@ -118,13 +96,45 @@ const OrderList: React.FC = () => {
     return () => unsubscribe();
   }, []);
 
+  // console.log(orders)
+  // console.log("ProductS:",selectedOrder )
+
   const handlePaymentMethod = async () => {
     if (selectedOrder) {
       const firestore = getFirestore();
       const ordersCollection = collection(firestore, 'ordersbox');
       const completedOrdersCollection = collection(firestore, 'completedOrders');
-      
+  
       try {
+      
+  
+        // Restar la cantidad de productos vendidos de la base de datos
+        await Promise.all(selectedOrder.products.map(async (product) => {
+          const productRef = doc(collection(firestore, 'products'), product.id);
+  
+          // Obtener el documento del producto y realizar la transacción
+          await runTransaction(firestore, async (transaction) => {
+        
+  
+            // Obtener el documento del producto
+            const productDoc = await transaction.get(productRef);
+  
+            if (!productDoc.exists()) {
+              throw new Error(`El producto ${product.title} (ID: ${product.id}) no existe en la base de datos.`);
+            }
+  
+            // Obtener los datos del producto y calcular la cantidad actualizada
+            const productData = productDoc.data();
+            const updatedQuantity = productData.quantities - product.quantity; // Utilizar 'quantities' en lugar de 'quantity'
+  
+  
+            // Actualizar la cantidad del producto en la base de datos
+            transaction.update(productRef, { quantities: updatedQuantity }); // Utilizar 'quantities' en lugar de 'quantity'
+  
+          });
+        }));
+  
+        // Mover la orden completada a la colección de órdenes completadas
         await addDoc(completedOrdersCollection, {
           ...selectedOrder,
           paymentMethod,
@@ -137,6 +147,7 @@ const OrderList: React.FC = () => {
           completedTimestamp: new Date(Timestamp.now().toMillis()), // Convertir a Date
         });
   
+        // Eliminar la orden de la colección de órdenes pendientes
         await deleteDoc(doc(ordersCollection, selectedOrder.id));
   
         console.log(`Order ${selectedOrder.id} moved to completedOrders with payment method: ${paymentMethod}`);
@@ -148,6 +159,8 @@ const OrderList: React.FC = () => {
       }
     }
   };
+  
+  
 
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
@@ -157,8 +170,6 @@ const OrderList: React.FC = () => {
     setSelectedcompletedOrders(null);
     setOpenDialogPrinte(false);
   };
-
-
 
   return (
     <Grid container spacing={2}>
@@ -186,7 +197,6 @@ const OrderList: React.FC = () => {
                     </ListItem>
                   ))}
                 </List>
-
               </Typography>
               <Button
                 variant="contained"

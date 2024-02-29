@@ -1,12 +1,13 @@
 import { useState, useEffect, useContext } from 'react';
 import { Snackbar, Tooltip } from '@mui/material';
 import { FaWhatsapp } from 'react-icons/fa';
-import { collection, addDoc, Timestamp } from 'firebase/firestore';
+import { collection, addDoc, Timestamp,  runTransaction, doc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import { CartContext } from '../../context/CartContext';
 import { useCustomer } from '../../context/CustomerContext';
 import { db } from '../../firebase/firebaseConfig';
-
+import { Product } from '../../type/type';
+import { DocumentReference } from 'firebase/firestore';
 
 const CashPayment = () => {
   const { customerInfo } = useCustomer()!;
@@ -44,33 +45,72 @@ const CashPayment = () => {
   const total = getTotalPrice ? getTotalPrice() : 0;
   const userData = customerInfo!;
 
+
   const handleOrder = async () => {
     const order = {
       userData,
       items: cart,
       total,
-      completedTimestamp: new Date(Timestamp.now().toMillis()), 
+      completedTimestamp: new Date(Timestamp.now().toMillis()),
       status: 'pending',
       paymentType: 'efectivo',
     };
-   
+  
     const ordersCollection = collection(db, 'orders');
-
+  
     try {
-     await addDoc(ordersCollection, {
+      // Agregar la orden a la colección de órdenes
+      console.log('Agregando orden a la colección de órdenes:', order);
+      await addDoc(ordersCollection, {
         ...order,
       });
-       
-        navigate('/checkout/pendingverification');
-        setSnackbarMessage('Orden generada con éxito.');
-        setSnackbarOpen(true);
-        clearCart();
+  
+      // Restar la cantidad de productos vendidos de la base de datos
+      console.log('Actualizando cantidades de productos:', cart);
+      await updateProductQuantities(cart);
+  
+      // Navegar a la siguiente página y mostrar un mensaje de éxito
      
+      navigate('/checkout/pendingverification');
+      setSnackbarMessage('Orden generada con éxito.');
+      setSnackbarOpen(true);
+      clearCart();
     } catch (error) {
       console.error('Error al generar la orden:', error);
       setUploadMessage('Error al generar la orden.');
     }
   };
+  const updateProductQuantities = async (products: Product[]) => {
+    const productRefs = products.map(product => doc(collection(db, 'products'), product.id));
+    await Promise.all(productRefs.map(async (productRef, index) => {
+      const product = products[index];
+     
+      const cartProduct = cart.find(cartItem => cartItem.barcode === product.barcode);
+      if (!cartProduct) {
+        throw new Error(`No se encontró el producto ${product.title} (ID: ${product.id}) en el carrito de compras.`);
+      }
+      await updateProductQuantityInTransaction(productRef, cartProduct.quantity);
+    }));
+  };
+  
+  const updateProductQuantityInTransaction = async (productRef: DocumentReference, quantity: number) => {
+    await runTransaction(db, async (transaction) => {
+      const productDoc = await transaction.get(productRef);
+      if (!productDoc.exists()) {
+        throw new Error('¡El producto no existe!');
+      }
+      const productData = productDoc.data();
+      const updatedQuantity = productData.quantities - quantity;
+      if (updatedQuantity < 0) {
+        throw new Error('¡Cantidad insuficiente disponible!');
+      }
+     
+      transaction.update(productRef, { quantities: updatedQuantity });
+    
+    });
+  };
+  
+
 
 
   return (

@@ -196,3 +196,29 @@ export interface Order {
 }
 
 
+export interface Productbox {
+  id: string;
+  title: string;
+  quantity: number;
+  price: number;
+  images: string[];
+}
+
+export interface Orderbox {
+  id: string;
+  customerName: string;
+  totalAmount: number;
+  timestamp: Date;
+  completedTimestamp: Date;
+  products: Productbox[];
+}
+
+export interface CompletedOrderbox {
+  id: string;
+  customerName: string;
+  totalAmount: number;
+  timestamp: Date;
+  completedTimestamp: Date;
+  products: Productbox[];
+  paymentMethod: string;
+}
