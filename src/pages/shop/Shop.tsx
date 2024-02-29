@@ -17,7 +17,7 @@ const Shop: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const isMobile = useMediaQuery('(max-width: 600px)');
-  const maxTitleLength = isMobile ? 15 : 29;
+  const maxTitleLength = isMobile ? 10 : 25;
   const [clickedProduct, setClickedProduct] = useState<string | null>(null);
   const handleTitleClick = (title: string) => {
     setClickedProduct((prevClickedProduct) =>
