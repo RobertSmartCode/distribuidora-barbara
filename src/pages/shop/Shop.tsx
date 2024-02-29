@@ -133,38 +133,46 @@ const Shop: React.FC = () => {
               {/* Productos más vendidos */}
               {products.map((product) => (
                 <Grid item xs={6} sm={4} md={4} lg={3} key={product.id}>
+                  
                    
                   <Card sx={productStyles}>
-                  
-                     <Box sx={{ position: "relative" }}>
-                          {/* Etiqueta de % Descuento */}
-                          { parseInt(String(product?.discount)) !== 0 && (
+
+                            {/* Etiqueta de % Descuento */}
+                            <Box sx={{ position: "relative" }}>
+                          {/* Paper para la etiqueta de descuento */}
+                          {parseInt(String(product?.discount)) !== 0 && (
                             <Paper
                               elevation={0}
                               sx={{
                                 position: "absolute",
-                                top: 0,
-                                left: isMobile ? 0 : "calc(-15%)",
+                                top: "0", // Ajusta la posición vertical
+                                left: isMobile ? "-70px" : "-140px",
                                 backgroundColor: customColors.primary.main,
                                 color: customColors.secondary.contrastText,
-                                width: isMobile ? "32px" : "48px", 
-                                height: isMobile ? "32px" : "48px", 
+                                width: isMobile ? "36px" : "48px",
+                                height: isMobile ? "36px" : "48px",
                                 borderRadius: "50%",
                                 display: "flex",
                                 alignItems: "center",
                                 justifyContent: "center",
-                                zIndex: 2, 
+                                zIndex: 100, // Ajusta el índice z para que el Paper esté sobre el Card
                               }}
                             >
-                              <Typography variant="body2" sx={{ fontSize: isMobile ? "10px" : "inherit" }}>
+                              {/* Contenido del Paper */}
+                              <Typography variant="body2" sx={{ fontSize: isMobile ? "8px" : "inherit" }}>
                                 {`${product?.discount}% `}
-                                <span style={{ fontSize: isMobile ? "8px" : "14px" }}>OFF</span>
+                                <span style={{ fontSize: isMobile ? "10px" : "14px" }}>OFF</span>
                               </Typography>
-
                             </Paper>
                           )}
+                          </Box>
+                                 {/* Paper para la etiqueta de descuento */}
 
-                             {/* Imagen del producto */}
+
+                                 {/* Imagen del producto */}
+
+                      <Box sx={{ position: "relative" }}>
+                         
                              <Link to={`/itemDetail/${generateSlug(product.title)}/${product.id}`}>
                               <Box
                                 onMouseEnter={() => handleMouseEnter(product.barcode)}
@@ -198,10 +206,12 @@ const Shop: React.FC = () => {
                           
                           />
                         ) : null}
-                    <CardContent>
+                  <CardContent>
+
+                      {/* Imagen del producto */}
 
                       {/* Descripción del Producto */}
-
+                     
                       <Typography
                           variant="subtitle1"
                           gutterBottom
@@ -227,7 +237,7 @@ const Shop: React.FC = () => {
                             ? `${product.description.substring(0, maxTitleLength).toUpperCase()}...`
                             : product.description.toUpperCase()}
                         </Typography>
-
+                          {/* Descripción del Producto */}
 
                         {/* Precio del producto */}
 
