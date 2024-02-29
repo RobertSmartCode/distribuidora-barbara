@@ -55,48 +55,53 @@ const SearchPage: React.FC = () => {
     setLoadedImageCount((prevCount) => prevCount + 1);
   };
 
-  useEffect(() => {
-    if (loadedImageCount >= allProducts.length) {
-      setIsComponentReady(true);
-    }
-  }, [loadedImageCount, allProducts]);
+          useEffect(() => {
+            if (loadedImageCount >= allProducts.length) {
+              setIsComponentReady(true);
+            }
+          }, [loadedImageCount, allProducts]);
 
 
 
-  useEffect(() => {
-    const normalizedSearchKeyword = searchKeyword.toLowerCase();
-     
-    const fetchSearchResults = async () => {
-      try {
-        const productsCollection = collection(db, 'products');
-        const searchQuery = query(
-          productsCollection,
-          where("keywords", ">=", normalizedSearchKeyword),
-          where("keywords", "<=", (normalizedSearchKeyword + "\uf8ff")),
-          where("online", "==", true), // Condición para productos en línea
-          where("quantities", ">", 0)   // Condición para productos con cantidad disponible
-        );
-        
-        const querySnapshot = await getDocs(searchQuery);
-        const productsData = querySnapshot.docs.map((doc) => ({
-          ...doc.data(),
-          id: doc.id,
-        } as Product));
-  
-        setSearchResults(productsData);
-        setAllProducts(productsData);
-        setProducts(productsData);
-      } catch (error) {
-        console.error('Error al obtener productos filtrados:', error);
-      }
-    };
-  
-    if (searchKeyword.trim() !== "") {
-      fetchSearchResults();
-    } else {
-      setSearchResults([]);
-    }
-  }, [searchKeyword]);
+          useEffect(() => {
+            const normalizedSearchKeyword = searchKeyword.toLowerCase();
+            
+            const fetchSearchResults = async () => {
+              try {
+                const productsCollection = collection(db, 'products');
+          
+                // Consulta para obtener productos que coincidan con la palabra clave de búsqueda
+                const searchQuery = query(
+                  productsCollection,
+                  where("keywords", ">=", normalizedSearchKeyword),
+                  where("keywords", "<=", (normalizedSearchKeyword + "\uf8ff"))
+                );
+          
+                const querySnapshot = await getDocs(searchQuery);
+                const productsData = querySnapshot.docs.map((doc) => ({
+                  ...doc.data(),
+                  id: doc.id,
+                } as Product));
+          
+                // Filtrar productos en línea y con stock
+                const filteredProducts = productsData.filter(product =>
+                  product.online && product.quantities > 0
+                );
+          
+                setSearchResults(filteredProducts);
+                setAllProducts(filteredProducts);
+                setProducts(filteredProducts);
+              } catch (error) {
+                console.error('Error al obtener productos filtrados:', error);
+              }
+            };
+          
+            if (searchKeyword.trim() !== "") {
+              fetchSearchResults();
+            } else {
+              setSearchResults([]);
+            }
+          }, [searchKeyword]);
   
 
 
