@@ -1,15 +1,19 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { CashRegisterContext } from '../../context/CashRegisterContext';
-import { Paper, List, ListItem, ListItemText, IconButton, Typography, Divider, Stack, ListItemAvatar, Avatar } from '@mui/material';
+import { Paper, List, ListItem, ListItemText, IconButton, Typography, Divider, Stack, ListItemAvatar, Avatar, Modal, Box, TextField, Button } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
+import EditIcon from '@mui/icons-material/Edit';
 import OrderForm from './OrderForm';
 
 const CartList: React.FC = () => {
   const { cart, removeFromCart, getTotalAmount, updateQuantityByBarcode } = useContext(CashRegisterContext)!;
   const [productCounters, setProductCounters] = useState<{ [key: string]: number }>({});
   const [exceededMaxInCart, setExceededMaxInCart] = useState<{ [key: string]: boolean }>({});
+  const [editModalOpen, setEditModalOpen] = useState<boolean>(false);
+  const [editedQuantity, setEditedQuantity] = useState<number>(0);
+  const [editedProductBarcode, setEditedProductBarcode] = useState<string>("");
 
   useEffect(() => {
     // Inicializa los contadores y el estado de exceder el máximo para cada producto en el carrito
@@ -70,6 +74,41 @@ const CartList: React.FC = () => {
     removeFromCart(barcode);
   };
 
+  const handleOpenEditModal = (productBarcode: string) => {
+    setEditedQuantity(productCounters[productBarcode] || 0);
+    setEditedProductBarcode(productBarcode);
+    setEditModalOpen(true);
+  };
+
+  const handleCloseEditModal = () => {
+    setEditModalOpen(false);
+  };
+
+  const handleEditQuantity = () => {
+    const inventoryQuantity = cart.find(item => item.barcode.toString() === editedProductBarcode)?.quantities || 0;
+    if (editedQuantity >= 1 && editedQuantity <= inventoryQuantity) {
+      setProductCounters(prevQuantities => ({
+        ...prevQuantities,
+        [editedProductBarcode]: editedQuantity,
+      }));
+      updateQuantityByBarcode(editedProductBarcode, editedQuantity);
+      handleCloseEditModal();
+    } else {
+      setExceededMaxInCart(prevExceeded => ({
+        ...prevExceeded,
+        [editedProductBarcode]: true,
+      }));
+
+      setTimeout(() => {
+        setExceededMaxInCart(prevExceeded => ({
+          ...prevExceeded,
+          [editedProductBarcode]: false,
+        }));
+      }, 1000);
+    }
+  };
+  
+
   return (
     <Paper sx={{ width: '100%', height: '100%', margin: 'auto', mt: 3, marginBottom: 1, overflowY: 'auto' }}>
       <List>
@@ -87,11 +126,17 @@ const CartList: React.FC = () => {
                 <IconButton color="primary" onClick={() => handleDecrement(item.barcode.toString())}>
                   <RemoveIcon />
                 </IconButton>
+
                 <Typography variant="body2">
                   {productCounters[item.barcode.toString()] || item.quantity}
                 </Typography>
+
                 <IconButton color="primary" onClick={() => handleIncrement(item.barcode.toString())}>
                   <AddIcon />
+                </IconButton>
+
+                <IconButton color="primary" onClick={() => handleOpenEditModal(item.barcode.toString())}>
+                  <EditIcon />
                 </IconButton>
               </Stack>
               <IconButton
@@ -116,6 +161,44 @@ const CartList: React.FC = () => {
       <Typography variant="h6" sx={{ mt: 2, textAlign: 'center' }}>
         Total: ${getTotalAmount().toFixed(2)}
       </Typography>
+      
+      <Modal open={editModalOpen} onClose={handleCloseEditModal}>
+          <Box
+            sx={{
+              position: 'absolute',
+              top: `calc(50% - 100px)`, // Ajusta la posición verticalmente
+              left: `calc(50% - 150px)`, // Ajusta la posición horizontalmente
+              width: 250,
+              bgcolor: 'background.paper',
+              p: 2,
+              outline: 0, // Quita el contorno del modal
+            }}
+          >
+            <TextField
+              label="Editar"
+              variant="outlined"
+              type="number"
+              value={editedQuantity}
+              onChange={(e) => {
+                setEditedQuantity(parseInt(e.target.value));
+              }}
+              sx={{ width: '100%' }} // Establece el ancho al 100%
+            />
+
+            {exceededMaxInCart[`${editedProductBarcode}`] && (
+              <Typography variant="body2" color="red" sx={{ textAlign: 'center', mt: 1 }}>
+                Tienes el máximo disponible.
+              </Typography>
+            )}
+
+            <Box sx={{ textAlign: 'right', mt: 1 }}>
+              <Button onClick={handleCloseEditModal}>Cancelar</Button> 
+              <Button onClick={handleEditQuantity}>Confirmar</Button>
+            </Box>
+          </Box>
+        </Modal>
+
+
       {/* Orden Form Component */}
       <OrderForm/>
     </Paper>
@@ -123,7 +206,3 @@ const CartList: React.FC = () => {
 };
 
 export default CartList;
-
-
-
-
