@@ -20,7 +20,7 @@ const [products, setProducts] = useState<Product[]>([]);
 const [isComponentReady, setIsComponentReady] = useState(false);
 const [loadedImageCount, setLoadedImageCount] = useState(0);
 const isMobile = useMediaQuery('(max-width: 600px)');
-const maxTitleLength = isMobile ? 15 : 29;
+const maxTitleLength = isMobile ? 10 : 22;
 const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 const [clickedProduct, setClickedProduct] = useState<string | null>(null);
 const handleTitleClick = (title: string) => {
@@ -265,10 +265,10 @@ useEffect(() => {
               onClick={() => handleTitleClick(product.description)}
             >
               {clickedProduct === product.description
-                ? product.description
+                ? product.description.toUpperCase()
                 : product.description.length > maxTitleLength
                 ? `${product.description.substring(0, maxTitleLength)}...`
-                : product.description}
+                : product.description.toUpperCase()}
               </Typography>
 
 
