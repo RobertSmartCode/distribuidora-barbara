@@ -25,7 +25,7 @@ const Search: React.FC<SearchProps> = ({ toggleSearch }) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const isMobile = useMediaQuery('(max-width: 600px)');
-  const maxTitleLength = isMobile ? 15 : 29;
+  const maxTitleLength = isMobile ? 10 : 22;
   const [clickedProduct, setClickedProduct] = useState<string | null>(null);
   const handleTitleClick = (title: string) => {
     setClickedProduct((prevClickedProduct) =>
@@ -68,41 +68,45 @@ const Search: React.FC<SearchProps> = ({ toggleSearch }) => {
 
 
 
+  useEffect(() => {
+    const normalizedSearchKeyword = searchKeyword.toLowerCase();
+    
+    const fetchSearchResults = async () => {
+      try {
+        const productsCollection = collection(db, 'products');
   
-useEffect(() => {
-  const  normalizedSearchKeyword = searchKeyword.toLowerCase()
-   
-   const fetchSearchResults = async () => {
-     try {
-       const productsCollection = collection(db, 'products');
-       const searchQuery = query(
-         productsCollection,
-         where("keywords", ">=", normalizedSearchKeyword  ),
-         where("keywords", "<=", (normalizedSearchKeyword + "\uf8ff") )
-         
-       );
-       const querySnapshot = await getDocs(searchQuery);
-
-       const productsData = querySnapshot.docs.map((doc) => ({
-         ...doc.data(),
-         id: doc.id,
-       } as Product));
-
-
-       setSearchResults(productsData);
-       setAllProducts(productsData);
-       setProducts(productsData);
-     } catch (error) {
-       console.error('Error al obtener productos filtrados:', error);
-     }
-   };
-
-   if (searchKeyword.trim() !== "") {
-     fetchSearchResults();
-   } else {
-     setSearchResults([]);
-   }
- }, [searchKeyword]);
+        // Consulta para obtener productos que coincidan con la palabra clave de búsqueda
+        const searchQuery = query(
+          productsCollection,
+          where("keywords", ">=", normalizedSearchKeyword),
+          where("keywords", "<=", (normalizedSearchKeyword + "\uf8ff"))
+        );
+  
+        const querySnapshot = await getDocs(searchQuery);
+        const productsData = querySnapshot.docs.map((doc) => ({
+          ...doc.data(),
+          id: doc.id,
+        } as Product));
+  
+        // Filtrar productos en línea y con stock
+        const filteredProducts = productsData.filter(product =>
+          product.online && product.quantities > 0
+        );
+  
+        setSearchResults(filteredProducts);
+        setAllProducts(filteredProducts);
+        setProducts(filteredProducts);
+      } catch (error) {
+        console.error('Error al obtener productos filtrados:', error);
+      }
+    };
+  
+    if (searchKeyword.trim() !== "") {
+      fetchSearchResults();
+    } else {
+      setSearchResults([]);
+    }
+  }, [searchKeyword]);
 
 
 
@@ -164,98 +168,111 @@ useEffect(() => {
            <Grid item xs={6} sm={4} md={4} lg={3} key={product.id}>
               
              <Card sx={productStyles}>
-             
-                <Box sx={{ position: "relative" }}>
-                     {/* Etiqueta de % Descuento */}
-                     { parseInt(String(product?.discount)) !== 0 && (
-                       <Paper
-                         elevation={0}
-                         sx={{
-                           position: "absolute",
-                           top: 0,
-                           left: isMobile ? 0 : "calc(-15%)",
-                           backgroundColor: customColors.primary.main,
-                           color: customColors.secondary.contrastText,
-                           width: isMobile ? "32px" : "48px", 
-                           height: isMobile ? "32px" : "48px", 
-                           borderRadius: "50%",
-                           display: "flex",
-                           alignItems: "center",
-                           justifyContent: "center",
-                           zIndex: 2, 
-                         }}
-                       >
-                         <Typography variant="body2" sx={{ fontSize: isMobile ? "10px" : "inherit" }}>
-                           {`${product?.discount}% `}
-                           <span style={{ fontSize: isMobile ? "8px" : "14px" }}>OFF</span>
-                         </Typography>
+           
 
-                       </Paper>
-                     )}
 
-                        {/* Imagen del producto */}
-                        <Link to={`/itemDetail/${generateSlug(product.title)}/${product.id}`} onClick={toggleSearch}>
-                         <Box
-                           onMouseEnter={() => handleMouseEnter(product.barcode)}
-                           onMouseLeave={handleMouseLeave}
-                         >
-                           <CardMedia
-                             component="img"
-                             height="140"
-                             image={product.images[0]}
-                             alt={product.title}
-                             onLoad={handleImageLoad}
-                             style={{
-                               objectFit: "contain",
-                               width: "100%",
-                               marginBottom: "8px",
-                               zIndex: 0,
-                               transition: "transform 0.3s ease-in-out",
-                               transform: hoveredProduct === product ? "scale(1.1)" : "scale(1)",
-                             }}
-                           />
-                         </Box>
-                       </Link>                                                  
-                   </Box>
+                            {/* Etiqueta de % Descuento */}
+                            <Box sx={{ position: "relative" }}>
+                          {/* Paper para la etiqueta de descuento */}
+                          {parseInt(String(product?.discount)) !== 0 && (
+                            <Paper
+                              elevation={0}
+                              sx={{
+                                position: "absolute",
+                                top: "0", // Ajusta la posición vertical
+                                left: isMobile ? "-70px" : "-140px",
+                                backgroundColor: customColors.primary.main,
+                                color: customColors.secondary.contrastText,
+                                width: isMobile ? "36px" : "48px",
+                                height: isMobile ? "36px" : "48px",
+                                borderRadius: "50%",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                zIndex: 100, // Ajusta el índice z para que el Paper esté sobre el Card
+                              }}
+                            >
+                              {/* Contenido del Paper */}
+                              <Typography variant="body2" sx={{ fontSize: isMobile ? "8px" : "inherit" }}>
+                                {`${product?.discount}% `}
+                                <span style={{ fontSize: isMobile ? "10px" : "14px" }}>OFF</span>
+                              </Typography>
+                            </Paper>
+                          )}
+                          </Box>
+                                 {/* Paper para la etiqueta de descuento */}
 
-               {selectedProduct === product ?  (
-                     <SelectionCard
-                       isOpen={true}
-                       onClose={() => setSelectedProduct(null)}
-                       handleBuyClick={handleBuyClick}
-                       product={product}
-                     
-                     />
-                   ) : null}
-               <CardContent>
 
+                                 {/* Imagen del producto */}
+
+                      <Box sx={{ position: "relative" }}>
+                         
+                             <Link to={`/itemDetail/${generateSlug(product.title)}/${product.id}`}   onClick={toggleSearch}>
+                              <Box
+                                onMouseEnter={() => handleMouseEnter(product.barcode)}
+                                onMouseLeave={handleMouseLeave}
+                              >
+                                <CardMedia
+                                  component="img"
+                                  height="140"
+                                  image={product.images[0]}
+                                  alt={product.title}
+                                  onLoad={handleImageLoad}
+                                  style={{
+                                    objectFit: "contain",
+                                    width: "100%",
+                                    marginBottom: "8px",
+                                    zIndex: 0,
+                                    transition: "transform 0.3s ease-in-out",
+                                    transform: hoveredProduct === product ? "scale(1.1)" : "scale(1)",
+                                  }}
+                                />
+                              </Box>
+                            </Link>                                                  
+                        </Box>
+
+                    {selectedProduct === product ?  (
+                          <SelectionCard
+                            isOpen={true}
+                            onClose={() => setSelectedProduct(null)}
+                            handleBuyClick={handleBuyClick}
+                            product={product}
+                          
+                          />
+                        ) : null}
+                  <CardContent>
+
+                      {/* Imagen del producto */}
+          
                  {/* Descripción del Producto */}
 
-               <Typography
-                 variant="subtitle1"
-                 gutterBottom
-                 sx={{
-                   ...productTitleStyles,
-                   whiteSpace: 'nowrap',
-                   overflow: 'hidden',
-                   textOverflow: 'ellipsis',
-                   cursor: 'pointer',
-                   ...(clickedProduct === product.description
-                     ? {
-                         whiteSpace: 'normal',
-                         maxWidth: '70%',
-                         margin: '0 auto',
-                       }
-                     : null),
-                 }}
-                 onClick={() => handleTitleClick(product.description)}
-               >
-                 {clickedProduct === product.description
-                   ? product.description
-                   : product.description.length > maxTitleLength
-                   ? `${product.description.substring(0, maxTitleLength)}...`
-                   : product.description}
-                 </Typography>
+                 <Typography
+                          variant="subtitle1"
+                          gutterBottom
+                          sx={{
+                            ...productTitleStyles,
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            cursor: 'pointer',
+                            ...(clickedProduct === product.description
+                              ? {
+                                  whiteSpace: 'normal',
+                                  maxWidth: '70%',
+                                  margin: '0 auto',
+                                }
+                              : null),
+                          }}
+                          onClick={() => handleTitleClick(product.description)}
+                        >
+                          {clickedProduct === product.description
+                            ? product.description.toUpperCase()
+                            : product.description.length > maxTitleLength
+                            ? `${product.description.substring(0, maxTitleLength).toUpperCase()}...`
+                            : product.description.toUpperCase()}
+                        </Typography>
+                          {/* Descripción del Producto */}
+
 
                    {/* Precio del producto */}
 

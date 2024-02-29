@@ -252,7 +252,7 @@ const ItemDetail: React.FC = () => {
                   margin: "0 auto",
                 }}
               >
-                {product?.title}
+                {product?.title.toUpperCase()}
               </Typography>
 
                 {/* Precio Original precio con descuento */}
