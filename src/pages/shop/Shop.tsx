@@ -17,7 +17,7 @@ const Shop: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const isMobile = useMediaQuery('(max-width: 600px)');
-  const maxTitleLength = isMobile ? 10 : 25;
+  const maxTitleLength = isMobile ? 8 : 22;
   const [clickedProduct, setClickedProduct] = useState<string | null>(null);
   const handleTitleClick = (title: string) => {
     setClickedProduct((prevClickedProduct) =>
@@ -202,31 +202,32 @@ const Shop: React.FC = () => {
 
                       {/* Descripción del Producto */}
 
-                    <Typography
-                      variant="subtitle1"
-                      gutterBottom
-                      sx={{
-                        ...productTitleStyles,
-                        whiteSpace: 'nowrap',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        cursor: 'pointer',
-                        ...(clickedProduct === product.description
-                          ? {
-                              whiteSpace: 'normal',
-                              maxWidth: '70%',
-                              margin: '0 auto',
-                            }
-                          : null),
-                      }}
-                      onClick={() => handleTitleClick(product.description)}
-                    >
-                      {clickedProduct === product.description
-                        ? product.description
-                        : product.description.length > maxTitleLength
-                        ? `${product.description.substring(0, maxTitleLength)}...`
-                        : product.description}
-                      </Typography>
+                      <Typography
+                          variant="subtitle1"
+                          gutterBottom
+                          sx={{
+                            ...productTitleStyles,
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            cursor: 'pointer',
+                            ...(clickedProduct === product.description
+                              ? {
+                                  whiteSpace: 'normal',
+                                  maxWidth: '70%',
+                                  margin: '0 auto',
+                                }
+                              : null),
+                          }}
+                          onClick={() => handleTitleClick(product.description)}
+                        >
+                          {clickedProduct === product.description
+                            ? product.description.toUpperCase()
+                            : product.description.length > maxTitleLength
+                            ? `${product.description.substring(0, maxTitleLength).toUpperCase()}...`
+                            : product.description.toUpperCase()}
+                        </Typography>
+
 
                         {/* Precio del producto */}
 
