@@ -26,6 +26,8 @@ import {CartItem } from "../../../type/type"
 import {customColors} from "../../../styles/styles"
 import { Product } from '../../../type/type';
 import Notification from '../../../notification/Notification';
+import useMediaQuery from '@mui/material/useMediaQuery';
+
 const ItemDetail: React.FC = () => {
 
   const { id } = useParams<{ id: string | undefined }>();
@@ -33,7 +35,14 @@ const ItemDetail: React.FC = () => {
   const [product, setProduct] = useState<any>(null);
   const [productCounters, setProductCounters] = useState<{ [key: string]: number }>({});
   const [exceededMaxInCart, setExceededMaxInCart] = useState<{ [key: string]: boolean }>({});
-
+  const isMobile = useMediaQuery('(max-width: 600px)');
+  const maxTitleLength = isMobile ? 10 : 22;
+  const [clickedProduct, setClickedProduct] = useState<string | null>(null);
+  const handleTitleClick = (title: string) => {
+    setClickedProduct((prevClickedProduct) =>
+      prevClickedProduct === title ? null : title
+    );
+  };
   const [showError, setShowError] = useState(false);
   const errorMessage = "Tienes el máximo disponible";
 
@@ -152,6 +161,7 @@ const ItemDetail: React.FC = () => {
     }
 };
 
+const productTitleStyles = { fontSize: "1rem", fontWeight: "bold" };
 
   return (
     <Box
@@ -242,18 +252,39 @@ const ItemDetail: React.FC = () => {
               }}
             >
 
-              {/* Título */}
-              <Typography
-                variant="h5"
-                component="div"
-                align="center"
-                sx={{
-                  color: customColors.primary.main,
-                  margin: "0 auto",
-                }}
-              >
-                {product?.title.toUpperCase()}
-              </Typography>
+             {/* Título */}
+             {product && ( // Verificar si product no es null
+  <Typography
+    variant="h5"
+    component="div"
+    align="center"
+    sx={{
+      color: customColors.primary.main,
+      margin: "0 auto",
+      ...productTitleStyles,
+      whiteSpace: 'nowrap',
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      cursor: 'pointer',
+      ...(clickedProduct === product.title
+        ? {
+            whiteSpace: 'normal',
+            maxWidth: '70%',
+            margin: '0 auto',
+          }
+        : null),
+    }}
+    onClick={() => handleTitleClick(product.title)}
+  >
+    {clickedProduct === product.title
+      ? product.title.toUpperCase()
+      : product.title.length > maxTitleLength
+      ? `${product.title.substring(0, maxTitleLength).toUpperCase()}...`
+      : product.title.toUpperCase()}
+  </Typography>
+)}
+
+
 
                 {/* Precio Original precio con descuento */}
 
