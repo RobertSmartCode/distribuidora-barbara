@@ -245,33 +245,37 @@ useEffect(() => {
                 ) : null}
             <CardContent>
 
-            <Typography
-              variant="subtitle1"
-              gutterBottom
-              sx={{
-                ...productTitleStyles,
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                cursor: 'pointer',
-                ...(clickedProduct === product.description
-                  ? {
-                      whiteSpace: 'normal',
-                      maxWidth: '70%',
-                      margin: '0 auto',
-                    }
-                  : null),
-              }}
-              onClick={() => handleTitleClick(product.description)}
-            >
-              {clickedProduct === product.description
-                ? product.description.toUpperCase()
-                : product.description.length > maxTitleLength
-                ? `${product.description.substring(0, maxTitleLength)}...`
-                : product.description.toUpperCase()}
-              </Typography>
 
 
+                              {/* Descripción del Producto */}
+
+                              <Typography
+                                variant="subtitle1"
+                                gutterBottom
+                                sx={{
+                                  ...productTitleStyles,
+                                  whiteSpace: 'nowrap',
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis',
+                                  cursor: 'pointer',
+                                  ...(clickedProduct === product.description
+                                    ? {
+                                        whiteSpace: 'normal',
+                                        maxWidth: '70%',
+                                        margin: '0 auto',
+                                      }
+                                    : null),
+                                }}
+                                onClick={() => handleTitleClick(product.description)}
+                              >
+                                {clickedProduct === product.description
+                                  ? product.description.toUpperCase()
+                                  : product.description.length > maxTitleLength
+                                  ? `${product.description.substring(0, maxTitleLength).toUpperCase()}...`
+                                  : product.description.toUpperCase()}
+                              </Typography>
+                          {/* Descripción del Producto */}
+  
 
                         {/* Precio del producto */}
 
