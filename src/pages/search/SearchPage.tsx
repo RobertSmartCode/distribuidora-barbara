@@ -63,42 +63,41 @@ const SearchPage: React.FC = () => {
 
 
 
+  useEffect(() => {
+    const normalizedSearchKeyword = searchKeyword.toLowerCase();
+     
+    const fetchSearchResults = async () => {
+      try {
+        const productsCollection = collection(db, 'products');
+        const searchQuery = query(
+          productsCollection,
+          where("keywords", ">=", normalizedSearchKeyword),
+          where("keywords", "<=", (normalizedSearchKeyword + "\uf8ff")),
+          where("online", "==", true), // Condición para productos en línea
+          where("quantities", ">", 0)   // Condición para productos con cantidad disponible
+        );
+        
+        const querySnapshot = await getDocs(searchQuery);
+        const productsData = querySnapshot.docs.map((doc) => ({
+          ...doc.data(),
+          id: doc.id,
+        } as Product));
   
-useEffect(() => {
-  const  normalizedSearchKeyword = searchKeyword.toLowerCase()
-   
-   const fetchSearchResults = async () => {
-     try {
-       const productsCollection = collection(db, 'products');
-       const searchQuery = query(
-         productsCollection,
-         where("keywords", ">=", normalizedSearchKeyword  ),
-         where("keywords", "<=", (normalizedSearchKeyword + "\uf8ff") )
-         
-       );
-       const querySnapshot = await getDocs(searchQuery);
-
-       const productsData = querySnapshot.docs.map((doc) => ({
-         ...doc.data(),
-         id: doc.id,
-       } as Product));
-
-
-       setSearchResults(productsData);
-       setAllProducts(productsData);
-       setProducts(productsData);
-     } catch (error) {
-       console.error('Error al obtener productos filtrados:', error);
-     }
-   };
-
-   if (searchKeyword.trim() !== "") {
-     fetchSearchResults();
-   } else {
-     setSearchResults([]);
-   }
- }, [searchKeyword]);
-
+        setSearchResults(productsData);
+        setAllProducts(productsData);
+        setProducts(productsData);
+      } catch (error) {
+        console.error('Error al obtener productos filtrados:', error);
+      }
+    };
+  
+    if (searchKeyword.trim() !== "") {
+      fetchSearchResults();
+    } else {
+      setSearchResults([]);
+    }
+  }, [searchKeyword]);
+  
 
 
  const containerStyles = { padding: '8px' };

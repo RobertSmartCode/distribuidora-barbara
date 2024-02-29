@@ -147,7 +147,7 @@ const CartList: React.FC = () => {
                 <DeleteIcon />
               </IconButton>
             </ListItem>
-            <Divider />
+
             {exceededMaxInCart[`${item.barcode}`] && (
               <ListItemText
                 primary=""
@@ -155,6 +155,7 @@ const CartList: React.FC = () => {
                 style={{ color: 'red', marginTop: '10px', textAlign: 'center' }}
               />
             )}
+            <Divider />
           </React.Fragment>
         ))}
       </List>

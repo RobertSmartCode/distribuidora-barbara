@@ -69,7 +69,7 @@ const Shop: React.FC = () => {
         const querySnapshot = await getDocs(productsQuery);
         const productsData = querySnapshot.docs
           .map((doc) => ({ ...doc.data(), id: doc.id } as Product))
-          .filter((product) => product.online === true); 
+          .filter((product) => product.online === true && product.quantities > 0);
   
         setAllProducts(productsData);
         setProducts(productsData);

@@ -34,22 +34,25 @@ const ProductScanner: React.FC = () => {
     try {
       setLoading(true);
       const products = await getProductByBarCode(barcode);
-
+  
       if (products.length > 0) {
-        if ('id' in products[0]) {
+        const productToAdd = products[0] as Product;
+  
+        if ('id' in productToAdd && productToAdd.quantities > 0) {
           addToCart({
-            ...products[0] as Product,
+            ...productToAdd,
             quantity: 1,
           });
-
+  
           playBarcodeScanBeep();
+          console.log('Producto encontrado y agregado al carrito:', productToAdd);
+        } else {
+          console.log('Producto encontrado, pero no hay suficiente stock.');
         }
-
-        console.log('Producto encontrado y agregado al carrito:', products[0]);
       } else {
         console.log('Producto no encontrado');
       }
-
+  
       setAutoBarcode('');
     } catch (error) {
       console.error('Error al escanear el producto:', error);
@@ -57,7 +60,8 @@ const ProductScanner: React.FC = () => {
       setLoading(false);
     }
   };
-
+  
+  
   useEffect(() => {
     if (autoBarcode) {
       scanProduct(autoBarcode);
