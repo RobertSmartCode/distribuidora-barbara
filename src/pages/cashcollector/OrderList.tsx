@@ -96,10 +96,8 @@ const OrderList: React.FC = () => {
     return () => unsubscribe();
   }, []);
 
-
   const handlePaymentMethod = async () => {
     if (selectedOrder && selectedOrder.id) {
-      
       console.log('selectedOrder.id:', selectedOrder.id);
     
       const firestore = getFirestore();
@@ -108,22 +106,26 @@ const OrderList: React.FC = () => {
     
       try {
         await Promise.all(selectedOrder.products.map(async (product) => {
-          console.log('product.id:', product.id);
-          const productRef = doc(collection(firestore, 'products'), product.id);
-          console.log('productRef:', productRef);
+          if (product.id) { // Verifica si product.id es una cadena no vacía antes de crear la referencia del documento
+            console.log('product.id:', product.id);
+            const productRef = doc(collection(firestore, 'products'), product.id);
+            console.log('productRef:', productRef);
     
-          await runTransaction(firestore, async (transaction) => {
-            const productDoc = await transaction.get(productRef);
+            await runTransaction(firestore, async (transaction) => {
+              const productDoc = await transaction.get(productRef);
     
-            if (!productDoc.exists()) {
-              throw new Error(`El producto ${product.title} (ID: ${product.id}) no existe en la base de datos.`);
-            }
+              if (!productDoc.exists()) {
+                throw new Error(`El producto ${product.title} (ID: ${product.id}) no existe en la base de datos.`);
+              }
     
-            const productData = productDoc.data();
-            const updatedQuantity = productData.quantities - product.quantity;
+              const productData = productDoc.data();
+              const updatedQuantity = productData.quantities - product.quantity;
     
-            transaction.update(productRef, { quantities: updatedQuantity });
-          });
+              transaction.update(productRef, { quantities: updatedQuantity });
+            });
+          } else {
+            console.error('product.id está vacío o no definido.');
+          }
         }));
     
         await addDoc(completedOrdersCollection, {
