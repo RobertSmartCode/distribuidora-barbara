@@ -28,17 +28,15 @@ import {
   ListItemText,
   ListItemAvatar,
   Avatar,
+  CircularProgress // Agregamos CircularProgress
 } from '@mui/material';
 import { useReactToPrint } from 'react-to-print';
 
 import { Orderbox, CompletedOrderbox, } from '../../type/type';
 
-
-
 interface OrderPrintComponentProps {
   order: Orderbox | null;
 }
-
 
 const OrderPrintComponent: React.FC<OrderPrintComponentProps & { ref: ForwardedRef<HTMLDivElement> }> = forwardRef(({ order }, ref) => {
   if (!order) return null;
@@ -70,7 +68,6 @@ const OrderPrintComponent: React.FC<OrderPrintComponentProps & { ref: ForwardedR
   );
 });
 
-
 const OrderList: React.FC = () => {
   const [orders, setOrders] = useState<Orderbox[]>([]);
   const [selectedOrder, setSelectedOrder] = useState<Orderbox | null>(null);
@@ -78,6 +75,7 @@ const OrderList: React.FC = () => {
   const [paymentMethod, setPaymentMethod] = useState<string>('');
   const [openDialog, setOpenDialog] = useState<boolean>(false);
   const [openDialogPrinte, setOpenDialogPrinte] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false); // Estado para indicar que se están ejecutando procesos
   const componentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -96,71 +94,62 @@ const OrderList: React.FC = () => {
     return () => unsubscribe();
   }, []);
 
-
-
   const handlePaymentMethod = async () => {
     if (selectedOrder && selectedOrder.id) {
       const firestore = getFirestore();
       const ordersCollection = collection(firestore, 'ordersbox');
       const completedOrdersCollection = collection(firestore, 'completedOrders');
-  
+
       try {
-        // Itera sobre los productos usando un bucle for...of
+        setLoading(true); // Activamos el indicador de carga al iniciar el proceso
+
         for (const product of selectedOrder.products) {
-          // Verifica si el producto tiene un id válido
           if (product.id) {
-            // Obtiene una referencia al documento del producto
             const productRef = await doc(collection(firestore, 'products'), product.id);
-  
-            // Ejecuta una transacción para actualizar la cantidad del producto
+
             await runTransaction(firestore, async (transaction) => {
               const productDoc = await transaction.get(productRef);
-  
+
               if (!productDoc.exists()) {
                 throw new Error(`El producto ${product.title} (ID: ${product.id}) no existe en la base de datos.`);
               }
-  
+
               const productData = productDoc.data();
               const updatedQuantity = productData.quantities - product.quantity;
-  
+
               transaction.update(productRef, { quantities: updatedQuantity });
             });
           } else {
-            // Si el id del producto está vacío o no definido, lanza un error
             throw new Error('El id del producto está vacío o no definido.');
           }
         }
-  
-        // Agrega la orden completada a la colección de órdenes completadas
+
         await addDoc(completedOrdersCollection, {
           ...selectedOrder,
           paymentMethod,
           completedTimestamp: Timestamp.now(),
         });
-  
-        // Actualiza el estado para mostrar la orden completada seleccionada
+
         setSelectedcompletedOrders({
           ...selectedOrder,
           paymentMethod,
           completedTimestamp: new Date(Timestamp.now().toMillis()),
         });
-  
-        // Elimina la orden de la colección de órdenes pendientes
+
         await deleteDoc(doc(ordersCollection, selectedOrder.id));
-  
-        // Establece el estado para mostrar el diálogo de impresión
+
         setOpenDialogPrinte(true);
         setOpenDialog(false);
       } catch (error) {
         console.error('Error handling payment method:', error);
+      } finally {
+        setLoading(false); // Desactivamos el indicador de carga al finalizar el proceso
       }
     } else {
       console.error('selectedOrder o su propiedad "id" es nula o vacía');
     }
   };
-  
-  
-  
+
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
   });
@@ -242,6 +231,12 @@ const OrderList: React.FC = () => {
         <Button variant="contained" onClick={handlePrint}>Imprimir Orden</Button>
         <Button onClick={handleClosePrint}>Cancelar</Button>
       </Dialog>
+
+      {loading && (
+        <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
+          <CircularProgress />
+        </div>
+      )}
     </Grid>
   );
 };
