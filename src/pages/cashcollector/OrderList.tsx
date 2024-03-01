@@ -108,7 +108,7 @@ const OrderList: React.FC = () => {
     
       try {
         await Promise.all(selectedOrder.products.map(async (product) => {
-          console.log('productRef:', product.id);
+          console.log('product.id:', product.id);
           const productRef = doc(collection(firestore, 'products'), product.id);
           console.log('productRef:', productRef);
     
