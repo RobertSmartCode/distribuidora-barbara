@@ -96,9 +96,6 @@ const OrderList: React.FC = () => {
     return () => unsubscribe();
   }, []);
 
-  // console.log(orders)
-  // console.log("ProductS:",selectedOrder )
-
   const handlePaymentMethod = async () => {
     if (selectedOrder) {
       const firestore = getFirestore();
@@ -106,16 +103,12 @@ const OrderList: React.FC = () => {
       const completedOrdersCollection = collection(firestore, 'completedOrders');
   
       try {
-      
-  
         // Restar la cantidad de productos vendidos de la base de datos
         await Promise.all(selectedOrder.products.map(async (product) => {
           const productRef = doc(collection(firestore, 'products'), product.id);
   
           // Obtener el documento del producto y realizar la transacción
           await runTransaction(firestore, async (transaction) => {
-        
-  
             // Obtener el documento del producto
             const productDoc = await transaction.get(productRef);
   
@@ -127,10 +120,8 @@ const OrderList: React.FC = () => {
             const productData = productDoc.data();
             const updatedQuantity = productData.quantities - product.quantity; // Utilizar 'quantities' en lugar de 'quantity'
   
-  
             // Actualizar la cantidad del producto en la base de datos
             transaction.update(productRef, { quantities: updatedQuantity }); // Utilizar 'quantities' en lugar de 'quantity'
-  
           });
         }));
   
@@ -148,12 +139,9 @@ const OrderList: React.FC = () => {
         });
   
         // Eliminar la orden de la colección de órdenes pendientes
-        if (selectedOrder && selectedOrder.id) {
+        if (selectedOrder.id) {
           await deleteDoc(doc(ordersCollection, selectedOrder.id));
         }
-        
-  
-        console.log(`Order ${selectedOrder.id} moved to completedOrders with payment method: ${paymentMethod}`);
   
         setOpenDialogPrinte(true);
         setOpenDialog(false);
@@ -162,6 +150,7 @@ const OrderList: React.FC = () => {
       }
     }
   };
+  
   
   
 
