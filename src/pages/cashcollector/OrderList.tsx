@@ -148,7 +148,10 @@ const OrderList: React.FC = () => {
         });
   
         // Eliminar la orden de la colección de órdenes pendientes
-        await deleteDoc(doc(ordersCollection, selectedOrder.id));
+        if (selectedOrder && selectedOrder.id) {
+          await deleteDoc(doc(ordersCollection, selectedOrder.id));
+        }
+        
   
         console.log(`Order ${selectedOrder.id} moved to completedOrders with payment method: ${paymentMethod}`);
   
