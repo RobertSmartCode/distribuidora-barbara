@@ -108,9 +108,10 @@ const OrderList: React.FC = () => {
     
       try {
         await Promise.all(selectedOrder.products.map(async (product) => {
+
           if (product.id) { 
             
-            const productRef = doc(collection(firestore, 'products'), product.id);
+            const productRef = await doc(collection(firestore, 'products'), product.id);
     
             await runTransaction(firestore, async (transaction) => {
               const productDoc = await transaction.get(productRef);
@@ -125,6 +126,7 @@ const OrderList: React.FC = () => {
               transaction.update(productRef, { quantities: updatedQuantity });
             });
           } 
+
         }));
     
         await addDoc(completedOrdersCollection, {
