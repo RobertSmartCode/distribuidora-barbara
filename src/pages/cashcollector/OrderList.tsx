@@ -96,11 +96,11 @@ const OrderList: React.FC = () => {
     return () => unsubscribe();
   }, []);
 
+
   const handlePaymentMethod = async () => {
     if (selectedOrder && selectedOrder.id) {
+      console.log('selectedOrder.id:', selectedOrder.id); // Verificar el valor de selectedOrder.id
       const firestore = getFirestore();
-      console.log('firestore:', firestore); // Agrega esta línea para depurar
-  
       const ordersCollection = collection(firestore, 'ordersbox');
       const completedOrdersCollection = collection(firestore, 'completedOrders');
   
@@ -147,12 +147,12 @@ const OrderList: React.FC = () => {
         setOpenDialog(false);
       } catch (error) {
         console.error('Error handling payment method:', error);
-        console.log('selectedOrder.id:', selectedOrder.id);
       }
     } else {
       console.error('selectedOrder o su propiedad "id" es nula o vacía');
     }
   };
+  
   
   
   
