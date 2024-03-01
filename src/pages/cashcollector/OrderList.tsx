@@ -100,55 +100,63 @@ const OrderList: React.FC = () => {
 
   const handlePaymentMethod = async () => {
     if (selectedOrder && selectedOrder.id) {
-    
-    
       const firestore = getFirestore();
       const ordersCollection = collection(firestore, 'ordersbox');
       const completedOrdersCollection = collection(firestore, 'completedOrders');
-    
+  
       try {
-        await Promise.all(selectedOrder.products.map(async (product) => {
-
-          if (product.id) { 
-            
+        // Itera sobre los productos usando un bucle for...of
+        for (const product of selectedOrder.products) {
+          // Verifica si el producto tiene un id válido
+          if (product.id) {
+            // Obtiene una referencia al documento del producto
             const productRef = await doc(collection(firestore, 'products'), product.id);
-    
+  
+            // Ejecuta una transacción para actualizar la cantidad del producto
             await runTransaction(firestore, async (transaction) => {
               const productDoc = await transaction.get(productRef);
-    
+  
               if (!productDoc.exists()) {
                 throw new Error(`El producto ${product.title} (ID: ${product.id}) no existe en la base de datos.`);
               }
-    
+  
               const productData = productDoc.data();
               const updatedQuantity = productData.quantities - product.quantity;
-    
+  
               transaction.update(productRef, { quantities: updatedQuantity });
             });
-          } 
-
-        }));
-    
+          } else {
+            // Si el id del producto está vacío o no definido, lanza un error
+            throw new Error('El id del producto está vacío o no definido.');
+          }
+        }
+  
+        // Agrega la orden completada a la colección de órdenes completadas
         await addDoc(completedOrdersCollection, {
           ...selectedOrder,
           paymentMethod,
           completedTimestamp: Timestamp.now(),
         });
-    
+  
+        // Actualiza el estado para mostrar la orden completada seleccionada
         setSelectedcompletedOrders({
           ...selectedOrder,
           paymentMethod,
           completedTimestamp: new Date(Timestamp.now().toMillis()),
         });
-    
+  
+        // Elimina la orden de la colección de órdenes pendientes
         await deleteDoc(doc(ordersCollection, selectedOrder.id));
-    
+  
+        // Establece el estado para mostrar el diálogo de impresión
         setOpenDialogPrinte(true);
         setOpenDialog(false);
       } catch (error) {
         console.error('Error handling payment method:', error);
       }
-    } 
+    } else {
+      console.error('selectedOrder o su propiedad "id" es nula o vacía');
+    }
   };
   
   
