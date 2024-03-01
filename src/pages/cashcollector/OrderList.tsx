@@ -97,29 +97,21 @@ const OrderList: React.FC = () => {
   }, []);
 
 
-  
-
   const handlePaymentMethod = async () => {
     if (selectedOrder && selectedOrder.id) {
-      console.log('selectedOrder:', selectedOrder);
       const firestore = getFirestore();
-      console.log('firestore:', firestore);
       const ordersCollection = collection(firestore, 'ordersbox');
-      console.log('ordersCollection:', ordersCollection);
       const completedOrdersCollection = collection(firestore, 'completedOrders');
-      console.log('completedOrdersCollection:', completedOrdersCollection);
   
       try {
         // Restar la cantidad de productos vendidos de la base de datos
         await Promise.all(selectedOrder.products.map(async (product) => {
           const productRef = doc(collection(firestore, 'products'), product.id);
-          console.log('productRef:', productRef);
   
           // Obtener el documento del producto y realizar la transacción
           await runTransaction(firestore, async (transaction) => {
             // Obtener el documento del producto
             const productDoc = await transaction.get(productRef);
-            console.log('productDoc:', productDoc);
   
             if (!productDoc.exists()) {
               throw new Error(`El producto ${product.title} (ID: ${product.id}) no existe en la base de datos.`);
@@ -154,6 +146,7 @@ const OrderList: React.FC = () => {
         setOpenDialog(false);
       } catch (error) {
         console.error('Error handling payment method:', error);
+        console.log('selectedOrder.id:', selectedOrder.id);
       }
     } else {
       console.error('selectedOrder o su propiedad "id" es nula o vacía');
