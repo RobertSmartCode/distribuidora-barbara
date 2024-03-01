@@ -96,11 +96,10 @@ const OrderList: React.FC = () => {
     return () => unsubscribe();
   }, []);
 
+
   const handlePaymentMethod = async () => {
     // Verifica si selectedOrder y selectedOrder.id están definidos y no son nulos
     if (selectedOrder && selectedOrder.id) {
-      console.log('selectedOrder.id:', selectedOrder.id); // Verificar el valor de selectedOrder.id
-  
       // Obtén una instancia de Firestore
       const firestore = getFirestore();
   
@@ -111,7 +110,8 @@ const OrderList: React.FC = () => {
       try {
         // Restar la cantidad de productos vendidos de la base de datos
         await Promise.all(selectedOrder.products.map(async (product) => {
-          const productRef = doc(collection(firestore, 'products'), product.id);
+          // Obtén la referencia del producto con await
+          const productRef = await doc(collection(firestore, 'products'), product.id);
   
           // Realiza una transacción para actualizar la cantidad del producto
           await runTransaction(firestore, async (transaction) => {
