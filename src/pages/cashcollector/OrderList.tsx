@@ -95,21 +95,31 @@ const OrderList: React.FC = () => {
 
     return () => unsubscribe();
   }, []);
+
+
+  
+
   const handlePaymentMethod = async () => {
     if (selectedOrder && selectedOrder.id) {
+      console.log('selectedOrder:', selectedOrder);
       const firestore = getFirestore();
+      console.log('firestore:', firestore);
       const ordersCollection = collection(firestore, 'ordersbox');
+      console.log('ordersCollection:', ordersCollection);
       const completedOrdersCollection = collection(firestore, 'completedOrders');
+      console.log('completedOrdersCollection:', completedOrdersCollection);
   
       try {
         // Restar la cantidad de productos vendidos de la base de datos
         await Promise.all(selectedOrder.products.map(async (product) => {
           const productRef = doc(collection(firestore, 'products'), product.id);
+          console.log('productRef:', productRef);
   
           // Obtener el documento del producto y realizar la transacción
           await runTransaction(firestore, async (transaction) => {
             // Obtener el documento del producto
             const productDoc = await transaction.get(productRef);
+            console.log('productDoc:', productDoc);
   
             if (!productDoc.exists()) {
               throw new Error(`El producto ${product.title} (ID: ${product.id}) no existe en la base de datos.`);
