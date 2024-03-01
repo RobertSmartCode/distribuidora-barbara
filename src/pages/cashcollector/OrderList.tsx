@@ -5,7 +5,7 @@ import {
   Timestamp,
   onSnapshot,
   doc,
-  deleteDoc,
+  // deleteDoc,
   addDoc,
   runTransaction
 } from 'firebase/firestore';
@@ -101,7 +101,7 @@ const OrderList: React.FC = () => {
     if (selectedOrder && selectedOrder.id) {
       console.log('selectedOrder.id:', selectedOrder.id); // Verificar el valor de selectedOrder.id
       const firestore = getFirestore();
-      const ordersCollection = collection(firestore, 'ordersbox');
+      // const ordersCollection = collection(firestore, 'ordersbox');
       const completedOrdersCollection = collection(firestore, 'completedOrders');
   
       try {
@@ -140,10 +140,8 @@ const OrderList: React.FC = () => {
           completedTimestamp: new Date(Timestamp.now().toMillis()), // Convertir a Date
         });
   
-        // Eliminar la orden de la colección de órdenes pendientes
-        console.log('ordersCollection:', ordersCollection); // Verificar la colección de órdenes
-        console.log('selectedOrder.id:', selectedOrder.id); // Verificar el valor de selectedOrder.id
-        await deleteDoc(doc(ordersCollection, selectedOrder.id));
+      
+        // await deleteDoc(doc(ordersCollection, selectedOrder.id));
 
   
         setOpenDialogPrinte(true);
