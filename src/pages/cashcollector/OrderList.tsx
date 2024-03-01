@@ -96,6 +96,8 @@ const OrderList: React.FC = () => {
     return () => unsubscribe();
   }, []);
 
+
+
   const handlePaymentMethod = async () => {
     if (selectedOrder && selectedOrder.id) {
       console.log('selectedOrder.id:', selectedOrder.id);
@@ -106,10 +108,9 @@ const OrderList: React.FC = () => {
     
       try {
         await Promise.all(selectedOrder.products.map(async (product) => {
-          if (product.id) { // Verifica si product.id es una cadena no vacía antes de crear la referencia del documento
-            console.log('product.id:', product.id);
+          if (product.id) { 
+            
             const productRef = doc(collection(firestore, 'products'), product.id);
-            console.log('productRef:', productRef);
     
             await runTransaction(firestore, async (transaction) => {
               const productDoc = await transaction.get(productRef);
@@ -147,9 +148,7 @@ const OrderList: React.FC = () => {
       } catch (error) {
         console.error('Error handling payment method:', error);
       }
-    } else {
-      console.error('selectedOrder o su propiedad "id" es nula o vacía');
-    }
+    } 
   };
   
   
