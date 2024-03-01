@@ -95,9 +95,8 @@ const OrderList: React.FC = () => {
 
     return () => unsubscribe();
   }, []);
-
   const handlePaymentMethod = async () => {
-    if (selectedOrder) {
+    if (selectedOrder && selectedOrder.id) {
       const firestore = getFirestore();
       const ordersCollection = collection(firestore, 'ordersbox');
       const completedOrdersCollection = collection(firestore, 'completedOrders');
@@ -139,15 +138,15 @@ const OrderList: React.FC = () => {
         });
   
         // Eliminar la orden de la colección de órdenes pendientes
-        if (selectedOrder.id) {
-          await deleteDoc(doc(ordersCollection, selectedOrder.id));
-        }
+        await deleteDoc(doc(ordersCollection, selectedOrder.id));
   
         setOpenDialogPrinte(true);
         setOpenDialog(false);
       } catch (error) {
         console.error('Error handling payment method:', error);
       }
+    } else {
+      console.error('selectedOrder o su propiedad "id" es nula o vacía');
     }
   };
   
