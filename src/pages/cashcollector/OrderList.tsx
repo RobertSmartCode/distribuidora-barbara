@@ -96,10 +96,11 @@ const OrderList: React.FC = () => {
     return () => unsubscribe();
   }, []);
 
-
   const handlePaymentMethod = async () => {
     if (selectedOrder && selectedOrder.id) {
       const firestore = getFirestore();
+      console.log('firestore:', firestore); // Agrega esta línea para depurar
+  
       const ordersCollection = collection(firestore, 'ordersbox');
       const completedOrdersCollection = collection(firestore, 'completedOrders');
   
