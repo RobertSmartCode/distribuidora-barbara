@@ -98,70 +98,58 @@ const OrderList: React.FC = () => {
 
 
   const handlePaymentMethod = async () => {
-    // Verifica si selectedOrder y selectedOrder.id están definidos y no son nulos
     if (selectedOrder && selectedOrder.id) {
-      // Obtén una instancia de Firestore
+      
+      console.log('selectedOrder.id:', selectedOrder.id);
+    
       const firestore = getFirestore();
-  
-      // Obtén las colecciones de órdenes y órdenes completadas
       const ordersCollection = collection(firestore, 'ordersbox');
       const completedOrdersCollection = collection(firestore, 'completedOrders');
-  
+    
       try {
-        // Restar la cantidad de productos vendidos de la base de datos
         await Promise.all(selectedOrder.products.map(async (product) => {
-          // Obtén la referencia del producto con await
-          const productRef = await doc(collection(firestore, 'products'), product.id);
-  
-          // Realiza una transacción para actualizar la cantidad del producto
+          console.log('productRef:', product.id);
+          const productRef = doc(collection(firestore, 'products'), product.id);
+          console.log('productRef:', productRef);
+    
           await runTransaction(firestore, async (transaction) => {
-            // Obtiene el documento del producto
             const productDoc = await transaction.get(productRef);
-  
+    
             if (!productDoc.exists()) {
               throw new Error(`El producto ${product.title} (ID: ${product.id}) no existe en la base de datos.`);
             }
-  
-            // Obtiene los datos del producto y calcula la cantidad actualizada
+    
             const productData = productDoc.data();
-            const updatedQuantity = productData.quantities - product.quantity; // Utilizar 'quantities' en lugar de 'quantity'
-  
-            // Actualiza la cantidad del producto en la base de datos
-            transaction.update(productRef, { quantities: updatedQuantity }); // Utilizar 'quantities' en lugar de 'quantity'
+            const updatedQuantity = productData.quantities - product.quantity;
+    
+            transaction.update(productRef, { quantities: updatedQuantity });
           });
         }));
-  
-        // Agrega la orden completada a la colección de órdenes completadas
+    
         await addDoc(completedOrdersCollection, {
           ...selectedOrder,
           paymentMethod,
           completedTimestamp: Timestamp.now(),
         });
-  
-        // Establece la orden completada seleccionada
+    
         setSelectedcompletedOrders({
           ...selectedOrder,
           paymentMethod,
-          completedTimestamp: new Date(Timestamp.now().toMillis()), // Convertir a Date
+          completedTimestamp: new Date(Timestamp.now().toMillis()),
         });
-  
-        // Elimina la orden de la colección de órdenes pendientes
-        console.log('ordersCollection:', ordersCollection); // Verificar la colección de órdenes
-        console.log('selectedOrder.id:', selectedOrder.id); // Verificar el valor de selectedOrder.id
+    
         await deleteDoc(doc(ordersCollection, selectedOrder.id));
-  
-        // Establece el estado para mostrar el diálogo de impresión
+    
         setOpenDialogPrinte(true);
         setOpenDialog(false);
       } catch (error) {
-        // Captura y maneja cualquier error
         console.error('Error handling payment method:', error);
       }
     } else {
-      // Imprime un mensaje de error si selectedOrder o su propiedad "id" son nulos o vacíos
       console.error('selectedOrder o su propiedad "id" es nula o vacía');
     }
   };
+  
   
   
   
