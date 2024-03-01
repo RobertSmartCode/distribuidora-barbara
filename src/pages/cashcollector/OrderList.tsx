@@ -124,9 +124,7 @@ const OrderList: React.FC = () => {
     
               transaction.update(productRef, { quantities: updatedQuantity });
             });
-          } else {
-            console.error('product.id está vacío o no definido.');
-          }
+          } 
         }));
     
         await addDoc(completedOrdersCollection, {
