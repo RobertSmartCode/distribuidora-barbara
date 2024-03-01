@@ -141,7 +141,10 @@ const OrderList: React.FC = () => {
         });
   
         // Eliminar la orden de la colección de órdenes pendientes
+        console.log('ordersCollection:', ordersCollection); // Verificar la colección de órdenes
+        console.log('selectedOrder.id:', selectedOrder.id); // Verificar el valor de selectedOrder.id
         await deleteDoc(doc(ordersCollection, selectedOrder.id));
+
   
         setOpenDialogPrinte(true);
         setOpenDialog(false);
