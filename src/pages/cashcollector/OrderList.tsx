@@ -100,7 +100,7 @@ const OrderList: React.FC = () => {
 
   const handlePaymentMethod = async () => {
     if (selectedOrder && selectedOrder.id) {
-      console.log('selectedOrder.id:', selectedOrder.id);
+    
     
       const firestore = getFirestore();
       const ordersCollection = collection(firestore, 'ordersbox');
@@ -153,9 +153,6 @@ const OrderList: React.FC = () => {
   
   
   
-  
-  
-
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
   });
