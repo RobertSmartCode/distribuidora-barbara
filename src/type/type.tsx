@@ -21,7 +21,9 @@ export interface Product {
   createdAt: string;
   online: boolean;
   location: string;
-  quantity?: number; 
+  quantity?: number;
+  stockAccumulation?: number;
+  quantityHistory?: { quantityAdded: number; date: string; }[];
 }
 
 

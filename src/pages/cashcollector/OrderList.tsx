@@ -116,8 +116,15 @@ const OrderList: React.FC = () => {
 
               const productData = productDoc.data();
               const updatedQuantity = productData.quantities - product.quantity;
+              const updatedSalesCount = productData.salesCount + product.quantity;
+              const updatedStockAccumulation = updatedQuantity + updatedSalesCount;
 
-              transaction.update(productRef, { quantities: updatedQuantity });
+              transaction.update(productRef, { 
+                quantities: updatedQuantity,
+                salesCount: updatedSalesCount,
+                stockAccumulation: updatedStockAccumulation
+              });
+              
             });
           } else {
             throw new Error('El id del producto está vacío o no definido.');
@@ -149,6 +156,8 @@ const OrderList: React.FC = () => {
       console.error('selectedOrder o su propiedad "id" es nula o vacía');
     }
   };
+
+
 
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,

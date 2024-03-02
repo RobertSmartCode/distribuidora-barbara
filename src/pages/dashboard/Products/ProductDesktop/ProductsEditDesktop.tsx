@@ -210,10 +210,6 @@ const handleIsContentInMililitersChange = (event: React.ChangeEvent<HTMLInputEle
   } 
 };
 
-
-
-  
-
   const updateProduct = async (
     collectionRef: CollectionReference,
     productId: string,
@@ -228,78 +224,86 @@ const handleIsContentInMililitersChange = (event: React.ChangeEvent<HTMLInputEle
     }
   };
 
-   // Función para manejar el envío del formulario
-
-   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-  
-    try {
-      // Validar el producto, ya sea el nuevo o el editado
-      const productToValidate = productSelected ;
+        
       
-     
-      await productSchema.validate(productToValidate, { abortEarly: false });
-  
-  
+      // Función para manejar el envío del formulario
+      const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
 
-    
-  
-      // Crear un objeto con la información del producto
-      const productInfo = {
-        ...productToValidate,
-        createdAt: (productToValidate?.createdAt) ?? getFormattedDate(),
-        keywords: (productToValidate?.title ?? "").toLowerCase(),
-        images: images.map(image => image.url),
-        
-      };
-  
-      const productsCollection = collection(db, "products");
-  
-      if (productSelected) {
-        // Actualizar el producto existente sin duplicar las imágenes
-        await updateProduct(productsCollection, productSelected.id, productInfo);
-      }
-  
-      // Limpiar el estado y mostrar un mensaje de éxito
-   
-      updateImages([]); 
-      setSnackbarMessage("Producto Modificado con éxito");
-      setSnackbarOpen(true);
+        try {
+          // Validar el producto, ya sea el nuevo o el editado
+          const productToValidate = productSelected;
 
-      setTimeout(() => {
-        updateSelectedItems([{ name: 'Mis Productos' }]);
-        handleClose();
-      }, 1000);
-  
-    }  catch (error) {
-     
+          if (productToValidate) {
+            await productSchema.validate(productToValidate, { abortEarly: false });
 
-      if (error instanceof Yup.ValidationError) {
+            // Calcular el stock acumulado sumando la cantidad actual del producto y las ventas
+            const quantities = parseInt(String(productToValidate?.quantities || '0'), 10);
+            const salesCount = parseInt(String(productToValidate?.salesCount || '0'), 10);
+            const stockAccumulation = quantities + salesCount;
 
-        // Manejar errores de validación aquí
-        
-        const validationErrors: { [key: string]: string } = {};
-        error.inner.forEach((e) => {
-          if (e.path) {
-            validationErrors[e.path] = e.message;
+            // Calcular la cantidad agregada
+            const previousQuantity = parseInt(String(productToValidate?.stockAccumulation || '0'), 10);
+            console.log("previousQuantity:",previousQuantity)
+            console.log("quantities:",quantities)
+            const quantityAdded = quantities  + salesCount - previousQuantity;
+            console.log("quantityAdded:", quantityAdded)
+
+            // Crear un objeto con la información del producto
+            const productInfo = {
+              ...productToValidate,
+              createdAt: (productToValidate?.createdAt) ?? getFormattedDate(),
+              keywords: (productToValidate?.title ?? "").toLowerCase(),
+              images: images.map(image => image.url),
+              stockAccumulation: stockAccumulation,
+              quantityHistory: [
+                ...(productToValidate.quantityHistory || []),
+                { quantityAdded: quantityAdded, date: getFormattedDate() }
+              ]
+            };
+
+            const productsCollection = collection(db, "products");
+
+            if (productSelected) {
+              // Actualizar el producto existente sin duplicar las imágenes
+              await updateProduct(productsCollection, productSelected.id, productInfo);
+            }
+
+            // Limpiar el estado y mostrar un mensaje de éxito
+            updateImages([]);
+            setSnackbarMessage("Producto Modificado con éxito");
+            setSnackbarOpen(true);
+
+            setTimeout(() => {
+              updateSelectedItems([{ name: 'Mis Productos' }]);
+              handleClose();
+            }, 1000);
           }
-        });
+        } catch (error) {
+          if (error instanceof Yup.ValidationError) {
+            // Manejar errores de validación aquí
+            const validationErrors: { [key: string]: string } = {};
+            error.inner.forEach((e) => {
+              if (e.path) {
+                validationErrors[e.path] = e.message;
+              }
+            });
 
             // Agregar manejo específico para el error de falta de variantes
-    
-        console.error("Errores de validación:", validationErrors);
-        setErrors(validationErrors);
-        setErrorTimeoutAndClear();
-        setSnackbarMessage("Por favor, corrige los errores en el formulario.");
-        setSnackbarOpen(true);
-      } else {
-        // Manejar otros errores aquí
-        console.error("Error en handleSubmit:", error);
-        setSnackbarMessage("Error modificar el producto");
-        setSnackbarOpen(true);
-      }
-    }
-  };
+            console.error("Errores de validación:", validationErrors);
+            setErrors(validationErrors);
+            setErrorTimeoutAndClear();
+            setSnackbarMessage("Por favor, corrige los errores en el formulario.");
+            setSnackbarOpen(true);
+          } else {
+            // Manejar otros errores aquí
+            console.error("Error en handleSubmit:", error);
+            setSnackbarMessage("Error al modificar el producto");
+            setSnackbarOpen(true);
+          }
+        }
+      };
+
 
 
   return (

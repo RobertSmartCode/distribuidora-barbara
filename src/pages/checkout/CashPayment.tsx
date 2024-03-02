@@ -60,13 +60,13 @@ const CashPayment = () => {
   
     try {
       // Agregar la orden a la colección de órdenes
-      console.log('Agregando orden a la colección de órdenes:', order);
+ 
       await addDoc(ordersCollection, {
         ...order,
       });
   
       // Restar la cantidad de productos vendidos de la base de datos
-      console.log('Actualizando cantidades de productos:', cart);
+  
       await updateProductQuantities(cart);
   
       // Navegar a la siguiente página y mostrar un mensaje de éxito
@@ -80,6 +80,8 @@ const CashPayment = () => {
       setUploadMessage('Error al generar la orden.');
     }
   };
+
+
   const updateProductQuantities = async (products: Product[]) => {
     const productRefs = products.map(product => doc(collection(db, 'products'), product.id));
     await Promise.all(productRefs.map(async (productRef, index) => {
@@ -93,23 +95,29 @@ const CashPayment = () => {
     }));
   };
   
-  const updateProductQuantityInTransaction = async (productRef: DocumentReference, quantity: number) => {
-    await runTransaction(db, async (transaction) => {
-      const productDoc = await transaction.get(productRef);
-      if (!productDoc.exists()) {
-        throw new Error('¡El producto no existe!');
-      }
-      const productData = productDoc.data();
-      const updatedQuantity = productData.quantities - quantity;
-      if (updatedQuantity < 0) {
-        throw new Error('¡Cantidad insuficiente disponible!');
-      }
-     
-      transaction.update(productRef, { quantities: updatedQuantity });
-    
+const updateProductQuantityInTransaction = async (productRef: DocumentReference, quantity: number) => {
+  await runTransaction(db, async (transaction) => {
+    const productDoc = await transaction.get(productRef);
+    if (!productDoc.exists()) {
+      throw new Error('¡El producto no existe!');
+    }
+    const productData = productDoc.data();
+    const updatedQuantity = productData.quantities - quantity;
+    const updatedSalesCount = productData.salesCount + quantity;
+    const updatedStockAccumulation = updatedQuantity + updatedSalesCount;
+
+    if (updatedQuantity < 0) {
+      throw new Error('¡Cantidad insuficiente disponible!');
+    }
+
+    transaction.update(productRef, { 
+      quantities: updatedQuantity,
+      salesCount: updatedSalesCount,
+      stockAccumulation: updatedStockAccumulation
     });
-  };
-  
+  });
+};
+
 
 
 

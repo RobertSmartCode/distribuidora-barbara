@@ -285,8 +285,10 @@ const handleIsContentInMililitersChange = (event: React.ChangeEvent<HTMLInputEle
         return images.map(image => image.url);
       };
       
-
-     
+      // Calcular el stock acumulado sumando la cantidad actual del producto y las ventas
+      const quantities = parseInt(String(productToValidate?.quantities || '0'), 10);
+      const salesCount = parseInt(productToValidate?.salesCount || '0', 10);
+      const stockAccumulation = quantities + salesCount;
         
       // Crear un objeto con la información del producto
       const productInfo = {
@@ -294,6 +296,7 @@ const handleIsContentInMililitersChange = (event: React.ChangeEvent<HTMLInputEle
         createdAt: productToValidate.createdAt ?? getFormattedDate(),
         keywords: productToValidate.title.toLowerCase(),
         images: convertImagesToStringArray(images),
+        stockAccumulation: stockAccumulation,
       };
   
       const productsCollection = collection(db, "products");
@@ -802,9 +805,6 @@ return (
 };
 
 export default ProductsFormDesktop;
-
-
-
 
 
 
