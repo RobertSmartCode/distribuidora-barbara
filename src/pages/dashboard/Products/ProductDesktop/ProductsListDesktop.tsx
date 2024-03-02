@@ -44,30 +44,31 @@ const ProductsListDesktop = () => {
   
         return {
           id: productDoc.id,
-  title: productData.title || "",
-  brand: productData.brand || "",
-  description: productData.description || "",
-  subCategory: productData.subCategory || "",
-  category: productData.category || "",
-  discount: productData.discount || 0,
-  unitperpack: productData.unitperpack || 0,
-  type: productData.type || "", 
-  price: productData.price || 0, 
-  quantities: productData.quantities || 0,
-  barcode: productData.barcode || 0,
-  contentPerUnit: productData.contentPerUnit || 0,
-  isContentInGrams: productData.isContentInGrams || false,
-  keywords: productData.keywords || "",
-  salesCount: productData.salesCount || 0,
-  featured: productData.featured || false,
-  images: productData.images || [],
-  createdAt: productData.createdAt || "",
-  online: productData.online || false,
-  location: productData.location || "",
-  stockAccumulation: productData.stockAccumulation || 0,
-  quantityHistory: [
-    ...(productData.quantityHistory || []),
-  ]
+          title: productData.title || "",
+          brand: productData.brand || "",
+          description: productData.description || "",
+          subCategory: productData.subCategory || "",
+          category: productData.category || "",
+          discount: productData.discount || 0,
+          unitperpack: productData.unitperpack || 0,
+          type: productData.type || "", 
+          price: productData.price || 0, 
+          quantities: productData.quantities || 0,
+          barcode: productData.barcode || 0,
+          contentPerUnit: productData.contentPerUnit || 0,
+          isContentInGrams: productData.isContentInGrams || false,
+          keywords: productData.keywords || "",
+          salesCount: productData.salesCount || 0,
+          featured: productData.featured || false,
+          images: productData.images || [],
+          createdAt: productData.createdAt || "",
+          online: productData.online || false,
+          location: productData.location || "",
+          stockAccumulation: productData.stockAccumulation || 0,
+          quantityHistory: [
+            ...(productData.quantityHistory || []),
+          ]
+
         };
       });
       setProducts(newArr);
@@ -77,6 +78,9 @@ const ProductsListDesktop = () => {
   }, [isChange]);
   
   
+
+
+
   const deleteProduct = (id: string) => {
     deleteDoc(doc(db, "products", id));
     setIsChange(true);

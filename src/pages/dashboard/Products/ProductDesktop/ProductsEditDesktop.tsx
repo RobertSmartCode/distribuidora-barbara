@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ProductsEditDesktopProps } from '../../../../type/type';
-import { Box, CssBaseline, Toolbar, Card, Typography } from '@mui/material';
+import { Box, CssBaseline, Toolbar, Card, Typography, Modal, Paper } from '@mui/material';
 import * as Yup from "yup";
 import { db } from "../../../../firebase/firebaseConfig";
 import { collection, doc, updateDoc, CollectionReference} from "firebase/firestore";
@@ -44,6 +44,9 @@ const ProductsEditDesktop: React.FC<ProductsEditDesktopProps> = ({ productSelect
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading] = useState<boolean>(false);
   const {  updateSelectedItems } = useSelectedItemsContext()!;
+  const [openModal, setOpenModal] = useState(false);
+  const [warningMessage, setWarningMessage] = useState("");
+
 
 
   useEffect(() => {
@@ -244,11 +247,19 @@ const handleIsContentInMililitersChange = (event: React.ChangeEvent<HTMLInputEle
 
             // Calcular la cantidad agregada
             const previousQuantity = parseInt(String(productToValidate?.stockAccumulation || '0'), 10);
-            console.log("previousQuantity:",previousQuantity)
-            console.log("quantities:",quantities)
+            
             const quantityAdded = quantities  + salesCount - previousQuantity;
-            console.log("quantityAdded:", quantityAdded)
 
+            // Verificar si la cantidad agregada es negativa
+              if (quantityAdded < 0) {
+                // Mostrar mensaje de advertencia y detener el proceso
+                 // Mostrar mensaje de advertencia en el modal
+                    setWarningMessage(`Están faltando ${Math.abs(quantityAdded)} Productos`);
+                    setOpenModal(true);
+                  return; // Detener el proceso
+              }
+
+           
             // Crear un objeto con la información del producto
             const productInfo = {
               ...productToValidate,
@@ -304,6 +315,58 @@ const handleIsContentInMililitersChange = (event: React.ChangeEvent<HTMLInputEle
         }
       };
 
+
+            // Cuando el usuario elige continuar después de ver el mensaje de advertencia en el modal
+            const handleContinue = async () => {
+              setOpenModal(false); // Cerrar el modal
+            
+              // Continuar con el proceso sin detenerlo
+              const productToValidate = productSelected;
+            
+              if (productToValidate) {
+                // Calcular el stock acumulado sumando la cantidad actual del producto y las ventas
+                const quantities = parseInt(String(productToValidate?.quantities || '0'), 10);
+                const salesCount = parseInt(String(productToValidate?.salesCount || '0'), 10);
+                const stockAccumulation = quantities + salesCount;
+            
+                // Calcular la cantidad agregada
+                const previousQuantity = parseInt(String(productToValidate?.stockAccumulation || '0'), 10);
+                const quantityAdded = quantities + salesCount - previousQuantity;
+            
+                // Crear un objeto con la información del producto
+                const productInfo = {
+                  ...productToValidate,
+                  createdAt: (productToValidate?.createdAt) ?? getFormattedDate(),
+                  keywords: (productToValidate?.title ?? "").toLowerCase(),
+                  images: images.map(image => image.url),
+                  stockAccumulation: stockAccumulation,
+                  quantityHistory: [
+                    ...(productToValidate.quantityHistory || []),
+                    { quantityAdded: quantityAdded, date: getFormattedDate() }
+                  ]
+                };
+            
+                const productsCollection = collection(db, "products");
+            
+                if (productSelected) {
+                  // Actualizar el producto existente sin duplicar las imágenes
+                  await updateProduct(productsCollection, productSelected.id, productInfo);
+                }
+            
+                // Limpiar el estado y mostrar un mensaje de éxito
+                updateImages([]);
+                setSnackbarMessage("Producto Modificado con éxito");
+                setSnackbarOpen(true);
+            
+                setTimeout(() => {
+                  updateSelectedItems([{ name: 'Mis Productos' }]);
+                  handleClose();
+                }, 1000);
+              }
+            };
+            
+
+      
 
 
   return (
@@ -759,12 +822,29 @@ const handleIsContentInMililitersChange = (event: React.ChangeEvent<HTMLInputEle
                     </Button>
                   )}
                 </Grid>
+               
            </Grid>
          </form>
-
-  
          </Card>
-        
+         <Modal
+                  open={openModal}
+                  onClose={() => setOpenModal(false)}
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                  }}
+                >
+                  <Paper style={{ background: 'white', padding: '20px', borderRadius: '8px', maxWidth: '500px', textAlign: 'center' }}>
+                    <Typography variant="h5" sx={{ mb: 2 }}>Advertencia</Typography>
+                    <Typography variant="body1" sx={{ mb: 2 }}>{warningMessage}</Typography>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2 }}>
+                      <Button variant="contained" onClick={() => setOpenModal(false)}>Cancelar</Button>
+                      <Button variant="contained" onClick={handleContinue}>Continuar</Button>
+                    </Box>
+                  </Paper>
+                </Modal>
+                
             <Snackbar
                   open={snackbarOpen}
                   autoHideDuration={4000}
