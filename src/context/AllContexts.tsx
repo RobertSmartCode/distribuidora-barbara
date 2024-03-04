@@ -1,4 +1,3 @@
-// AllContexts.tsx
 import React, { ReactNode } from 'react';
 import AuthContextComponent from './AuthContext';
 import CartContextComponent from './CartContext';
@@ -11,7 +10,8 @@ import ShippingContextComponent from "./ShippingMethodsContext";
 import PaymentMethodsContextComponent from './PaymentMethodsContext'
 import CategoriesContextComponent from './CategoriesContext';
 import { CustomerContextComponent } from './CustomerContext';
-
+import ProductContext from './ProductContext';
+import  BarcodeContextComponent  from './BarcodeContext'; 
 
 interface AllContextsProps {
   children: ReactNode;
@@ -21,28 +21,32 @@ const AllContexts: React.FC<AllContextsProps> = ({ children }) => {
  
   return (
     <CategoriesContextComponent>
-    <StoreDataContextComponent>
-      <PaymentMethodsContextComponent>
-        <ShippingContextComponent>
-          <CustomerContextComponent>
-          <CashRegisterContextComponent >
-            <SelectedItemsContextComponent>
-              <ImagesContextComponent>
-                  <SearchContextComponent>
-                        <CartContextComponent>
-                          <AuthContextComponent>
-                          {children}
-                          </AuthContextComponent>
-                        </CartContextComponent>
-                  </SearchContextComponent>
-                </ImagesContextComponent>
-              </SelectedItemsContextComponent>
-            </CashRegisterContextComponent>
+      <StoreDataContextComponent>
+        <PaymentMethodsContextComponent>
+          <ShippingContextComponent>
+            <CustomerContextComponent>
+              <CashRegisterContextComponent>
+                <SelectedItemsContextComponent>
+                  <ImagesContextComponent>
+                    <SearchContextComponent>
+                      <BarcodeContextComponent> {/* Utiliza BarcodeContextComponent */}
+                        <ProductContext>
+                          <CartContextComponent>
+                            <AuthContextComponent>
+                              {children}
+                            </AuthContextComponent>
+                          </CartContextComponent>
+                        </ProductContext>
+                      </BarcodeContextComponent>
+                    </SearchContextComponent>
+                  </ImagesContextComponent>
+                </SelectedItemsContextComponent>
+              </CashRegisterContextComponent>
             </CustomerContextComponent>
           </ShippingContextComponent>
-          </PaymentMethodsContextComponent>
+        </PaymentMethodsContextComponent>
       </StoreDataContextComponent>
-      </CategoriesContextComponent>
+    </CategoriesContextComponent>
   );
 };
 

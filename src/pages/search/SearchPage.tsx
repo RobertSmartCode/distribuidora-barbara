@@ -348,3 +348,7 @@ const SearchPage: React.FC = () => {
 export default SearchPage;
 
 
+
+
+
+// console.log(searchKeyword)
