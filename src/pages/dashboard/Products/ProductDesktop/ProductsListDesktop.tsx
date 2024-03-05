@@ -247,6 +247,7 @@ const ProductsListDesktop = () => {
                   <Typography variant="subtitle1" sx={{ mb: 2 }}>Ventas: {productSelected.salesCount}</Typography>
                   <Typography variant="subtitle1" sx={{ mb: 2 }}>Historial del Producto:</Typography>
                   <ul>
+                  <Typography variant="subtitle1" sx={{ mb: 2 }}>Fecha de Creación: {productSelected.createdAt}</Typography>
                     {productSelected && productSelected.quantityHistory && productSelected.quantityHistory.map((historyItem, index) => (
                       <li key={index}>
                         <Typography variant="body2">Fecha: {historyItem.date}</Typography>
