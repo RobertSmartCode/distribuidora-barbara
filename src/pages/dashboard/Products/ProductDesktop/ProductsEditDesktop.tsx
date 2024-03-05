@@ -267,11 +267,15 @@ const handleIsContentInMililitersChange = (event: React.ChangeEvent<HTMLInputEle
               keywords: (productToValidate?.title ?? "").toLowerCase(),
               images: images.map(image => image.url),
               stockAccumulation: stockAccumulation,
-              quantityHistory: [
-                ...(productToValidate.quantityHistory || []),
-                { quantityAdded: quantityAdded, date: getFormattedDate() }
-              ]
+             
             };
+            // Actualizar quantityHistory solo si la cantidad cambia
+                if (quantities !== parseInt(String(previousQuantity || '0'), 10)) {
+                  productInfo.quantityHistory = [
+                    ...(productToValidate.quantityHistory || []),
+                    { quantityAdded: quantityAdded, date: getFormattedDate() }
+                  ];
+                }
 
             const productsCollection = collection(db, "products");
 
