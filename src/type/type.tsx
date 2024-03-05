@@ -11,7 +11,7 @@ export interface Product {
   type: string;
   price: number;
   quantities: number;
-  barcode: number;
+  barcode: string;
   contentPerUnit: number;  
   isContentInGrams: boolean;
   keywords: string;

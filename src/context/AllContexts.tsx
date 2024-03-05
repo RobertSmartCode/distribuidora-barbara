@@ -29,7 +29,7 @@ const AllContexts: React.FC<AllContextsProps> = ({ children }) => {
                 <SelectedItemsContextComponent>
                   <ImagesContextComponent>
                     <SearchContextComponent>
-                      <BarcodeContextComponent> {/* Utiliza BarcodeContextComponent */}
+                      <BarcodeContextComponent> 
                         <ProductContext>
                           <CartContextComponent>
                             <AuthContextComponent>

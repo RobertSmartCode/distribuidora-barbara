@@ -26,7 +26,7 @@ const Shop: React.FC = () => {
   };
   
   const [hoveredProduct, setHoveredProduct] = useState<Product | null>(null);
-  const handleMouseEnter = (barcode: number) => {
+  const handleMouseEnter = (barcode: string) => {
     const product = products.find((p) => p.barcode === barcode);
     if (product) {
       setHoveredProduct(product);

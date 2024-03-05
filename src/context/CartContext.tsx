@@ -4,12 +4,12 @@ import { Product, CartItem } from "../type/type";
 interface CartContextData {
   cart: CartItem[];
   addToCart: (product: CartItem) => void;
-  getQuantityByBarcode: (barcode: number) => number | undefined;
+  getQuantityByBarcode: (barcode: string) => number | undefined;
   clearCart: () => void;
-  deleteByBarcode: (barcode: number) => void;
+  deleteByBarcode: (barcode: string) => void;
   getTotalPrice: () => number;
   getTotalQuantity: () => number;
-  updateQuantityByBarcode: (barcode: number, newQuantity: number) => void;
+  updateQuantityByBarcode: (barcode: string, newQuantity: number) => void;
   checkStock: (product: Product) => boolean;
   getStockForProduct: (product: Product) => number;
 }
@@ -49,7 +49,7 @@ const CartContextComponent: React.FC<CartContextComponentProps> = ({ children })
     }
   };
 
-  const getQuantityByBarcode = (barcode: number) => {
+  const getQuantityByBarcode = (barcode: string) => {
     const product = cart.find((item) => item.barcode === barcode);
     return product?.quantity;
   };
@@ -59,14 +59,14 @@ const CartContextComponent: React.FC<CartContextComponentProps> = ({ children })
     localStorage.removeItem("cart");
   };
 
-  const updateQuantityByBarcode = (barcode: number, newQuantity: number) => {
+  const updateQuantityByBarcode = (barcode: string, newQuantity: number) => {
     const updatedCart = cart.map((item) =>
       item.barcode === barcode ? { ...item, quantity: newQuantity } : item
     );
     setCart(updatedCart);
   };
 
-  const deleteByBarcode = (barcode: number) => {
+  const deleteByBarcode = (barcode: string) => {
     const updatedCart = cart.filter((item) => item.barcode !== barcode);
     setCart(updatedCart);
     localStorage.setItem("cart", JSON.stringify(updatedCart));

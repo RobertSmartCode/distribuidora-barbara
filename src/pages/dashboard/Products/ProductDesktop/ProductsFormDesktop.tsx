@@ -53,7 +53,7 @@ const ProductsFormDesktop: React.FC<ProductsFormDesktopProps> = (props) => {
     type: "",
     price: 0,
     quantities: 0,
-    barcode: 0,
+    barcode: "",
     contentPerUnit: 0, 
     isContentInGrams: true,  
     keywords: "",

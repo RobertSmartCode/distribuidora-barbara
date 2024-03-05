@@ -6,7 +6,7 @@ import { Product, } from '../type/type';
 interface CashRegisterContextData {
   cart: CartItem[];
   addToCart: (product: Product, quantity?: number) => void;
-  getQuantityByBarcode: (barcode: number) => number | undefined;
+  getQuantityByBarcode: (barcode: string) => number | undefined;
   removeFromCart: (barcode: string) => void;
   clearCart: () => void;
   getTotalAmount: () => number;
@@ -45,7 +45,7 @@ const CashRegisterContextComponent: React.FC<CashRegisterContextComponentProps> 
     }
   };
 
-  const getQuantityByBarcode = (barcode: number) => {
+  const getQuantityByBarcode = (barcode: string) => {
     const product = cart.find((item) => item.barcode === barcode);
     return product?.quantity;
   };
