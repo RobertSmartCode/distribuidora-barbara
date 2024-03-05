@@ -628,7 +628,7 @@ return (
 
             <Grid item xs={12} sm={6}>
               <TextField
-                type="number"
+              
                 variant="outlined"
                 label="Código de Barra"
                 name="barcode"
