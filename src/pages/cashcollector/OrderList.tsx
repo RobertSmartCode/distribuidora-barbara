@@ -109,7 +109,7 @@ const OrderList: React.FC = () => {
         setLoading(true); 
   
         for (const product of selectedOrder.products) {
-          if (product && product.barcode) { // Buscar por barcode en lugar de id
+          if (product && product.barcode) { 
            
             const productQuery = query(collection(firestore, 'products'), where('barcode', '==', product.barcode));
             const productSnapshot = await getDocs(productQuery);
@@ -118,15 +118,20 @@ const OrderList: React.FC = () => {
               throw new Error(`El producto ${product.title} (Barcode: ${product.barcode}) no existe en la base de datos.`);
             }
   
-            const productDoc = productSnapshot.docs[0]; // Suponiendo que hay solo un documento por cada código de barras
+            const productDoc = productSnapshot.docs[0]; 
   
             const productData = productDoc.data();
             const updatedQuantity = productData.quantities - product.quantity;
             const updatedSalesCount = productData.salesCount + product.quantity;
             const updatedLocalSalesCount = productData.localSalesCount + product.quantity; 
             const updatedStockAccumulation = updatedQuantity + updatedSalesCount;
+
+            console.log('Cantidad actualizada:', updatedQuantity);
+            console.log('Ventas actualizadas:', updatedSalesCount);
+            console.log('Ventas locales actualizadas:', updatedLocalSalesCount);
+            console.log('Acumulación de stock actualizada:', updatedStockAccumulation);
   
-            const productRef = doc(collection(firestore, 'products'), productDoc.id); // Usar el ID del documento encontrado
+            const productRef = doc(collection(firestore, 'products'), productDoc.id); 
   
             await runTransaction(firestore, async (transaction) => {
               transaction.update(productRef, { 
