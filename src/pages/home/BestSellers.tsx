@@ -78,7 +78,8 @@ useEffect(() => {
         .filter((product) => product.online === true); // Filtrar los productos cuya propiedad "online" sea true
 
       // Ordenar los productos por salesCount
-      newArray.sort((a, b) => parseInt(b.salesCount, 10) - parseInt(a.salesCount, 10));
+      newArray.sort((a, b) => parseInt(b.salesCount.toString(), 10) - parseInt(a.salesCount.toString(), 10));
+
 
       setProducts(newArray);
     })
