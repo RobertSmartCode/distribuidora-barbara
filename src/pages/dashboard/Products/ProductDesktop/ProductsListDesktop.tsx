@@ -13,6 +13,8 @@ import SearchByBarCode from "./SearchByBarCode";
 import SearchByCategories from "./SearchByCategories";
 import DeleteConfirmationModal from "./DeleteConfirmationModal"; 
 import ProductDetailsModal from "./ProductDetailsModal"; 
+import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
+import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 
 const ProductsListDesktop = () => {
   const { products, deleteProduct } = useProductContext(); // Usar el contexto de productos
@@ -21,7 +23,9 @@ const ProductsListDesktop = () => {
   const [clickedProduct, setClickedProduct] = useState<string | null>(null);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState<boolean>(false); 
   const [detailsModalOpen, setDetailsModalOpen] = useState<boolean>(false); 
-  
+  const productsPerPage = 10; 
+  const [currentPage, setCurrentPage] = useState<number>(1);
+
   const maxTitleLength = 25;
 
   const handleTitleClick = (title: string) => {
@@ -61,6 +65,21 @@ const ProductsListDesktop = () => {
     setDetailsModalOpen(false);
   };
 
+  // Calcular el índice inicial y final de los productos a mostrar en la página actual
+  const indexOfLastProduct = currentPage * productsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+  const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
+
+  // Cambiar a la página siguiente
+  const nextPage = () => {
+    setCurrentPage((prevPage) => prevPage + 1);
+  };
+
+  // Cambiar a la página anterior
+  const prevPage = () => {
+    setCurrentPage((prevPage) => prevPage - 1);
+  };
+
   return (
     <Box>
       <Grid container spacing={2} alignItems="center" justifyContent="center">
@@ -77,7 +96,7 @@ const ProductsListDesktop = () => {
 
       <Box mt={2} />
 
-      {products.length === 0 ? ( // Verifica si el array de productos está vacío
+      {currentProducts.length === 0 ? ( // Verifica si el array de productos está vacío
         <Typography variant="body1" align="center">
           No se encontraron productos.
         </Typography>
@@ -104,7 +123,7 @@ const ProductsListDesktop = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {products.map((product) => (
+                {currentProducts.map((product) => (
                   <TableRow key={product.id}>
                     <TableCell component="th" scope="row" align="justify" style={{ width: 'auto', maxWidth: "100%" }}>
                       <Typography
@@ -113,11 +132,11 @@ const ProductsListDesktop = () => {
                         onClick={() => handleTitleClick(product.description)}
                         sx={{
                           cursor: 'pointer',
-                          display: 'block', // Muestra el texto como un bloque
-                          maxWidth: '300px', // Ancho máximo para el contenedor padre
-                          whiteSpace: 'normal', // Permite que el texto fluya y se ajuste automáticamente
-                          wordBreak: 'break-all', // Rompe el texto en palabras si no hay suficiente espacio
-                          textTransform: 'uppercase', // Convierte el texto a mayúsculas
+                          display: 'block', 
+                          maxWidth: '300px',
+                          whiteSpace: 'normal', 
+                          wordBreak: 'break-all', 
+                          textTransform: 'uppercase', 
                         }}
                       >
                         {clickedProduct === product.description
@@ -142,8 +161,8 @@ const ProductsListDesktop = () => {
                         <EditIcon color="primary" />
                       </IconButton>
                       <IconButton onClick={() => {
-                        setProductSelected(product); // Establecer el producto seleccionado antes de eliminar
-                        handleDeleteConfirmationOpen(); // Abrir modal de confirmación
+                        setProductSelected(product); 
+                        handleDeleteConfirmationOpen(); 
                       }}>
                         <DeleteForeverIcon color="error" />
                       </IconButton>
@@ -158,6 +177,18 @@ const ProductsListDesktop = () => {
               </TableBody>
             </Table>
           </TableContainer>
+          {/* Agregar controles de paginación */}
+          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 2 }}>
+            <IconButton sx={{ fontSize: '32px', marginRight: '16px' }} onClick={prevPage} disabled={currentPage === 1}>
+              <NavigateBeforeIcon />
+            </IconButton>
+            <Typography variant="body1" sx={{ marginRight: '16px' }}>
+              Página {currentPage}
+            </Typography>
+            <IconButton sx={{ fontSize: '32px' }} onClick={nextPage} disabled={indexOfLastProduct >= products.length}>
+              <NavigateNextIcon />
+            </IconButton>
+          </Box>
           <Modal
             open={open}
             onClose={handleClose}
@@ -195,8 +226,6 @@ const ProductsListDesktop = () => {
             productSelected={productSelected}
           />
 
-
-
         </Card>
       )}
     </Box>
@@ -204,8 +233,3 @@ const ProductsListDesktop = () => {
 };
 
 export default ProductsListDesktop;
-
-
-
-
-
