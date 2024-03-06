@@ -7,7 +7,10 @@ import {
   doc,
   deleteDoc,
   addDoc,
-  runTransaction
+  runTransaction,
+  query,
+  where,
+  getDocs
 } from 'firebase/firestore';
 import {
   Grid,
