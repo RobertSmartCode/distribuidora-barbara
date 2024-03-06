@@ -101,7 +101,7 @@ const OrderList: React.FC = () => {
       const firestore = getFirestore();
       const ordersCollection = collection(firestore, 'ordersbox');
       const completedOrdersCollection = collection(firestore, 'completedOrders');
-
+   console.log(selectedOrder)
       try {
         setLoading(true); 
 
