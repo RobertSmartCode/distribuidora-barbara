@@ -104,6 +104,7 @@ const updateProductQuantityInTransaction = async (productRef: DocumentReference,
     const productData = productDoc.data();
     const updatedQuantity = productData.quantities - quantity;
     const updatedSalesCount = productData.salesCount + quantity;
+    const updatedOnlineSalesCount = productData.onlineSalesCount + quantity; 
     const updatedStockAccumulation = updatedQuantity + updatedSalesCount;
 
     if (updatedQuantity < 0) {
@@ -113,6 +114,7 @@ const updateProductQuantityInTransaction = async (productRef: DocumentReference,
     transaction.update(productRef, { 
       quantities: updatedQuantity,
       salesCount: updatedSalesCount,
+      onlineSalesCount: updatedOnlineSalesCount,
       stockAccumulation: updatedStockAccumulation
     });
   });

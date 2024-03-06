@@ -94,6 +94,8 @@ const OrderList: React.FC = () => {
     return () => unsubscribe();
   }, []);
 
+
+
   const handlePaymentMethod = async () => {
     if (selectedOrder && selectedOrder.id) {
       const firestore = getFirestore();
@@ -117,11 +119,13 @@ const OrderList: React.FC = () => {
               const productData = productDoc.data();
               const updatedQuantity = productData.quantities - product.quantity;
               const updatedSalesCount = productData.salesCount + product.quantity;
+              const updatedLocalSalesCount = productData.localSalesCount + product.quantity; 
               const updatedStockAccumulation = updatedQuantity + updatedSalesCount;
 
               transaction.update(productRef, { 
                 quantities: updatedQuantity,
                 salesCount: updatedSalesCount,
+                localSalesCount: updatedLocalSalesCount,
                 stockAccumulation: updatedStockAccumulation
               });
               
