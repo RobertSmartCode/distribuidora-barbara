@@ -102,10 +102,20 @@ const updateProductQuantityInTransaction = async (productRef: DocumentReference,
       throw new Error('¡El producto no existe!');
     }
     const productData = productDoc.data();
-    const updatedQuantity = productData.quantities - quantity;
-    const updatedSalesCount = productData.salesCount + quantity;
-    const updatedOnlineSalesCount = productData.onlineSalesCount + quantity; 
+
+    const updatedQuantity = parseInt(productData.quantities) - parseInt(String(quantity));
+    const onlineSalesCount = parseInt(productData.onlineSalesCount) || 0; 
+    const updatedSalesCount = parseInt(productData.salesCount) + parseInt(String(quantity));
+    const updatedOnlineSalesCount = onlineSalesCount + parseInt(String(quantity));
     const updatedStockAccumulation = updatedQuantity + updatedSalesCount;
+
+    
+    console.log('localSalesCount :', onlineSalesCount);
+    console.log('Cantidad actualizada:', updatedQuantity);
+    console.log('Ventas actualizadas:', updatedSalesCount);
+    console.log('Ventas locales actualizadas:', updatedOnlineSalesCount);
+    console.log('Acumulación de stock actualizada:', updatedStockAccumulation);
+
 
     if (updatedQuantity < 0) {
       throw new Error('¡Cantidad insuficiente disponible!');

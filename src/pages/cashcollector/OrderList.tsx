@@ -128,12 +128,6 @@ const OrderList: React.FC = () => {
             const updatedSalesCount = parseInt(productData.salesCount) + parseInt(String(product.quantity));
             const updatedStockAccumulation = updatedQuantity + updatedSalesCount;
 
-            console.log('localSalesCount :', localSalesCount );
-            console.log('Cantidad actualizada:', updatedQuantity);
-            console.log('Ventas actualizadas:', updatedSalesCount);
-            console.log('Ventas locales actualizadas:', updatedLocalSalesCount);
-            console.log('Acumulación de stock actualizada:', updatedStockAccumulation);
-  
             const productRef = doc(collection(firestore, 'products'), productDoc.id); 
   
             await runTransaction(firestore, async (transaction) => {
