@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { IconButton, Modal, TableBody, TableCell, TableContainer, TableHead, TableRow, Table, Card, Typography, Grid, Button, Tooltip } from "@mui/material";
+import { IconButton, Modal, TableBody, TableCell, TableContainer, TableHead, TableRow, Table, Card, Typography, Grid,Tooltip } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import InfoIcon from "@mui/icons-material/Info"; 
@@ -11,14 +11,17 @@ import { Product } from "../../../../type/type";
 import SearchByName from "./SearchByName";
 import SearchByBarCode from "./SearchByBarCode";
 import SearchByCategories from "./SearchByCategories";
+import DeleteConfirmationModal from "./DeleteConfirmationModal"; 
+import ProductDetailsModal from "./ProductDetailsModal"; 
 
 const ProductsListDesktop = () => {
   const { products, deleteProduct } = useProductContext(); // Usar el contexto de productos
   const [open, setOpen] = useState<boolean>(false);
   const [productSelected, setProductSelected] = useState<Product | null>(null);
   const [clickedProduct, setClickedProduct] = useState<string | null>(null);
-  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState<boolean>(false); // Estado para controlar la apertura del modal de confirmación
-  const [detailsModalOpen, setDetailsModalOpen] = useState<boolean>(false); // Estado para controlar la apertura del modal de detalles del producto
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState<boolean>(false); 
+  const [detailsModalOpen, setDetailsModalOpen] = useState<boolean>(false); 
+  
   const maxTitleLength = 25;
 
   const handleTitleClick = (title: string) => {
@@ -178,94 +181,19 @@ const ProductsListDesktop = () => {
           </Modal>
 
           {/* Modal de confirmación de eliminación */}
-          <Modal
-            open={confirmDeleteOpen}
-            onClose={handleDeleteConfirmationClose}
-            aria-labelledby="modal-title"
-            aria-describedby="modal-description"
-          >
-            <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', bgcolor: 'background.paper', p: 4 }}>
-              <Typography id="modal-title" variant="h6" component="h2" align="center">
-                ¿Estás seguro que deseas eliminar el producto?
-              </Typography>
-              {productSelected && (
-                <Box sx={{ textAlign: 'center', mt: 2 }}>
-                  <Typography
-                    variant="subtitle1"
-                    gutterBottom
-                    sx={{
-                      display: 'block',
-                      maxWidth: '500px',
-                      whiteSpace: 'normal',
-                      wordBreak: 'break-all',
-                      textTransform: 'uppercase',
-                    }}
-                    onClick={() => handleTitleClick(productSelected.description)}
-                  >
-                    {clickedProduct === productSelected.description
-                      ? productSelected.description
-                      : productSelected.description.length > maxTitleLength
-                        ? productSelected.description.substring(0, maxTitleLength) + "..."
-                        : productSelected.description
-                    }
-                  </Typography>
-                  <img src={productSelected.images && productSelected.images[0]} alt="Product" style={{ maxWidth: '100%', maxHeight: '150px', marginTop: '8px' }} />
-                </Box>
-              )}
-              <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-                <Button variant="contained" color="secondary" onClick={handleDeleteConfirmationClose} sx={{ mr: 2 }}>Cancelar</Button>
-                <Button variant="contained" color="error" onClick={handleDeleteProduct}>Eliminar</Button>
-              </Box>
-            </Box>
-          </Modal>
+          <DeleteConfirmationModal
+              open={confirmDeleteOpen}
+              onClose={handleDeleteConfirmationClose}
+              productSelected={productSelected}
+              handleDeleteProduct={handleDeleteProduct}
+            />
 
           {/* Modal de detalles del producto */}
-          <Modal
-              open={detailsModalOpen}
-              onClose={handleDetailsModalClose}
-              aria-labelledby="details-modal-title"
-              aria-describedby="details-modal-description"
-            >
-              <Box
-                sx={{
-                  position: 'absolute',
-                  top: '50%',
-                  left: '50%',
-                  transform: 'translate(-50%, -50%)',
-                  bgcolor: 'background.paper',
-                  p: 4,
-                  maxHeight: '80vh', 
-                  overflowY: 'auto', 
-                }}
-              >
-                <Typography id="details-modal-title" variant="h6" component="h2" align="center">
-                  Detalles del Producto
-                </Typography>
-                {productSelected && (
-                  <Box sx={{ textAlign: 'center', mt: 2 }}>
-                  <Typography variant="subtitle1" sx={{ mb: 2 }}>Cantidad Disponible: {productSelected.quantities}</Typography>
-                  <Typography variant="subtitle1" sx={{ mb: 2 }}>Ventas: {productSelected.salesCount}</Typography>
-                  <Typography variant="subtitle1" sx={{ mb: 2 }}>Historial del Producto:</Typography>
-                  <ul>
-                  <Typography variant="subtitle1" sx={{ mb: 2 }}>Fecha de Creación: {productSelected.createdAt}</Typography>
-                    {productSelected && productSelected.quantityHistory && productSelected.quantityHistory.map((historyItem, index) => (
-                      <li key={index}>
-                        <Typography variant="body2">Fecha: {historyItem.date}</Typography>
-                        <Typography variant="body2" sx={{ color: historyItem.quantityAdded >= 0 ? 'inherit' : 'red' }}>
-                          {historyItem.quantityAdded >= 0 ? `Cantidad Agregada: ${historyItem.quantityAdded}` : `Stock Faltante: ${-historyItem.quantityAdded}`}
-                        </Typography>
-                      </li>
-                    ))}
-                  </ul>
-                </Box>
-                
-                
-                )}
-                <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-                  <Button variant="contained" color="primary" onClick={handleDetailsModalClose}>Cerrar</Button>
-                </Box>
-              </Box>
-            </Modal>
+          <ProductDetailsModal
+            open={detailsModalOpen}
+            onClose={handleDetailsModalClose}
+            productSelected={productSelected}
+          />
 
 
 
@@ -276,3 +204,8 @@ const ProductsListDesktop = () => {
 };
 
 export default ProductsListDesktop;
+
+
+
+
+
