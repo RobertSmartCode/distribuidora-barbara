@@ -37,6 +37,8 @@ const ProductAddForm = () => {
           isContentInGrams: productData.isContentInGrams || false,
           keywords: productData.keywords || "",
           salesCount: productData.salesCount || "",
+          onlineSalesCount: productData.onlineSalesCount || 0,
+          localSalesCount: productData.localSalesCount || 0,
           featured: productData.featured || false,
           images: productData.images || [],
           createdAt: productData.createdAt || "",

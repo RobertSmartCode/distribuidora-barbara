@@ -83,6 +83,8 @@ const ProductContextComponent: React.FC<ProductContextComponentProps> = ({ child
           isContentInGrams: productData.isContentInGrams || false,
           keywords: productData.keywords || "",
           salesCount: productData.salesCount || 0,
+          onlineSalesCount: productData.onlineSalesCount || 0,
+          localSalesCount: productData.localSalesCount || 0,
           featured: productData.featured || false,
           images: productData.images || [],
           createdAt: productData.createdAt || "",

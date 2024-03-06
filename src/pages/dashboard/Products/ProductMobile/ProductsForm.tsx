@@ -45,6 +45,8 @@ const ProductsFormDesktop: React.FC<ProductsFormDesktopProps> = (props) => {
     isContentInGrams: true,  
     keywords: "",
     salesCount: "",
+    onlineSalesCount: "",
+    localSalesCount: "",
     featured: false,
     images: [],
     createdAt: getFormattedDate(),

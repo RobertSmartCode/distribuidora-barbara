@@ -16,6 +16,8 @@ export interface Product {
   isContentInGrams: boolean;
   keywords: string;
   salesCount: string;
+  onlineSalesCount: string; 
+  localSalesCount: string;
   featured: boolean;
   images: string[];
   createdAt: string;
@@ -96,9 +98,9 @@ export interface CustomerInfo {
   city: string;
   postalCode: string;
   province: string;
-  customerType?: "finalConsumer" | "invoice"; // Nuevo campo para el tipo de cliente
-  cuilCuit?: string; // Nuevo campo para CUIL/CUIT
-  businessName?: string; // Nuevo campo para Razón Social
+  customerType?: "finalConsumer" | "invoice"; 
+  cuilCuit?: string; 
+  businessName?: string;
 
 }
 
@@ -136,9 +138,9 @@ export interface Order {
     city: string;
     postalCode: string;
     province: string;
-    customerType?: "finalConsumer" | "invoice"; // Nuevo campo para el tipo de cliente
-    cuilCuit?: string; // Nuevo campo para CUIL/CUIT
-    businessName?: string; // Nuevo campo para Razón Social
+    customerType?: "finalConsumer" | "invoice"; 
+    cuilCuit?: string; 
+    businessName?: string; 
   };
 }
 
