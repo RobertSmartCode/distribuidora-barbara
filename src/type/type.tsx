@@ -206,6 +206,7 @@ export interface Productbox {
   quantity: number;
   price: number;
   images: string[];
+  barcode:number;
 }
 
 export interface Orderbox {

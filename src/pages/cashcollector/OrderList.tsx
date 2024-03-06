@@ -95,62 +95,63 @@ const OrderList: React.FC = () => {
   }, []);
 
 
-
   const handlePaymentMethod = async () => {
     if (selectedOrder && selectedOrder.id) {
       const firestore = getFirestore();
       const ordersCollection = collection(firestore, 'ordersbox');
       const completedOrdersCollection = collection(firestore, 'completedOrders');
       console.log('Productos de selectedOrder:', selectedOrder.products);
-
+  
       try {
         setLoading(true); 
-
+  
         for (const product of selectedOrder.products) {
-          if (product && product.id) {
-            console.log(product)
-            const productRef = await doc(collection(firestore, 'products'), product.id);
-
+          if (product && product.barcode) { // Buscar por barcode en lugar de id
+            console.log(product);
+            const productQuery = query(collection(firestore, 'products'), where('barcode', '==', product.barcode));
+            const productSnapshot = await getDocs(productQuery);
+  
+            if (productSnapshot.empty) {
+              throw new Error(`El producto ${product.title} (Barcode: ${product.barcode}) no existe en la base de datos.`);
+            }
+  
+            const productDoc = productSnapshot.docs[0]; // Suponiendo que hay solo un documento por cada código de barras
+  
+            const productData = productDoc.data();
+            const updatedQuantity = productData.quantities - product.quantity;
+            const updatedSalesCount = productData.salesCount + product.quantity;
+            const updatedLocalSalesCount = productData.localSalesCount + product.quantity; 
+            const updatedStockAccumulation = updatedQuantity + updatedSalesCount;
+  
+            const productRef = doc(collection(firestore, 'products'), productDoc.id); // Usar el ID del documento encontrado
+  
             await runTransaction(firestore, async (transaction) => {
-              const productDoc = await transaction.get(productRef);
-
-              if (!productDoc.exists()) {
-                throw new Error(`El producto ${product.title} (ID: ${product.id}) no existe en la base de datos.`);
-              }
-
-              const productData = productDoc.data();
-              const updatedQuantity = productData.quantities - product.quantity;
-              const updatedSalesCount = productData.salesCount + product.quantity;
-              const updatedLocalSalesCount = productData.localSalesCount + product.quantity; 
-              const updatedStockAccumulation = updatedQuantity + updatedSalesCount;
-
               transaction.update(productRef, { 
                 quantities: updatedQuantity,
                 salesCount: updatedSalesCount,
                 localSalesCount: updatedLocalSalesCount,
                 stockAccumulation: updatedStockAccumulation
               });
-              
             });
           } else {
-            throw new Error('El id del producto está vacío o no definido.');
+            throw new Error('El código de barras del producto está vacío o no definido.');
           }
         }
-
+  
         await addDoc(completedOrdersCollection, {
           ...selectedOrder,
           paymentMethod,
           completedTimestamp: Timestamp.now(),
         });
-
+  
         setSelectedcompletedOrders({
           ...selectedOrder,
           paymentMethod,
           completedTimestamp: new Date(Timestamp.now().toMillis()),
         });
-
+  
         await deleteDoc(doc(ordersCollection, selectedOrder.id));
-
+  
         setOpenDialogPrinte(true);
         setOpenDialog(false);
       } catch (error) {
@@ -162,7 +163,7 @@ const OrderList: React.FC = () => {
       console.error('selectedOrder o su propiedad "id" es nula o vacía');
     }
   };
-
+  
 
 
   const handlePrint = useReactToPrint({
