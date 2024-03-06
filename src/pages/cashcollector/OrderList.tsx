@@ -103,10 +103,10 @@ const OrderList: React.FC = () => {
       const completedOrdersCollection = collection(firestore, 'completedOrders');
 
       try {
-        setLoading(true); // Activamos el indicador de carga al iniciar el proceso
+        setLoading(true); 
 
         for (const product of selectedOrder.products) {
-          if (product.id) {
+          if (product && product.id) {
             const productRef = await doc(collection(firestore, 'products'), product.id);
 
             await runTransaction(firestore, async (transaction) => {

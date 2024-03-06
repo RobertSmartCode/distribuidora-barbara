@@ -148,7 +148,7 @@ const ProductsListDesktop = () => {
                       </Typography>
                     </TableCell>
                     <TableCell align="justify">{product.price}</TableCell>
-                    <TableCell align="justify" sx={{ maxWidth: "100px" }}>
+                    <TableCell align="center" sx={{ maxWidth: "100px" }}>
                       <img
                         src={product.images && product.images[0] ? product.images[0] : ''}
                         alt=""
