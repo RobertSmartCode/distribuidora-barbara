@@ -188,7 +188,7 @@ export interface SelectedLocation {
 }
 
 
-// types.ts
+// Revisar esto 
 export interface Order {
   id: string;
   customerName: string;
