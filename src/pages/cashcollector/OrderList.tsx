@@ -107,6 +107,7 @@ const OrderList: React.FC = () => {
 
         for (const product of selectedOrder.products) {
           if (product && product.id) {
+            console.log(product)
             const productRef = await doc(collection(firestore, 'products'), product.id);
 
             await runTransaction(firestore, async (transaction) => {
