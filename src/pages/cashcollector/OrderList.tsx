@@ -123,11 +123,12 @@ const OrderList: React.FC = () => {
             const productData = productDoc.data();
 
             const updatedQuantity = parseInt(productData.quantities) - parseInt(String(product.quantity));
-            const localSalesCount = parseInt(productData.localSalesCount) || 0; // Inicializar con 0 si es undefined
+            const localSalesCount = parseInt(productData.localSalesCount) || 0; 
             const updatedLocalSalesCount = localSalesCount + parseInt(String(product.quantity));
             const updatedSalesCount = parseInt(productData.salesCount) + parseInt(String(product.quantity));
             const updatedStockAccumulation = updatedQuantity + updatedSalesCount;
 
+            console.log('localSalesCount :', localSalesCount );
             console.log('Cantidad actualizada:', updatedQuantity);
             console.log('Ventas actualizadas:', updatedSalesCount);
             console.log('Ventas locales actualizadas:', updatedLocalSalesCount);
