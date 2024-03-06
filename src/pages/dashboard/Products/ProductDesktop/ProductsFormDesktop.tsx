@@ -57,9 +57,9 @@ const ProductsFormDesktop: React.FC<ProductsFormDesktopProps> = (props) => {
     contentPerUnit: 0, 
     isContentInGrams: true,  
     keywords: "",
-    salesCount: "",
-    onlineSalesCount: "",
-    localSalesCount: "",
+    salesCount: 0,
+    onlineSalesCount: 0,
+    localSalesCount: 0,
     featured: false,
     images: [],
     createdAt: getFormattedDate(),
@@ -289,7 +289,7 @@ const handleIsContentInMililitersChange = (event: React.ChangeEvent<HTMLInputEle
       
       // Calcular el stock acumulado sumando la cantidad actual del producto y las ventas
       const quantities = parseInt(String(productToValidate?.quantities || '0'), 10);
-      const salesCount = parseInt(productToValidate?.salesCount || '0', 10);
+      const salesCount = parseInt(String(productToValidate?.salesCount || '0'), 10);
       const stockAccumulation = quantities + salesCount;
         
       // Crear un objeto con la información del producto

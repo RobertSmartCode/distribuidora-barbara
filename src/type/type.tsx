@@ -15,9 +15,9 @@ export interface Product {
   contentPerUnit: number;  
   isContentInGrams: boolean;
   keywords: string;
-  salesCount: string;
-  onlineSalesCount: string; 
-  localSalesCount: string;
+  salesCount: number;
+  onlineSalesCount: number;
+  localSalesCount: number;
   featured: boolean;
   images: string[];
   createdAt: string;

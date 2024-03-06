@@ -103,14 +103,14 @@ const OrderList: React.FC = () => {
       const firestore = getFirestore();
       const ordersCollection = collection(firestore, 'ordersbox');
       const completedOrdersCollection = collection(firestore, 'completedOrders');
-      console.log('Productos de selectedOrder:', selectedOrder.products);
+     
   
       try {
         setLoading(true); 
   
         for (const product of selectedOrder.products) {
           if (product && product.barcode) { // Buscar por barcode en lugar de id
-            console.log(product);
+           
             const productQuery = query(collection(firestore, 'products'), where('barcode', '==', product.barcode));
             const productSnapshot = await getDocs(productQuery);
   
