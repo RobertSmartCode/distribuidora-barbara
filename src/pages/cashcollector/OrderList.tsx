@@ -121,9 +121,11 @@ const OrderList: React.FC = () => {
             const productDoc = productSnapshot.docs[0]; 
   
             const productData = productDoc.data();
-            const updatedQuantity = productData.quantities - product.quantity;
-            const updatedSalesCount = productData.salesCount + product.quantity;
-            const updatedLocalSalesCount = productData.localSalesCount + product.quantity; 
+
+            const updatedQuantity = parseInt(productData.quantities) - parseInt(String(product.quantity));
+            const localSalesCount = parseInt(productData.localSalesCount) || 0; // Inicializar con 0 si es undefined
+            const updatedLocalSalesCount = localSalesCount + parseInt(String(product.quantity));
+            const updatedSalesCount = parseInt(productData.salesCount) + parseInt(String(product.quantity));
             const updatedStockAccumulation = updatedQuantity + updatedSalesCount;
 
             console.log('Cantidad actualizada:', updatedQuantity);
