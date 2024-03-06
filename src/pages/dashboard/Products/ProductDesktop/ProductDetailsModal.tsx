@@ -34,7 +34,7 @@ const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({ open, onClose
         {productSelected && (
           <Box sx={{ textAlign: 'center', mt: 2 }}>
             <Typography variant="subtitle1" sx={{ mb: 2 }}>Cantidad Disponible: {productSelected.quantities}</Typography>
-            <Typography variant="subtitle1" sx={{ mb: 2 }}>Ventas: {productSelected.salesCount}</Typography>
+            <Typography variant="subtitle1" sx={{ mb: 2 }}>Ventas Totales: {productSelected.salesCount}</Typography>
             <Typography variant="subtitle1" sx={{ mb: 2 }}>Ventas en Línea: {productSelected.onlineSalesCount}</Typography>
             <Typography variant="subtitle1" sx={{ mb: 2 }}>Ventas en el Local: {productSelected.localSalesCount}</Typography>
             <Typography variant="subtitle1" sx={{ mb: 2 }}>Historial del Producto:</Typography>
