@@ -15,11 +15,11 @@ import {
 } from '@mui/material';
 
 import 'firebase/firestore';
-import {Order} from "../../../type/type"
+import {OrderOnline} from "../../../type/type"
 
 const MyOrdersDesktop : React.FC = () => {
 
-  const [myOrders, setMyOrders] = useState<Order[]>([]);
+  const [myOrders, setMyOrders] = useState<OrderOnline[]>([]);
   
 
   useEffect(() => {
@@ -27,12 +27,12 @@ const MyOrdersDesktop : React.FC = () => {
 
     getDocs(ordersCollection)
       .then((res) => {
-        const newArr: Order[] = res.docs.map((order) => ({
+        const newArr: OrderOnline[] = res.docs.map((order) => ({
           ...(order.data() as DocumentData),
           id: order.id,
           // Convertir el _Timestamp a un objeto Date
           date: order.data().date.toDate(),
-        })) as Order[];
+        })) as OrderOnline[];
         console.log(newArr)
         setMyOrders(newArr);
       })
@@ -110,7 +110,7 @@ const MyOrdersDesktop : React.FC = () => {
                     {product.title} x {product.quantity}
                   </Typography>
                   <Typography variant="body2">
-                   Código del producto: {product.sku}
+                   Código del producto: {product.barcode}
                   </Typography>
                 </Grid>
                 
