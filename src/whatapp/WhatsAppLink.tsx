@@ -3,8 +3,8 @@ import { Tooltip } from '@mui/material';
 import { FaWhatsapp } from 'react-icons/fa';
 
 const WhatsAppLink: React.FC = () => {
-  const phoneNumber = '+59898724545';
-  const message = 'Hola, quiero saber más sobre tu empresa.';
+  const phoneNumber = '+5491131563696';
+  const message = 'Hola, quiero saber más sobre Distribuidora Barbara.';
   const encodedMessage = encodeURIComponent(message);
   const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
 
