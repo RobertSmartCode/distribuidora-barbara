@@ -14,10 +14,10 @@ import {
 } from '@mui/material';
 
 import 'firebase/firestore';
-import {Order} from "../../../type/type"
+import {OrderOnline} from "../../../type/type"
 
 const UserOrders : React.FC = () => {
-  const [myOrders, setMyOrders] = useState<Order[]>([]);
+  const [myOrders, setMyOrders] = useState<OrderOnline[]>([]);
  
   useEffect(() => {
     const ordersCollection = collection(db, "orders");
@@ -25,10 +25,10 @@ const UserOrders : React.FC = () => {
 
     getDocs(ordersCollection)
       .then((res) => {
-        const newArr: Order[] = res.docs.map((order) => ({
+        const newArr: OrderOnline[] = res.docs.map((order) => ({
           ...(order.data() as DocumentData),
           id: order.id,
-        })) as Order[];
+        })) as OrderOnline[];
         setMyOrders(newArr);
       })
       .catch((error) => console.log(error));
