@@ -18,10 +18,10 @@ import {
 import { AuthContext } from "../../context/AuthContext";
 import 'firebase/firestore';
 
-import {Order} from "../../type/type"
+import {OrderOnline} from "../../type/type"
 
 const UserOrders : React.FC = () => {
-  const [myOrders, setMyOrders] = useState<Order[]>([]);
+  const [myOrders, setMyOrders] = useState<OrderOnline[]>([]);
   
   const { user } = useContext(AuthContext)!;
 
@@ -34,7 +34,7 @@ const UserOrders : React.FC = () => {
 
     getDocs(ordersFiltered)
     .then((res) => {
-      const newArr: Order[] = res.docs.map((order) => {
+      const newArr: OrderOnline[] = res.docs.map((order) => {
         const orderData = order.data() as DocumentData;
         const completedTimestamp = orderData.completedTimestamp ? (orderData.completedTimestamp as Timestamp).toDate() : new Date(); // Ajustar la fecha
         return {
@@ -42,7 +42,7 @@ const UserOrders : React.FC = () => {
           id: order.id,
           completedTimestamp: completedTimestamp,
         };
-      }) as Order[];
+      }) as OrderOnline[];
       setMyOrders(newArr);
     })
     .catch((error) => console.log(error));
