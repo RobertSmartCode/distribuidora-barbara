@@ -18,7 +18,7 @@ import { AuthContext } from "../../context/AuthContext";
 import * as Yup from 'yup';
 import { useFormik } from "formik";
 import { useNavigate } from 'react-router-dom';
-import {CustomerInfo, Order} from "../../type/type"
+import {CustomerInfo, OrderOnline} from "../../type/type"
 import {
   getDocs,
   collection,
@@ -32,7 +32,7 @@ const CheckoutForm = () => {
 
   const { customerInfo, setCustomerInfo } = useCustomer()!;
 
-    const [myOrders, setMyOrders] = useState<Order[]>([]);
+    const [myOrders, setMyOrders] = useState<OrderOnline[]>([]);
 
     const [initialValuesLoaded, setInitialValuesLoaded] = useState(false);
 
@@ -58,10 +58,10 @@ const CheckoutForm = () => {
   
       getDocs(ordersFiltered)
         .then((res) => {
-          const newArr: Order[] = res.docs.map((order) => ({
+          const newArr: OrderOnline[] = res.docs.map((order) => ({
             ...(order.data() as DocumentData),
             id: order.id,
-          })) as Order[];
+          })) as OrderOnline[];
           
           setMyOrders(newArr);
         })
@@ -70,7 +70,7 @@ const CheckoutForm = () => {
 
     
     // Si el usuario está logueado e hizo una orden llenará la información del usuario con la información de la orden
-    const mapOrderToCustomerInfo = (order: Order): CustomerInfo => {
+    const mapOrderToCustomerInfo = (order: OrderOnline): CustomerInfo => {
       const userData = order.userData || {};
     
       return {
