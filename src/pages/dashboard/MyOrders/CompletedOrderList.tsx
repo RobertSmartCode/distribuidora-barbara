@@ -108,8 +108,8 @@ const CompletedOrderList: React.FC = () => {
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
             >
-                <Card style={{ width: '20%', height: '100%', overflowY: "auto", margin:"auto", marginTop: 3 }}>
-                <CardContent style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <Card style={{ width: '50%', margin: 'auto', marginTop: '5%', maxHeight: '80%', overflowY: 'auto' }}>
+                    <CardContent style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                         {selectedOrder && (
                             <div>
                                 <Typography variant="h6" style={{ marginTop: "10%" }} gutterBottom>Productos:</Typography>
