@@ -65,7 +65,7 @@ const OrdersOnline: React.FC = () => {
     };
 
 
-    console.log(selectedOrder)
+
 
     return (
         <Card
@@ -169,7 +169,7 @@ const OrdersOnline: React.FC = () => {
                                     <div key={index}>
                                   <Typography variant="body1">Productos:</Typography>
 
-                                        {product.images[0] && (
+                                      {product.images && product.images.length > 0 && (
                                             <ListItemAvatar>
                                                 <Avatar src={product.images[0]} alt={product.title} style={{ width: '50px', height: '50px', margin: '5px' }} />
                                             </ListItemAvatar>
