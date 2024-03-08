@@ -8,15 +8,15 @@ import {ErrorMessage} from '../../messages/ErrorMessage'; // Ajusta la ruta seg�
 
 const OrderForm: React.FC = () => {
   const { cart, getTotalAmount, clearCart } = useContext(CashRegisterContext)!;
-  const [customerName, setCustomerName] = useState('');
+  const [customerId, setCustomerId] = useState('');
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
 
   const validationSchema = yup.object().shape({
     dni: yup.string().required('El DNI es requerido').matches(/^\d{8}$/, 'Ingrese un DNI válido'),
   });
-  const handleCustomerNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setCustomerName(event.target.value);
+  const handleCustomerIdChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setCustomerId(event.target.value);
   };
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
@@ -47,7 +47,7 @@ const OrderForm: React.FC = () => {
 
     // Crear un objeto de orden con la información necesaria
     const order = {
-      customerName,
+      customerId,
       totalAmount: getTotalAmount(),
       products: cart.map((product) => ({
         ...product,
@@ -62,7 +62,7 @@ const OrderForm: React.FC = () => {
     const ordersCollection = collection(firestore, 'ordersbox');
 
     try {
-      await validationSchema.validate({ dni: customerName });
+      await validationSchema.validate({ dni: customerId });
 
       await addDoc(ordersCollection, order);
       playOrderSuccessBeep();
@@ -83,7 +83,7 @@ const OrderForm: React.FC = () => {
         clearCart();
 
         // Limpiar el nombre del cliente después de crear la orden
-        setCustomerName('');
+        setCustomerId('');
       }, 2000);
     } catch (error) {
       if (error instanceof yup.ValidationError) {
@@ -107,8 +107,8 @@ const OrderForm: React.FC = () => {
         <form onSubmit={handleFormSubmit} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <TextField
             type="number"
-            value={customerName}
-            onChange={handleCustomerNameChange}
+            value={customerId}
+            onChange={handleCustomerIdChange}
             label="DNI del Cliente"
             name="dni"
             variant="outlined"

@@ -115,9 +115,11 @@ const CartList: React.FC = () => {
         {cart.map((item) => (
           <React.Fragment key={item.barcode}>
             <ListItem>
-              <ListItemAvatar>
-                <Avatar alt={item.title} src={item.images[0]} />
-              </ListItemAvatar>
+            {item.images[0] ? (
+            <ListItemAvatar>
+              <Avatar alt={item.title} src={item.images[0]} />
+            </ListItemAvatar>
+          ) : null}
               <ListItemText
                 primary={`${item.title}`}
                 secondary={`Cantidad: ${item.quantity} | Precio: $${item.price * item.quantity}`}

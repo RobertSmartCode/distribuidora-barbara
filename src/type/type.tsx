@@ -28,6 +28,76 @@ export interface Product {
   quantityHistory?: { quantityAdded: number; date: string; }[];
 }
 
+export interface OrderOnline {
+  id: string;
+  date: Date;
+  timestamp: Date;
+  completedTimestamp: Date;
+  items: Array<{
+    id: string;
+    title: string;
+    quantity: number;
+    price: number;
+    images: string;
+    barcode:string;
+  }>;
+  shippingCost: number;
+  shippingMethod: string;
+  total: number;
+  paymentType:  string;
+  userData: {
+    email: string;
+    receiveOffers: boolean;
+    country: string;
+    identificationDocument: string;
+    firstName: string;
+    lastName: string;
+    phone: string;
+    isOtherPerson: boolean;
+    otherPersonFirstName: string;
+    otherPersonLastName: string;
+    streetAndNumber: string;
+    department: string;
+    neighborhood: string;
+    city: string;
+    postalCode: string;
+    province: string;
+    customerType?: "finalConsumer" | "invoice"; 
+    cuilCuit?: string; 
+    businessName?: string; 
+  };
+}
+
+export interface Orderbox {
+  id: string;
+  customerId: string;
+  totalAmount: number;
+  timestamp: Date;
+  completedTimestamp: Date;
+  products: Productbox[];
+}
+
+export interface Productbox {
+  id: string;
+  title: string;
+  quantity: number;
+  price: number;
+  images: string[];
+  barcode:number;
+}
+
+export interface CompletedOrderbox {
+  id: string;
+  customerId: string;
+  totalAmount: number;
+  timestamp: Date;
+  completedTimestamp: Date;
+  paymentMethod: string;
+  products: Productbox[];
+  
+}
+
+
 
 export interface ProductsEditDesktopProps {
   productSelected: Product | null;
@@ -104,46 +174,6 @@ export interface CustomerInfo {
 
 }
 
-export interface Order {
-  id: string;
-  date: Date;
-  timestamp: Date;
-  completedTimestamp: Date;
-  items: Array<{
-    id: string;
-    title: string;
-    quantity: number;
-    price: number;
-    images: string
-    sku:string
-  }>;
-  shippingCost: number;
-  shippingMethod: string;
-  total: number;
-  paymentType:  string;
-  userData: {
-    email: string;
-    receiveOffers: boolean;
-    country: string;
-    identificationDocument: string;
-    firstName: string;
-    lastName: string;
-    phone: string;
-    isOtherPerson: boolean;
-    otherPersonFirstName: string;
-    otherPersonLastName: string;
-    streetAndNumber: string;
-    department: string;
-    neighborhood: string;
-    city: string;
-    postalCode: string;
-    province: string;
-    customerType?: "finalConsumer" | "invoice"; 
-    cuilCuit?: string; 
-    businessName?: string; 
-  };
-}
-
 export interface StoreData {
   id?: string;
   storeName: string;
@@ -188,42 +218,4 @@ export interface SelectedLocation {
 }
 
 
-// Revisar esto 
-export interface Order {
-  id: string;
-  customerName: string;
-  totalAmount: number;
-  timestamp: Date;
-  completedTimestamp: Date;
-  
-  // Agrega más propiedades según la estructura de tu orden
-}
 
-
-export interface Productbox {
-  id: string;
-  title: string;
-  quantity: number;
-  price: number;
-  images: string[];
-  barcode:number;
-}
-
-export interface Orderbox {
-  id: string;
-  customerName: string;
-  totalAmount: number;
-  timestamp: Date;
-  completedTimestamp: Date;
-  products: Productbox[];
-}
-
-export interface CompletedOrderbox {
-  id: string;
-  customerName: string;
-  totalAmount: number;
-  timestamp: Date;
-  completedTimestamp: Date;
-  products: Productbox[];
-  paymentMethod: string;
-}

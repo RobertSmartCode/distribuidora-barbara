@@ -94,7 +94,7 @@ const CashClosing: React.FC = () => {
             <List>
               {Object.entries(paymentTotals).map(([method, amount]) => (
                 <ListItem key={method} disablePadding>
-                  <ListItemText primary={`${method === 'cash' ? 'Efectivo' : method === 'transfer' ? 'Transferencia' : method === 'debit' ? 'Débito' : method}: $${amount.toFixed(2)}`} />
+                    <ListItemText primary={`${method === 'Efectivo' ? 'Efectivo' : method === 'Transferencia' ? 'Transferencia' : method === 'Débito' ? 'Débito' : method === 'Crédito' ? 'Crédito' : method}: $${amount.toFixed(2)}`} />
                 </ListItem>
               ))}
             </List>

@@ -35,7 +35,7 @@ import {
 } from '@mui/material';
 import { useReactToPrint } from 'react-to-print';
 
-import { Orderbox, CompletedOrderbox, } from '../../type/type';
+import { Orderbox, CompletedOrderbox } from '../../type/type';
 
 interface OrderPrintComponentProps {
   order: Orderbox | null;
@@ -48,7 +48,7 @@ const OrderPrintComponent: React.FC<OrderPrintComponentProps & { ref: ForwardedR
     <Card ref={ref}>
       <CardContent>
         <Typography variant="h6" align="center" style={{ marginBottom: '1rem' }}>Orden a Imprimir</Typography>
-        <Typography variant="body1">DNI: {order.customerName}</Typography>
+        <Typography variant="body1">DNI: {order.customerId}</Typography>
         <Typography variant="body1">Total: {order.totalAmount}</Typography>
         <Typography variant="body1">
           Productos:
@@ -189,7 +189,7 @@ const OrderList: React.FC = () => {
               <Typography variant="h6" gutterBottom>
                 Orden
               </Typography>
-              <Typography variant="body1">DNI: {order.customerName}</Typography>
+              <Typography variant="body1">DNI: {order.customerId}</Typography>
               <Typography variant="body1">Total: {order.totalAmount}</Typography>
               <Typography variant="body1">
                 Productos:
@@ -234,9 +234,9 @@ const OrderList: React.FC = () => {
               value={paymentMethod}
               onChange={(e) => setPaymentMethod(e.target.value as string)}
             >
-              <MenuItem value="cash">Efectivo</MenuItem>
-              <MenuItem value="debit">Débito</MenuItem>
-              <MenuItem value="credit">Crédito</MenuItem>
+              <MenuItem value="Efectivo">Efectivo</MenuItem>
+              <MenuItem value="Débito">Débito</MenuItem>
+              <MenuItem value="Crédito">Crédito</MenuItem>
               <MenuItem value="transfer">Transferencia</MenuItem>
             </Select>
           </FormControl>
