@@ -182,7 +182,7 @@ useEffect(() => {
   
       {/* Productos más vendidos */}
       {products.map((product) => (
-        <Grid item xs={6} sm={4} md={4} lg={3} key={product.id}>
+        <Grid item xs={6} sm={4} md={4} lg={2} key={product.id}>
           <Card sx={productStyles}>
 
             
