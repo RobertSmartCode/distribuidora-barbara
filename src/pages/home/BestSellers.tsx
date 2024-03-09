@@ -20,7 +20,7 @@ const [products, setProducts] = useState<Product[]>([]);
 const [isComponentReady, setIsComponentReady] = useState(false);
 const [loadedImageCount, setLoadedImageCount] = useState(0);
 const isMobile = useMediaQuery('(max-width: 600px)');
-const maxTitleLength = isMobile ? 10 : 22;
+const maxTitleLength = isMobile ? 10 : 14;
 const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 const [clickedProduct, setClickedProduct] = useState<string | null>(null);
 const handleTitleClick = (title: string) => {
