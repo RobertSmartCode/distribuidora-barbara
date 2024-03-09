@@ -188,7 +188,7 @@ useEffect(() => {
                               sx={{
                                 position: "absolute",
                                 top: "0", // Ajusta la posición vertical
-                                left: isMobile ? "-70px" : "-70px",
+                                left: isMobile ? "-70px" : "-90px",
                                 backgroundColor: customColors.primary.main,
                                 color: customColors.secondary.contrastText,
                                 width: isMobile ? "36px" : "48px",
