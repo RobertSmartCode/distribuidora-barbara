@@ -179,8 +179,8 @@ useEffect(() => {
       {products.map((product) => (
         <Grid item xs={6} sm={4} md={4} lg={2} key={product.id}>
           <Card sx={productStyles}>
-                                                {/* Etiqueta de % Descuento */}
-                                                <Box sx={{ position: "relative" }}>
+                              {/* Etiqueta de % Descuento */}
+                              <Box sx={{ position: "relative" }}>
                           {/* Paper para la etiqueta de descuento */}
                           {parseInt(String(product?.discount)) !== 0 && (
                             <Paper
@@ -188,7 +188,7 @@ useEffect(() => {
                               sx={{
                                 position: "absolute",
                                 top: "0", // Ajusta la posición vertical
-                                left: isMobile ? "-70px" : "-140px",
+                                left: isMobile ? "-70px" : "-70px",
                                 backgroundColor: customColors.primary.main,
                                 color: customColors.secondary.contrastText,
                                 width: isMobile ? "36px" : "48px",

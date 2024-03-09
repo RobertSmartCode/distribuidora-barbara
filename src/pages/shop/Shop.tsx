@@ -138,7 +138,7 @@ const Shop: React.FC = () => {
                   <Card sx={productStyles}>
 
                             {/* Etiqueta de % Descuento */}
-                            <Box sx={{ position: "relative" }}>
+                          <Box sx={{ position: "relative" }}>
                           {/* Paper para la etiqueta de descuento */}
                           {parseInt(String(product?.discount)) !== 0 && (
                             <Paper
@@ -146,7 +146,7 @@ const Shop: React.FC = () => {
                               sx={{
                                 position: "absolute",
                                 top: "0", // Ajusta la posición vertical
-                                left: isMobile ? "-70px" : "-140px",
+                                left: isMobile ? "-70px" : "-70px",
                                 backgroundColor: customColors.primary.main,
                                 color: customColors.secondary.contrastText,
                                 width: isMobile ? "36px" : "48px",
