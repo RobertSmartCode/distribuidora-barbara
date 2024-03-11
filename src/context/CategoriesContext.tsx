@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useState, ReactNode } from
 import { collection, onSnapshot, doc, deleteDoc } from "firebase/firestore";
 import { db } from '../firebase/firebaseConfig';
 
-// Definición de la interfaz de categoría
+// Define la interfaz de categoría
 interface Category {
   id: string;
   name: string;
@@ -18,32 +18,33 @@ interface CategoriesProviderProps {
 interface CategoriesContextValue {
   categories: Category[] | null;
   selectedCategory: Category | null;
-  selectedSubcategory: string | null; // Nueva propiedad para la subcategoría seleccionada
+  selectedSubcategory: string | null;
   updateCategories: (newCategories: Category[]) => void;
   deleteCategory: (categoryId: string) => void;
   setSelectedCategory: (category: Category | null) => void;
-  setSelectedSubcategory: (subcategory: string | null) => void; // Función para establecer la subcategoría seleccionada
+  setSelectedSubcategory: (subcategory: string | null) => void;
 }
 
-// Crear el contexto de categorías
+// Crea el contexto de categorías
 const CategoriesContext = createContext<CategoriesContextValue | undefined>(undefined);
 
 // Hook personalizado para usar el contexto de categorías
 export const useCategories = () => {
   const context = useContext(CategoriesContext);
   if (!context) {
-    throw new Error("useCategories must be used within a CategoriesProvider");
+    throw new Error("useCategories debe ser utilizado dentro de un CategoriesProvider");
   }
   return context;
 };
 
 // Componente principal que provee el contexto de categorías
-const CategoriesContextComponent: React.FC<CategoriesProviderProps> = ({ children }) => {
+const CategoriesProvider: React.FC<CategoriesProviderProps> = ({ children }) => {
   const [categories, setCategories] = useState<Category[] | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
-  const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(null); // Estado para la subcategoría seleccionada
+  const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(null);
 
   useEffect(() => {
+    // Carga las categorías desde Firestore
     const unsubscribe = onSnapshot(collection(db, "categories"), (snapshot) => {
       const newCategories: Category[] = snapshot.docs.map((categoryDoc) => {
         const categoryData = categoryDoc.data();
@@ -55,6 +56,8 @@ const CategoriesContextComponent: React.FC<CategoriesProviderProps> = ({ childre
           subCategories: subCategories,
         };
       });
+      // Guarda las categorías en el almacenamiento local
+      localStorage.setItem("categories", JSON.stringify(newCategories));
       setCategories(newCategories);
     });
 
@@ -63,6 +66,7 @@ const CategoriesContextComponent: React.FC<CategoriesProviderProps> = ({ childre
 
   // Función para actualizar las categorías
   const updateCategories = (newCategories: Category[]) => {
+    localStorage.setItem("categories", JSON.stringify(newCategories));
     setCategories(newCategories);
   };
 
@@ -93,4 +97,4 @@ const CategoriesContextComponent: React.FC<CategoriesProviderProps> = ({ childre
   );
 };
 
-export default CategoriesContextComponent;
+export default CategoriesProvider;

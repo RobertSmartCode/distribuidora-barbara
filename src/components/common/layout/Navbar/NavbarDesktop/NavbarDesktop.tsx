@@ -5,6 +5,7 @@ import {
   CssBaseline,
   Grid,
   Box,
+  useMediaQuery
  
 } from "@mui/material";
 import Logo from "./Logo/Logo";
@@ -17,30 +18,31 @@ import Notification from "../../../../../notification/Notification";
 import WhatsAppLink from "../../../../../whatapp/WhatsAppLink";
 
 const NavbarDesktop = () => {
+  const isMediumScreen = useMediaQuery('(max-width:960px)'); // Para pantallas medianas
+  const marginTopValue = isMediumScreen ? '32%' : '8%';
 
   return (
     <>
       <AppBar position="static" color="secondary"  sx={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 999 }}>
-        <Toolbar>
-          <Grid container spacing={2} alignItems="center">
-            <Grid container item lg={12} alignItems="center">
-              <Grid item xs={12} sm={3} md={3} lg={3}>
-                <Logo />
-              </Grid>
-              <Grid item xs={12} sm={6} md={6} lg={6}>
-                <SearchBar />
-              </Grid>
-              <Grid item container xs={12} sm={2} md={2} lg={2} justifyContent="flex-end" spacing={5}>
-                <Grid item>
-                  <LoginButton />
-                </Grid>
-                <Grid item>
-                  <MobileCart />
-                </Grid>
-              </Grid>
+      <Toolbar>
+        <Grid container spacing={2} alignItems="center">
+          <Grid item xs={12} sm={6} md={3} lg={3}>
+            <Logo />
+          </Grid>
+          <Grid item xs={12} sm={12} md={12} lg={6} >
+            <SearchBar />
+          </Grid>
+          <Grid item container xs={12} sm={12} md={12} lg={3} justifyContent="flex-end" spacing={5}>
+            <Grid item>
+              <LoginButton />
+            </Grid>
+            <Grid item>
+              <MobileCart />
             </Grid>
           </Grid>
-        </Toolbar>
+        </Grid>
+      </Toolbar>
+
         
         {/* Estilos en el contenedor de MenuButton */}
         <Box sx={{ height: '30px',
@@ -65,7 +67,7 @@ const NavbarDesktop = () => {
           width: "100%",
           minHeight: "100vh",
           px: 2,
-          marginTop: '8%',
+          marginTop: marginTopValue,
         }}
       >
         <Outlet />
