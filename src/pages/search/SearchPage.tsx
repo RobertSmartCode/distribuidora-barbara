@@ -19,8 +19,8 @@ const SearchPage: React.FC = () => {
   const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const isMobile = useMediaQuery('(max-width: 1024px)');
-  const maxTitleLength = isMobile ? 6 : 14;
+  const isMobile = useMediaQuery('(max-width: 600px)');
+  const maxTitleLength = isMobile ? 10 : 14;
   const [clickedProduct, setClickedProduct] = useState<string | null>(null);
   const handleTitleClick = (title: string) => {
     setClickedProduct((prevClickedProduct) =>
@@ -238,33 +238,33 @@ const SearchPage: React.FC = () => {
 
                       {/* Imagen del producto */}
 
-                 {/* Descripción del Producto */}
+                     {/* Descripción del Producto */}
 
-                 <Typography
-                          variant="subtitle1"
-                          gutterBottom
-                          sx={{
-                            ...productTitleStyles,
-                            whiteSpace: 'nowrap',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            cursor: 'pointer',
-                            ...(clickedProduct === product.description
-                              ? {
-                                  whiteSpace: 'normal',
-                                  maxWidth: '70%',
-                                  margin: '0 auto',
-                                }
-                              : null),
-                          }}
-                          onClick={() => handleTitleClick(product.description)}
-                        >
-                          {clickedProduct === product.description
-                            ? product.description.toUpperCase()
-                            : product.description.length > maxTitleLength
-                            ? `${product.description.substring(0, maxTitleLength).toUpperCase()}...`
-                            : product.description.toUpperCase()}
-                        </Typography>
+                     <Typography
+                                variant="subtitle1"
+                                gutterBottom
+                                sx={{
+                                  ...productTitleStyles,
+                                  whiteSpace: 'nowrap',
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis',
+                                  cursor: 'pointer',
+                                  ...(clickedProduct === product.description
+                                    ? {
+                                        whiteSpace: 'normal',
+                                        maxWidth: '70%',
+                                        margin: '0 auto',
+                                      }
+                                    : null),
+                                }}
+                                onClick={() => handleTitleClick(product.description)}
+                              >
+                                {clickedProduct === product.description
+                                  ? product.description.toUpperCase()
+                                  : product.description.length > maxTitleLength
+                                  ? `${product.description.substring(0, maxTitleLength).toUpperCase()}...`
+                                  : product.description.toUpperCase()}
+                              </Typography>
                           {/* Descripción del Producto */}
 
 
