@@ -75,7 +75,7 @@ useEffect(() => {
   const fetchNewArrivals = async () => {
     try {
       const productCollection = collection(db, "products");
-      const productQuery = query(productCollection, orderBy("createdAt", "desc"), limit(6));
+      const productQuery = query(productCollection, orderBy("createdAt", "desc"));
       const querySnapshot = await getDocs(productQuery);
 
       const newArrivals = querySnapshot.docs
@@ -83,6 +83,7 @@ useEffect(() => {
         .filter((product) => product.online === true); 
 
       setProducts(newArrivals);
+
     } catch (error) {
       console.error("Error fetching new arrivals:", error);
     }
