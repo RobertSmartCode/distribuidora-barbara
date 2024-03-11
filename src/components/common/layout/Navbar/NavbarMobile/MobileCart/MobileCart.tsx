@@ -41,7 +41,7 @@ const MobileCart: React.FC = () => {
     setCartOpen(!cartOpen);
   };
 
-  const minimumOrderAmount = 150000; // Cambiar según tu requisito
+  const minimumOrderAmount = 4000; // Cambiar según tu requisito
 
   const isMinimumOrderReached = () => getTotalPrice() && getTotalPrice() >= minimumOrderAmount;
 
