@@ -2,29 +2,25 @@ import { useState, useContext, useEffect } from "react";
 import { initMercadoPago, Wallet} from "@mercadopago/sdk-react";
 import axios from "axios";
 import { CartContext } from '../../context/CartContext';
-import { useShippingMethods } from '../../context/ShippingMethodsContext';
-import { useCustomer} from '../../context/CustomerContext';
+
 
 
 const MercadoPagoPayment = () => {
 
- 
-  const { cart, getTotalPrice } = useContext(CartContext)! || {};
-  const { getSelectedShippingMethod } = useShippingMethods()!;
-  const { customerInfo } = useCustomer()!;
+  const { cart, getTotalPrice, } = useContext(CartContext)! || {};
   const subtotal = getTotalPrice ? getTotalPrice() : 0;
-  const selectedShippingMethod = getSelectedShippingMethod();
+
 
   const [preferenceId, setPreferenceId] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const shippingCost = selectedShippingMethod ? selectedShippingMethod.price : 0;
+  const shippingCost = 0
+ 
 
  
-  let total = (subtotal + shippingCost)
+  let total = (subtotal + shippingCost) 
 
 
-const userData = customerInfo
 
 
 
@@ -40,10 +36,10 @@ const userData = customerInfo
 
 
     let order = {
-      userData,
+
       items: cart,
       shippingCost,
-      shippingMethod: selectedShippingMethod ? selectedShippingMethod.name : 'No shipping method',
+    
       total
 
       
@@ -63,7 +59,7 @@ const userData = customerInfo
     });
 
     try {
-      const response = await axios.post("https://back-ecommerce-phi.vercel.app/create_preference", {
+      const response = await axios.post("https://backbarbara.vercel.app/create_preference", {
         items: newArray,
         shipment_cost: shippingCost
       });
