@@ -20,7 +20,7 @@ const SearchPage: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const isMobile = useMediaQuery('(max-width: 600px)');
-  const maxTitleLength = isMobile ? 5 : 5;
+  const maxTitleLength = isMobile ? 10 : 14;
   const [clickedProduct, setClickedProduct] = useState<string | null>(null);
   const handleTitleClick = (title: string) => {
     setClickedProduct((prevClickedProduct) =>
@@ -151,7 +151,7 @@ const SearchPage: React.FC = () => {
       {searchResults.length > 0 ? (
        <div>
        <Typography variant="h6" gutterBottom sx={{ textAlign: 'center' }}>
-           Resultados de tu búsqueda. Prueba
+           Resultados de tu búsqueda. 
          </Typography>
          {isComponentReady && (
    
