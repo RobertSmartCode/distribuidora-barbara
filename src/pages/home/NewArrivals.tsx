@@ -1,7 +1,7 @@
 // NewArrivals.tsx
 import React, { useEffect, useState} from "react";
 import { db } from "../../firebase/firebaseConfig";
-import { getDocs, collection, orderBy, query, limit } from "firebase/firestore";
+import { getDocs, collection, orderBy, query } from "firebase/firestore";
 import { Link } from "react-router-dom";
 import { Grid, Card, CardContent, Typography, Button, IconButton, Box, CardMedia, Paper } from "@mui/material";
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -80,10 +80,12 @@ useEffect(() => {
 
       const newArrivals = querySnapshot.docs
         .map((doc) => ({ ...doc.data(), id: doc.id } as Product))
-        .filter((product) => product.online === true); 
+        .filter((product) => product.online === true);
 
-      setProducts(newArrivals);
+      // Limitar a 6 productos
+      const limitedProducts = newArrivals.slice(0, 6);
 
+      setProducts(limitedProducts);
     } catch (error) {
       console.error("Error fetching new arrivals:", error);
     }
@@ -91,6 +93,7 @@ useEffect(() => {
 
   fetchNewArrivals();
 }, []);
+
 
 
 

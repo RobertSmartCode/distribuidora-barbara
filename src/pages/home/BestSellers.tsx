@@ -80,8 +80,9 @@ useEffect(() => {
       // Ordenar los productos por salesCount
       newArray.sort((a, b) => parseInt(b.salesCount.toString(), 10) - parseInt(a.salesCount.toString(), 10));
 
+      const limitedProducts = newArray.slice(0, 6);
 
-      setProducts(newArray);
+      setProducts(limitedProducts);
     })
     .catch((err) => console.log(err));
 }, []);
