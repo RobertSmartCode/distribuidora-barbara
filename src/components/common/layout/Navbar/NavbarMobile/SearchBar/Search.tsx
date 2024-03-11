@@ -25,7 +25,7 @@ const Search: React.FC<SearchProps> = ({ toggleSearch }) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const isMobile = useMediaQuery('(max-width: 600px)');
-  const maxTitleLength = isMobile ? 10 : 22;
+  const maxTitleLength = isMobile ? 10 : 14;
   const [clickedProduct, setClickedProduct] = useState<string | null>(null);
   const handleTitleClick = (title: string) => {
     setClickedProduct((prevClickedProduct) =>
@@ -180,7 +180,7 @@ const Search: React.FC<SearchProps> = ({ toggleSearch }) => {
                               sx={{
                                 position: "absolute",
                                 top: "0", // Ajusta la posición vertical
-                                left: isMobile ? "-70px" : "-140px",
+                                left: isMobile ? "-70px" : "-90px",
                                 backgroundColor: customColors.primary.main,
                                 color: customColors.secondary.contrastText,
                                 width: isMobile ? "36px" : "48px",
