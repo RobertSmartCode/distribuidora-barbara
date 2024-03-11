@@ -1,7 +1,7 @@
 // BestSellers.tsx
 import React, {useEffect, useState} from "react";
 import { db } from "../../firebase/firebaseConfig";
-import { getDocs, collection } from "firebase/firestore";
+import { getDocs, collection, query, limit, orderBy } from "firebase/firestore";
 import { Link } from "react-router-dom";
 import { Grid, Card, CardContent, Typography, Button, IconButton, Box, CardMedia, Paper } from "@mui/material";
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -70,22 +70,27 @@ useEffect(() => {
 }, [loadedImageCount, products]);
 
 useEffect(() => {
-  let refCollection = collection(db, "products");
-  getDocs(refCollection)
-    .then((res) => {
-      let newArray: Product[] = res.docs
-        .map((product) => ({ ...product.data(), id: product.id } as Product))
-        .filter((product) => product.online === true); // Filtrar los productos cuya propiedad "online" sea true
+  const fetchProducts = async () => {
+    try {
+      const productCollection = collection(db, "products");
+      const productQuery = query(productCollection, orderBy("salesCount", "desc"), limit(6)); 
 
-      // Ordenar los productos por salesCount
-      newArray.sort((a, b) => parseInt(b.salesCount.toString(), 10) - parseInt(a.salesCount.toString(), 10));
+      const querySnapshot = await getDocs(productQuery);
 
+      const newProducts = querySnapshot.docs
+        .map((doc) => ({ ...doc.data(), id: doc.id } as Product))
+        .filter((product) => product.online === true); // Filter online products
 
-      setProducts(newArray);
-    })
-    .catch((err) => console.log(err));
+      // No explicit sorting needed as the query already sorts by "salesCount"
+
+      setProducts(newProducts);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
+  };
+
+  fetchProducts();
 }, []);
-
 
 
 
