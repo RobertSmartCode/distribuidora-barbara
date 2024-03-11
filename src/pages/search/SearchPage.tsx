@@ -20,7 +20,7 @@ const SearchPage: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const isMobile = useMediaQuery('(max-width: 1024px)');
-  const maxTitleLength = isMobile ? 10 : 14;
+  const maxTitleLength = isMobile ? 6 : 14;
   const [clickedProduct, setClickedProduct] = useState<string | null>(null);
   const handleTitleClick = (title: string) => {
     setClickedProduct((prevClickedProduct) =>
@@ -351,4 +351,3 @@ export default SearchPage;
 
 
 
-// console.log(searchKeyword)
