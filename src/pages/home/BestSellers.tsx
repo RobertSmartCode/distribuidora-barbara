@@ -1,8 +1,7 @@
 // BestSellers.tsx
 import React, {useEffect, useState} from "react";
 import { db } from "../../firebase/firebaseConfig";
-import { collection, getDocs, query, where, orderBy, limit,  QueryDocumentSnapshot } from "firebase/firestore";
-import { DocumentData,  } from "firebase/firestore";
+import { getDocs, collection } from "firebase/firestore";
 import { Link } from "react-router-dom";
 import { Grid, Card, CardContent, Typography, Button, IconButton, Box, CardMedia, Paper } from "@mui/material";
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -70,17 +69,18 @@ useEffect(() => {
   }
 }, [loadedImageCount, products]);
 
-
 useEffect(() => {
-  const refCollection = collection(db, "products");
-  const q = query(refCollection, where("online", "==", true), orderBy("salesCount", "desc"), limit(6));
+  let refCollection = collection(db, "products");
+  getDocs(refCollection)
+    .then((res) => {
+      let newArray: Product[] = res.docs
+        .map((product) => ({ ...product.data(), id: product.id } as Product))
+        .filter((product) => product.online === true); // Filtrar los productos cuya propiedad "online" sea true
 
-  getDocs(q)
-    .then((querySnapshot) => {
-      const newArray: Product[] = [];
-      querySnapshot.forEach((doc: QueryDocumentSnapshot<DocumentData>) => {
-        newArray.push({ ...doc.data(), id: doc.id } as Product);
-      });
+      // Ordenar los productos por salesCount
+      newArray.sort((a, b) => parseInt(b.salesCount.toString(), 10) - parseInt(a.salesCount.toString(), 10));
+
+
       setProducts(newArray);
     })
     .catch((err) => console.log(err));
