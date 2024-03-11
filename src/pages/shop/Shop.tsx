@@ -136,7 +136,6 @@ const Shop: React.FC = () => {
                   
                    
                   <Card sx={productStyles}>
-
                             {/* Etiqueta de % Descuento */}
                           <Box sx={{ position: "relative" }}>
                           {/* Paper para la etiqueta de descuento */}

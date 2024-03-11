@@ -1,7 +1,7 @@
 // NewArrivals.tsx
 import React, { useEffect, useState} from "react";
 import { db } from "../../firebase/firebaseConfig";
-import { getDocs, collection, orderBy, query } from "firebase/firestore";
+import { getDocs, collection, orderBy, query, limit } from "firebase/firestore";
 import { Link } from "react-router-dom";
 import { Grid, Card, CardContent, Typography, Button, IconButton, Box, CardMedia, Paper } from "@mui/material";
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -75,7 +75,7 @@ useEffect(() => {
   const fetchNewArrivals = async () => {
     try {
       const productCollection = collection(db, "products");
-      const productQuery = query(productCollection, orderBy("createdAt", "desc"));
+      const productQuery = query(productCollection, orderBy("createdAt", "desc"), limit(6)); // Limitar la consulta a 6 productos
       const querySnapshot = await getDocs(productQuery);
 
       const newArrivals = querySnapshot.docs
@@ -90,6 +90,7 @@ useEffect(() => {
 
   fetchNewArrivals();
 }, []);
+
 
 
 
